@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale-1.0">
     <title>Arelyshop - Tu Tienda Online</title>
     
     <!-- Tailwind CSS -->
@@ -10,7 +10,7 @@
     
     <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Font Awesome for Icons -->
@@ -58,8 +58,7 @@
         @media (max-width: 767px) {
             .hero-section {
                 min-height: auto; /* Reseteamos la altura mínima */
-                height: 0;
-                padding-bottom: 56.25%; /* Proporción 16:9 (9 / 16 = 0.5625) */
+                aspect-ratio: 16 / 9; /* Establecemos la proporción 16:9 */
             }
         }
     </style>
@@ -141,16 +140,16 @@
         <main class="container mx-auto p-4">
             <!-- Hero Section / Carrusel -->
             <section 
-                class="hero-section rounded-lg shadow-lg mb-8 text-white relative bg-cover bg-center" 
+                class="hero-section rounded-lg shadow-lg mb-8 text-white relative bg-cover bg-center flex flex-col justify-center" 
                 style="background-image: url('https://lh3.googleusercontent.com/d/1IdzWIfD27EGcW-3UyszUgkYfNrvXpRRn=w1900?authuser=0');">
                 <!-- Overlay para mejorar la legibilidad del texto -->
                 <div class="absolute inset-0 bg-black opacity-40 rounded-lg"></div>
                 
-                <div class="absolute inset-0 z-10 p-6 sm:p-8 md:p-12 flex flex-col justify-center w-full md:w-3/4 lg:w-1/2">
-                    <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 leading-tight">Grandes Ofertas de Verano</h1>
-                    <p class="text-base sm:text-lg mb-6">Hasta 50% de descuento en productos seleccionados. ¡No te lo pierdas!</p>
-                    <div class="mt-4">
-                         <a href="#" class="bg-accent text-white font-bold py-2 px-6 text-base sm:py-3 sm:px-8 sm:text-lg rounded-lg hover-bg-accent-dark transition-colors">Comprar Ahora</a>
+                <div class="relative z-10 p-6 sm:p-8 md:p-12 w-full md:w-3/4 lg:w-1/2">
+                    <h1 class="text-2xl sm:text-4xl md:text-5xl font-bold mb-2 sm:mb-4 leading-tight">Grandes Ofertas de Verano</h1>
+                    <p class="text-sm sm:text-lg mb-4 sm:mb-6">Hasta 50% de descuento en productos seleccionados. ¡No te lo pierdas!</p>
+                    <div class="mt-2">
+                         <a href="#" class="bg-accent text-white font-bold py-2 px-5 text-sm sm:py-3 sm:px-8 sm:text-lg rounded-lg hover-bg-accent-dark transition-colors">Comprar Ahora</a>
                     </div>
                 </div>
             </section>
