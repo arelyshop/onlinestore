@@ -157,84 +157,10 @@
             <!-- Productos Destacados -->
             <section>
                 <h2 class="text-2xl font-bold text-gray-800 mb-6">Productos Destacados</h2>
-                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-                    
-                    <!-- Producto 1 -->
-                    <div class="bg-white rounded-lg shadow-md overflow-hidden product-card">
-                        <a href="#">
-                            <img src="https://placehold.co/300x300/ffffff/2c3e50?text=Producto+1" alt="Producto 1" class="w-full h-48 object-cover">
-                        </a>
-                        <div class="p-4">
-                            <h3 class="text-sm font-semibold text-gray-800 truncate">Auriculares Inalámbricos Pro</h3>
-                            <p class="text-lg font-bold text-gray-900 mt-1">$49.99</p>
-                            <p class="text-xs text-gray-500">Envío gratis</p>
-                            <button class="w-full mt-3 bg-accent text-white py-2 rounded-lg text-sm font-semibold hover-bg-accent-dark transition-colors">
-                                Añadir al carrito
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- Producto 2 -->
-                    <div class="bg-white rounded-lg shadow-md overflow-hidden product-card">
-                        <a href="#">
-                            <img src="https://placehold.co/300x300/ffffff/2c3e50?text=Producto+2" alt="Producto 2" class="w-full h-48 object-cover">
-                        </a>
-                        <div class="p-4">
-                            <h3 class="text-sm font-semibold text-gray-800 truncate">Smartwatch Deportivo Fit</h3>
-                            <p class="text-lg font-bold text-gray-900 mt-1">$79.50</p>
-                             <p class="text-xs text-gray-500">235 vendidos</p>
-                            <button class="w-full mt-3 bg-accent text-white py-2 rounded-lg text-sm font-semibold hover-bg-accent-dark transition-colors">
-                                Añadir al carrito
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- Producto 3 -->
-                    <div class="bg-white rounded-lg shadow-md overflow-hidden product-card">
-                        <a href="#">
-                            <img src="https://placehold.co/300x300/ffffff/2c3e50?text=Producto+3" alt="Producto 3" class="w-full h-48 object-cover">
-                        </a>
-                        <div class="p-4">
-                            <h3 class="text-sm font-semibold text-gray-800 truncate">Mochila Urbana Antirrobo</h3>
-                            <p class="text-lg font-bold text-gray-900 mt-1">$35.00</p>
-                             <p class="text-xs text-gray-500">Envío gratis</p>
-                            <button class="w-full mt-3 bg-accent text-white py-2 rounded-lg text-sm font-semibold hover-bg-accent-dark transition-colors">
-                                Añadir al carrito
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- Producto 4 -->
-                    <div class="bg-white rounded-lg shadow-md overflow-hidden product-card">
-                        <a href="#">
-                            <img src="https://placehold.co/300x300/ffffff/2c3e50?text=Producto+4" alt="Producto 4" class="w-full h-48 object-cover">
-                        </a>
-                        <div class="p-4">
-                            <h3 class="text-sm font-semibold text-gray-800 truncate">Cámara de Seguridad WiFi</h3>
-                            <p class="text-lg font-bold text-gray-900 mt-1">$55.99</p>
-                             <p class="text-xs text-gray-500">1.2k vendidos</p>
-                            <button class="w-full mt-3 bg-accent text-white py-2 rounded-lg text-sm font-semibold hover-bg-accent-dark transition-colors">
-                                Añadir al carrito
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- Producto 5 -->
-                    <div class="bg-white rounded-lg shadow-md overflow-hidden product-card">
-                        <a href="#">
-                            <img src="https://placehold.co/300x300/ffffff/2c3e50?text=Producto+5" alt="Producto 5" class="w-full h-48 object-cover">
-                        </a>
-                        <div class="p-4">
-                            <h3 class="text-sm font-semibold text-gray-800 truncate">Teclado Mecánico RGB Gamer</h3>
-                            <p class="text-lg font-bold text-gray-900 mt-1">$68.00</p>
-                            <p class="text-xs text-gray-500">Envío gratis</p>
-                            <button class="w-full mt-3 bg-accent text-white py-2 rounded-lg text-sm font-semibold hover-bg-accent-dark transition-colors">
-                                Añadir al carrito
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- Puedes añadir más productos aquí -->
+                <!-- El contenido de esta cuadrícula se generará dinámicamente con JavaScript -->
+                <div id="product-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+                    <!-- Estado de carga inicial -->
+                     <p class="col-span-full text-center text-gray-500">Cargando productos...</p>
                 </div>
             </section>
         </main>
@@ -295,6 +221,124 @@
         mobileMenuButton.addEventListener('click', () => {
             mobileMenu.classList.toggle('hidden');
         });
+
+        /**
+         * Función robusta para convertir texto CSV a un array de arrays.
+         * Maneja campos entre comillas que contienen comas y saltos de línea.
+         * @param {string} text - El texto en formato CSV.
+         * @returns {string[][]} Un array de arrays representando las filas y columnas.
+         */
+        function csvToArray(text) {
+            const result = [];
+            let row = [];
+            let current = '';
+            let inQuotes = false;
+            // Normalizamos los saltos de línea a \n
+            text = text.replace(/\r\n/g, '\n');
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i];
+                const nextChar = text[i + 1];
+
+                if (char === '"' && inQuotes && nextChar === '"') {
+                    // Manejar comillas dobles escapadas dentro de un campo
+                    current += '"';
+                    i++; // saltar la siguiente comilla
+                } else if (char === '"') {
+                    inQuotes = !inQuotes;
+                } else if (char === ',' && !inQuotes) {
+                    row.push(current);
+                    current = '';
+                } else if (char === '\n' && !inQuotes) {
+                    row.push(current);
+                    result.push(row);
+                    row = [];
+                    current = '';
+                } else {
+                    current += char;
+                }
+            }
+            // Añadir el último valor y la última fila
+            row.push(current);
+            result.push(row);
+            return result;
+        }
+
+
+        // --- Lógica para cargar productos desde Google Sheets ---
+        async function loadProducts() {
+            const productGrid = document.getElementById('product-grid');
+            if (!productGrid) return;
+
+            // URL directa al archivo CSV publicado desde Google Sheets
+            const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSK0OrQot2ujjcN5zQ8RH4R-AEseAUnTnRMGknBUBLtXv0gAbb6rEFBmDtlSejS_C9L2w04oppTWGv5/pub?gid=23655206&single=true&output=csv';
+            
+            // Usamos un proxy CORS más estable para evitar problemas de origen cruzado
+            const proxyUrl = 'https://corsproxy.io/?';
+
+            try {
+                const response = await fetch(proxyUrl + encodeURIComponent(sheetUrl));
+                if (!response.ok) {
+                    throw new Error(`Error de red: ${response.statusText}`);
+                }
+                const csvText = await response.text();
+                
+                if (!csvText) {
+                    throw new Error('No se pudo obtener el contenido CSV desde el proxy.');
+                }
+                
+                // Usamos la nueva función para convertir el CSV a un array
+                const productsArray = csvToArray(csvText);
+                productsArray.shift(); // Omitimos la fila de la cabecera
+
+                if (productsArray.length === 0) {
+                    productGrid.innerHTML = '<p class="col-span-full text-center text-gray-500">No hay productos para mostrar en este momento.</p>';
+                    return;
+                }
+
+                let productsHTML = '';
+                for (const columns of productsArray) {
+                    if (columns.length < 9) continue;
+
+                    // Extraemos los datos de las columnas correctas (B=1, C=2, I=8)
+                    const name = columns[1] ? columns[1].trim() : '';
+                    const price = columns[2] ? columns[2].trim() : '';
+                    const imageUrl = columns[8] ? columns[8].trim() : 'https://placehold.co/300x300/ffffff/2c3e50?text=Sin+Imagen';
+
+                    if (!name || !price) {
+                        continue;
+                    }
+
+                    productsHTML += `
+                        <div class="bg-white rounded-lg shadow-md overflow-hidden product-card flex flex-col">
+                            <a href="#">
+                                <img src="${imageUrl}" alt="${name}" class="w-full h-48 object-cover" onerror="this.onerror=null;this.src='https.placehold.co/300x300/ffffff/2c3e50?text=Error+Img';">
+                            </a>
+                            <div class="p-4 flex flex-col flex-grow">
+                                <h3 class="text-sm font-semibold text-gray-800 flex-grow" title="${name}">${name}</h3>
+                                <p class="text-lg font-bold text-gray-900 mt-2">Bs. ${price}</p>
+                                <p class="text-xs text-gray-500 mt-1">Envío gratis</p>
+                                <button class="w-full mt-4 bg-accent text-white py-2 rounded-lg text-sm font-semibold hover-bg-accent-dark transition-colors">
+                                    Añadir al carrito
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                if (productsHTML === '') {
+                    productGrid.innerHTML = '<p class="col-span-full text-center text-gray-500">No se encontraron productos con formato válido.</p>';
+                } else {
+                    productGrid.innerHTML = productsHTML;
+                }
+
+            } catch (error) {
+                console.error('Error al cargar los productos:', error);
+                productGrid.innerHTML = `<p class="col-span-full text-center text-red-500"><strong>Error:</strong> No se pudieron cargar los productos. <br><span class="text-sm text-gray-600">${error.message}</span></p>`;
+            }
+        }
+
+        // Llamamos a la función cuando la página se carga
+        document.addEventListener('DOMContentLoaded', loadProducts);
     </script>
 </body>
 </html>
