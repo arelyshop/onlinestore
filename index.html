@@ -29,12 +29,6 @@
         .text-primary {
             color: #1f2937;
         }
-        .border-primary {
-            border-color: #1f2937;
-        }
-        .hover-bg-primary-dark:hover {
-            background-color: #111827;
-        }
         /* Color de Acento */
         .bg-accent {
             background-color: #007934;
@@ -53,13 +47,6 @@
         /* Estilos para la portada */
         .hero-section {
             min-height: 400px;
-        }
-        /* Media query para dispositivos móviles (pantallas de hasta 767px) */
-        @media (max-width: 767px) {
-            .hero-section {
-                min-height: auto; /* Reseteamos la altura mínima */
-                aspect-ratio: 16 / 9; /* Establecemos la proporción 16:9 */
-            }
         }
         /* Animación para la banda de anuncio horizontal */
         @keyframes marquee {
@@ -83,17 +70,25 @@
             -webkit-box-orient: vertical;
             overflow: hidden;
             position: relative;
-            line-height: 1.4em; /* Ajusta según el tamaño de tu fuente */
-            max-height: 2.8em; /* 2 * line-height */
+            line-height: 1.4em;
+            max-height: 2.8em;
         }
         .product-title::after {
             content: "";
             position: absolute;
             bottom: 0;
             right: 0;
-            width: 50%; /* Ancho del degradado */
-            height: 1.4em; /* Altura de una línea de texto */
+            width: 50%;
+            height: 1.4em;
             background: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1) 70%);
+        }
+        
+        /* Media query para dispositivos móviles */
+        @media (max-width: 767px) {
+            .hero-section {
+                min-height: auto;
+                aspect-ratio: 16 / 9;
+            }
         }
     </style>
 </head>
@@ -102,103 +97,81 @@
     <!-- Contenedor principal -->
     <div id="root">
         <!-- Barra superior de navegación -->
-        <header class="bg-primary shadow-md">
-            <!-- Banda de Anuncio en Carrusel Horizontal -->
+        <header class="bg-white shadow-md">
+             <!-- Banda de Anuncio en Carrusel Horizontal -->
             <div class="bg-accent text-white text-sm font-medium py-2 overflow-hidden h-[36px] flex items-center">
                 <div class="animate-marquee">
-                    <!-- Anuncios originales -->
-                    <span class="mx-8">
-                        ¡Envíos a toda Bolivia!
-                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3" class="ml-3 h-5 w-5"><path d="M280-160q-50 0-85-35t-35-85H60l18-80h113q17-19 40-29.5t49-10.5q26 0 49 10.5t40 29.5h167l84-360H182l4-17q6-28 27.5-45.5T264-800h456l-37 160h117l120 160-40 200h-80q0 50-35 85t-85 35q-50 0-85-35t-35-85H400q0 50-35 85t-85 35Zm357-280h193l4-21-74-99h-95l-28 120Zm-19-273 2-7-84 360 2-7 34-146 46-200ZM20-427l20-80h220l-20 80H20Zm80-146 20-80h260l-20 80H100Zm180 333q17 0 28.5-11.5T320-280q0-17-11.5-28.5T280-320q-17 0-28.5 11.5T240-280q0 17 11.5 28.5T280-240Zm400 0q17 0 28.5-11.5T720-280q0-17-11.5-28.5T680-320q-17 0-28.5 11.5T640-280q0 17 11.5 28.5T680-240Z"/></svg>
-                    </span>
-                    <span class="mx-8">
-                        Entregas a domicilio en Santa Cruz.
-                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3" class="ml-3 h-5 w-5"><path d="M280-200q-50 0-85-35t-35-85H80v-120q0-66 47-113t113-47h160v200h140l140-174v-106H560v-80h120q33 0 56.5 23.5T760-680v134L580-320H400q0 50-35 85t-85 35Zm40-200Zm-40 120q17 0 28.5-11.5T320-320h-80q0 17 11.5 28.5T280-280Zm-80-360v-80h200v80H200Zm560 440q-50 0-85-35t-35-85q0-50 35-85t85-35q50 0 85 35t35 85q0 50-35 85t-85 35Zm0-80q17 0 28.5-11.5T800-320q0-17-11.5-28.5T760-360q-17 0-28.5 11.5T720-320q0 17 11.5 28.5T760-280ZM160-400h160v-120h-80q-33 0-56.5 23.5T160-440v40Z"/></svg>
-                    </span>
-                    <span class="mx-8">
-                        Todos nuestros productos con garantía.
-                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3" class="ml-3 h-5 w-5"><path d="m344-60-76-128-144-32 14-148-98-112 98-112-14-148 144-32 76-128 136 58 136-58 76 128 144 32-14 148 98 112-98 112 14 148-144 32-76 128-136-58-136 58Zm34-102 102-44 104 44 56-96 110-26-10-112 74-84-74-86 10-112-110-24-58-96-102 44-104-44-56 96-110 24 10 112-74 86 74 84-10 114 110 24 58 96Zm102-318Zm-42 142 226-226-56-58-170 170-86-84-56 56 142 142Z"/></svg>
-                    </span>
-                    <!-- Anuncios duplicados para el bucle continuo -->
-                     <span class="mx-8">
-                        ¡Envíos a toda Bolivia!
-                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3" class="ml-3 h-5 w-5"><path d="M280-160q-50 0-85-35t-35-85H60l18-80h113q17-19 40-29.5t49-10.5q26 0 49 10.5t40 29.5h167l84-360H182l4-17q6-28 27.5-45.5T264-800h456l-37 160h117l120 160-40 200h-80q0 50-35 85t-85 35q-50 0-85-35t-35-85H400q0 50-35 85t-85 35Zm357-280h193l4-21-74-99h-95l-28 120Zm-19-273 2-7-84 360 2-7 34-146 46-200ZM20-427l20-80h220l-20 80H20Zm80-146 20-80h260l-20 80H100Zm180 333q17 0 28.5-11.5T320-280q0-17-11.5-28.5T280-320q-17 0-28.5 11.5T240-280q0 17 11.5 28.5T280-240Zm400 0q17 0 28.5-11.5T720-280q0-17-11.5-28.5T680-320q-17 0-28.5 11.5T640-280q0 17 11.5 28.5T680-240Z"/></svg>
-                    </span>
-                    <span class="mx-8">
-                        Entregas a domicilio en Santa Cruz.
-                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3" class="ml-3 h-5 w-5"><path d="M280-200q-50 0-85-35t-35-85H80v-120q0-66 47-113t113-47h160v200h140l140-174v-106H560v-80h120q33 0 56.5 23.5T760-680v134L580-320H400q0 50-35 85t-85 35Zm40-200Zm-40 120q17 0 28.5-11.5T320-320h-80q0 17 11.5 28.5T280-280Zm-80-360v-80h200v80H200Zm560 440q-50 0-85-35t-35-85q0-50 35-85t85-35q50 0 85 35t35 85q0 50-35 85t-85 35Zm0-80q17 0 28.5-11.5T800-320q0-17-11.5-28.5T760-360q-17 0-28.5 11.5T720-320q0 17 11.5 28.5T760-280ZM160-400h160v-120h-80q-33 0-56.5 23.5T160-440v40Z"/></svg>
-                    </span>
-                    <span class="mx-8">
-                        Todos nuestros productos con garantía.
-                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3" class="ml-3 h-5 w-5"><path d="m344-60-76-128-144-32 14-148-98-112 98-112-14-148 144-32 76-128 136 58 136-58 76 128 144 32-14 148 98 112-98 112 14 148-144 32-76 128-136-58-136 58Zm34-102 102-44 104 44 56-96 110-26-10-112 74-84-74-86 10-112-110-24-58-96-102 44-104-44-56 96-110 24 10 112-74 86 74 84-10 114 110 24 58 96Zm102-318Zm-42 142 226-226-56-58-170 170-86-84-56 56 142 142Z"/></svg>
-                    </span>
+                    <!-- Anuncios -->
+                    <span class="mx-8">¡Envíos a toda Bolivia! <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3" class="ml-3 h-5 w-5"><path d="M280-160q-50 0-85-35t-35-85H60l18-80h113q17-19 40-29.5t49-10.5q26 0 49 10.5t40 29.5h167l84-360H182l4-17q6-28 27.5-45.5T264-800h456l-37 160h117l120 160-40 200h-80q0 50-35 85t-85 35q-50 0-85-35t-35-85H400q0 50-35 85t-85 35Zm357-280h193l4-21-74-99h-95l-28 120Zm-19-273 2-7-84 360 2-7 34-146 46-200ZM20-427l20-80h220l-20 80H20Zm80-146 20-80h260l-20 80H100Zm180 333q17 0 28.5-11.5T320-280q0-17-11.5-28.5T280-320q-17 0-28.5 11.5T240-280q0 17 11.5 28.5T280-240Zm400 0q17 0 28.5-11.5T720-280q0-17-11.5-28.5T680-320q-17 0-28.5 11.5T640-280q0 17 11.5 28.5T680-240Z"/></svg></span>
+                    <span class="mx-8">Entregas a domicilio en Santa Cruz. <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3" class="ml-3 h-5 w-5"><path d="M280-200q-50 0-85-35t-35-85H80v-120q0-66 47-113t113-47h160v200h140l140-174v-106H560v-80h120q33 0 56.5 23.5T760-680v134L580-320H400q0 50-35 85t-85 35Zm40-200Zm-40 120q17 0 28.5-11.5T320-320h-80q0 17 11.5 28.5T280-280Zm-80-360v-80h200v80H200Zm560 440q-50 0-85-35t-35-85q0-50 35-85t85-35q50 0 85 35t35 85q0 50-35 85t-85 35Zm0-80q17 0 28.5-11.5T800-320q0-17-11.5-28.5T760-360q-17 0-28.5 11.5T720-320q0 17 11.5 28.5T760-280ZM160-400h160v-120h-80q-33 0-56.5 23.5T160-440v40Z"/></svg></span>
+                    <span class="mx-8">Todos nuestros productos con garantía. <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3" class="ml-3 h-5 w-5"><path d="m344-60-76-128-144-32 14-148-98-112 98-112-14-148 144-32 76-128 136 58 136-58 76 128 144 32-14 148 98 112-98 112 14 148-144 32-76 128-136-58-136 58Zm34-102 102-44 104 44 56-96 110-26-10-112 74-84-74-86 10-112-110-24-58-96-102 44-104-44-56 96-110 24 10 112-74 86 74 84-10 114 110 24 58 96Zm102-318Zm-42 142 226-226-56-58-170 170-86-84-56 56 142 142Z"/></svg></span>
+                    <span class="mx-8">¡Envíos a toda Bolivia! <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3" class="ml-3 h-5 w-5"><path d="M280-160q-50 0-85-35t-35-85H60l18-80h113q17-19 40-29.5t49-10.5q26 0 49 10.5t40 29.5h167l84-360H182l4-17q6-28 27.5-45.5T264-800h456l-37 160h117l120 160-40 200h-80q0 50-35 85t-85 35q-50 0-85-35t-35-85H400q0 50-35 85t-85 35Zm357-280h193l4-21-74-99h-95l-28 120Zm-19-273 2-7-84 360 2-7 34-146 46-200ZM20-427l20-80h220l-20 80H20Zm80-146 20-80h260l-20 80H100Zm180 333q17 0 28.5-11.5T320-280q0-17-11.5-28.5T280-320q-17 0-28.5 11.5T240-280q0 17 11.5 28.5T280-240Zm400 0q17 0 28.5-11.5T720-280q0-17-11.5-28.5T680-320q-17 0-28.5 11.5T640-280q0 17 11.5 28.5T680-240Z"/></svg></span>
+                    <span class="mx-8">Entregas a domicilio en Santa Cruz. <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3" class="ml-3 h-5 w-5"><path d="M280-200q-50 0-85-35t-35-85H80v-120q0-66 47-113t113-47h160v200h140l140-174v-106H560v-80h120q33 0 56.5 23.5T760-680v134L580-320H400q0 50-35 85t-85 35Zm40-200Zm-40 120q17 0 28.5-11.5T320-320h-80q0 17 11.5 28.5T280-280Zm-80-360v-80h200v80H200Zm560 440q-50 0-85-35t-35-85q0-50 35-85t85-35q50 0 85 35t35 85q0 50-35 85t-85 35Zm0-80q17 0 28.5-11.5T800-320q0-17-11.5-28.5T760-360q-17 0-28.5 11.5T720-320q0 17 11.5 28.5T760-280ZM160-400h160v-120h-80q-33 0-56.5 23.5T160-440v40Z"/></svg></span>
+                    <span class="mx-8">Todos nuestros productos con garantía. <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3" class="ml-3 h-5 w-5"><path d="m344-60-76-128-144-32 14-148-98-112 98-112-14-148 144-32 76-128 136 58 136-58 76 128 144 32-14 148 98 112-98 112 14 148-144 32-76 128-136-58-136 58Zm34-102 102-44 104 44 56-96 110-26-10-112 74-84-74-86 10-112-110-24-58-96-102 44-104-44-56 96-110 24 10 112-74 86 74 84-10 114 110 24 58 96Zm102-318Zm-42 142 226-226-56-58-170 170-86-84-56 56 142 142Z"/></svg></span>
                 </div>
             </div>
 
             <!-- Cabecera principal -->
-            <div class="container mx-auto px-4 py-4">
-                <!-- Fila superior: Contenedor para móvil y escritorio -->
-                <div class="flex justify-between items-center">
-                    <!-- Izquierda: Hamburguesa (Móvil) / Logo (Escritorio) -->
-                    <div class="flex-1 md:flex-initial">
-                        <button id="mobile-menu-button" class="md:hidden text-white hover:text-gray-300">
-                             <i class="fas fa-bars text-xl"></i>
+            <div class="container mx-auto px-4 py-3">
+                <!-- Vista de Escritorio -->
+                <div class="hidden md:flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <a href="#" class="text-3xl font-bold text-primary">Arelyshop</a>
+                        <button id="desktop-menu-button" class="flex items-center space-x-2 text-primary bg-gray-100 px-4 py-2 rounded-md hover:bg-gray-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" /></svg>
+                            <span>Categorías</span>
                         </button>
-                        <a href="#" class="hidden md:block text-3xl font-bold text-white">Arelyshop</a>
                     </div>
-
-                    <!-- Centro: Logo (Móvil) / Búsqueda (Escritorio) -->
-                    <div class="flex-1 text-center md:flex-grow md:max-w-2xl md:mx-8">
-                        <a href="#" class="md:hidden text-3xl font-bold text-white">Arelyshop</a>
-                        <div class="hidden md:flex w-full">
-                            <input type="text" placeholder="Buscar en Arelyshop..." class="w-full px-4 py-2 border border-gray-300 bg-white text-gray-800 rounded-l-md focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent">
-                            <button class="bg-accent text-white px-6 py-2 rounded-r-md hover-bg-accent-dark transition-colors">
-                                <i class="fas fa-search"></i>
-                            </button>
-                        </div>
+                    <div class="flex-1 max-w-lg mx-4 relative">
+                         <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                            <svg class="w-5 h-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M11 2.75a8.25 8.25 0 1 0 0 16.5 8.25 8.25 0 0 0 0-16.5M1.25 11c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S1.25 16.385 1.25 11" clip-rule="evenodd"></path><path fill-rule="evenodd" d="M17.47 17.47a.75.75 0 0 1 1.06 0l4 4a.75.75 0 1 1-1.06 1.06l-4-4a.75.75 0 0 1 0-1.06" clip-rule="evenodd"></path></svg>
+                         </span>
+                         <input type="text" placeholder="¿Qué estás buscando?" class="w-full pl-10 pr-4 py-2 border border-gray-300 bg-white text-gray-800 rounded-full focus:outline-none focus:ring-2 focus:ring-accent">
                     </div>
-
-                    <!-- Derecha: Iconos -->
-                    <div class="flex-1 flex justify-end items-center space-x-4">
-                        <a href="https://wa.me/59167500044" target="_blank" class="text-white hover:text-gray-300">
-                            <img src="https://multicenter.vtexassets.com/assets/vtex/assets-builder/multicenter.fizzmod-template/1.0.61/img/whatsapp___137df0507289306e032f910d2b76935c.png" alt="WhatsApp" class="h-6 w-6">
+                    <div class="flex items-center space-x-6">
+                        <a href="https://wa.me/59167500044" target="_blank" class="text-primary hover:text-gray-600">
+                           <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" class="h-8 w-8">
                         </a>
-                        <a href="#" class="text-white hover:text-gray-300 transition-colors relative">
-                            <i class="fas fa-shopping-cart text-xl"></i>
+                        <a href="#" class="text-primary hover:text-gray-600 relative">
+                            <i class="fas fa-shopping-cart text-2xl"></i>
                             <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
                         </a>
                     </div>
                 </div>
-                <!-- Fila inferior: Barra de búsqueda (Móvil) -->
-                <div class="mt-4 md:hidden">
-                    <div class="flex w-full">
-                        <input type="text" placeholder="Buscar en Arelyshop..." class="w-full px-4 py-2 border border-gray-300 bg-white text-gray-800 rounded-l-md focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent">
-                        <button class="bg-accent text-white px-6 py-2 rounded-r-md hover-bg-accent-dark transition-colors">
-                            <i class="fas fa-search"></i>
+
+                <!-- Vista Móvil -->
+                <div class="md:hidden">
+                    <div class="flex justify-between items-center">
+                        <button id="mobile-menu-button" class="text-primary hover:text-gray-600">
+                             <i class="fas fa-bars text-xl"></i>
                         </button>
+                        <a href="#" class="text-2xl font-bold text-primary">Arelyshop</a>
+                        <div class="flex items-center space-x-4">
+                             <a href="https://wa.me/59167500044" target="_blank" class="text-primary hover:text-gray-600">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" class="h-7 w-7">
+                            </a>
+                            <a href="#" class="text-primary hover:text-gray-600 relative">
+                                <i class="fas fa-shopping-cart text-xl"></i>
+                                <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="mt-3 relative">
+                         <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                            <svg class="w-5 h-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M11 2.75a8.25 8.25 0 1 0 0 16.5 8.25 8.25 0 0 0 0-16.5M1.25 11c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S1.25 16.385 1.25 11" clip-rule="evenodd"></path><path fill-rule="evenodd" d="M17.47 17.47a.75.75 0 0 1 1.06 0l4 4a.75.75 0 1 1-1.06 1.06l-4-4a.75.75 0 0 1 0-1.06" clip-rule="evenodd"></path></svg>
+                         </span>
+                         <input type="text" placeholder="¿Qué estás buscando?" class="w-full pl-10 pr-4 py-2 border border-gray-300 bg-white text-gray-800 rounded-full focus:outline-none focus:ring-2 focus:ring-accent">
                     </div>
                 </div>
             </div>
-            
-            <!-- Menú de categorías -->
-            <nav class="bg-primary">
-                 <div class="container mx-auto px-4 hidden md:flex items-center justify-center space-x-12 py-2">
-                     <a href="#" class="font-semibold text-white hover:underline">Inicio</a>
-                     <a href="#" class="text-white hover:underline">Catalogo</a>
-                     <a href="https://wa.me/59167500044" target="_blank" class="text-white hover:underline flex items-center">
-                         <img src="https://multicenter.vtexassets.com/assets/vtex/assets-builder/multicenter.fizzmod-template/1.0.61/img/whatsapp___137df0507289306e032f910d2b76935c.png" alt="WhatsApp" class="h-5 w-5 mr-2">
-                         WhatsApp
-                     </a>
-                 </div>
-            </nav>
         </header>
         
-        <!-- Menú móvil -->
-        <div id="mobile-menu" class="hidden md:hidden bg-white p-4">
-            <a href="#" class="block py-2 text-gray-700 hover:bg-gray-100">Inicio</a>
-            <a href="#" class="block py-2 text-gray-700 hover:bg-gray-100">Catalogo</a>
-            <a href="https://wa.me/59167500044" target="_blank" class="block py-2 text-gray-700 hover:bg-gray-100 flex items-center">
-                <img src="https://multicenter.vtexassets.com/assets/vtex/assets-builder/multicenter.fizzmod-template/1.0.61/img/whatsapp___137df0507289306e032f910d2b76935c.png" alt="WhatsApp" class="h-5 w-5 mr-2">
+        <!-- Menú móvil desplegable -->
+        <div id="mobile-menu" class="hidden md:hidden bg-gray-100 p-4">
+            <a href="#" class="block py-2 text-gray-700 hover:bg-gray-200 rounded-md">Inicio</a>
+            <a href="#" class="block py-2 text-gray-700 hover:bg-gray-200 rounded-md">Catalogo</a>
+            <a href="https://wa.me/59167500044" target="_blank" class="flex items-center py-2 text-gray-700 hover:bg-gray-200 rounded-md">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" class="h-5 w-5 mr-2">
                 WhatsApp
             </a>
         </div>
@@ -210,24 +183,18 @@
             <section 
                 class="hero-section rounded-lg shadow-lg mb-8 text-white relative bg-cover bg-center flex flex-col justify-center" 
                 style="background-image: url('https://lh3.googleusercontent.com/d/1IdzWIfD27EGcW-3UyszUgkYfNrvXpRRn=w1900?authuser=0');">
-                <!-- Overlay para mejorar la legibilidad del texto -->
                 <div class="absolute inset-0 bg-black opacity-40 rounded-lg"></div>
-                
                 <div class="relative z-10 p-6 sm:p-8 md:p-12 w-full md:w-3/4 lg:w-1/2">
                     <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 leading-tight">Lo mejor de<br>UGREEN aquí!</h1>
                     <p class="text-sm sm:text-lg mb-6">Variedad de accesorios rápidos y divertidos para tus gadgets.</p>
-                    <div class="mt-2">
-                         <a href="#" class="bg-accent text-white font-bold py-2 px-5 text-sm sm:py-3 sm:px-8 sm:text-lg rounded-lg hover-bg-accent-dark transition-colors">Ver Catálogo</a>
-                    </div>
+                    <a href="#" class="bg-accent text-white font-bold py-2 px-5 text-sm sm:py-3 sm:px-8 sm:text-lg rounded-lg hover-bg-accent-dark transition-colors">Ver Catálogo</a>
                 </div>
             </section>
 
             <!-- Productos Destacados -->
             <section>
                 <h2 class="text-2xl font-bold text-gray-800 mb-6">Productos Destacados</h2>
-                <!-- El contenido de esta cuadrícula se generará dinámicamente con JavaScript -->
                 <div id="product-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-                    <!-- Estado de carga inicial -->
                      <p class="col-span-full text-center text-gray-500">Cargando productos...</p>
                 </div>
             </section>
@@ -290,27 +257,19 @@
             mobileMenu.classList.toggle('hidden');
         });
 
-        /**
-         * Función robusta para convertir texto CSV a un array de arrays.
-         * Maneja campos entre comillas que contienen comas y saltos de línea.
-         * @param {string} text - El texto en formato CSV.
-         * @returns {string[][]} Un array de arrays representando las filas y columnas.
-         */
         function csvToArray(text) {
             const result = [];
             let row = [];
             let current = '';
             let inQuotes = false;
-            // Normalizamos los saltos de línea a \n
             text = text.replace(/\r\n/g, '\n');
             for (let i = 0; i < text.length; i++) {
                 const char = text[i];
                 const nextChar = text[i + 1];
 
                 if (char === '"' && inQuotes && nextChar === '"') {
-                    // Manejar comillas dobles escapadas dentro de un campo
                     current += '"';
-                    i++; // saltar la siguiente comilla
+                    i++;
                 } else if (char === '"') {
                     inQuotes = !inQuotes;
                 } else if (char === ',' && !inQuotes) {
@@ -325,41 +284,29 @@
                     current += char;
                 }
             }
-            // Añadir el último valor y la última fila
             row.push(current);
             result.push(row);
             return result;
         }
 
-
-        // --- Lógica para cargar productos desde Google Sheets ---
         async function loadProducts() {
             const productGrid = document.getElementById('product-grid');
             if (!productGrid) return;
 
-            // URL directa al archivo CSV publicado desde Google Sheets
             const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSK0OrQot2ujjcN5zQ8RH4R-AEseAUnTnRMGknBUBLtXv0gAbb6rEFBmDtlSejS_C9L2w04oppTWGv5/pub?gid=23655206&single=true&output=csv';
-            
-            // Usamos un proxy CORS más estable para evitar problemas de origen cruzado
             const proxyUrl = 'https://corsproxy.io/?';
 
             try {
                 const response = await fetch(proxyUrl + encodeURIComponent(sheetUrl));
-                if (!response.ok) {
-                    throw new Error(`Error de red: ${response.statusText}`);
-                }
+                if (!response.ok) throw new Error(`Error de red: ${response.statusText}`);
                 const csvText = await response.text();
+                if (!csvText) throw new Error('No se pudo obtener el contenido CSV.');
                 
-                if (!csvText) {
-                    throw new Error('No se pudo obtener el contenido CSV desde el proxy.');
-                }
-                
-                // Usamos la nueva función para convertir el CSV a un array
                 const productsArray = csvToArray(csvText);
-                productsArray.shift(); // Omitimos la fila de la cabecera
+                productsArray.shift();
 
                 if (productsArray.length === 0) {
-                    productGrid.innerHTML = '<p class="col-span-full text-center text-gray-500">No hay productos para mostrar en este momento.</p>';
+                    productGrid.innerHTML = '<p class="col-span-full text-center text-gray-500">No hay productos para mostrar.</p>';
                     return;
                 }
 
@@ -367,44 +314,30 @@
                 for (const columns of productsArray) {
                     if (columns.length < 9) continue;
 
-                    // Extraemos los datos de las columnas correctas (B=1, C=2, I=8)
                     const name = columns[1] ? columns[1].trim() : '';
                     const price = columns[2] ? columns[2].trim() : '';
                     const imageUrl = columns[8] ? columns[8].trim() : 'https://placehold.co/300x300/ffffff/2c3e50?text=Sin+Imagen';
 
-                    if (!name || !price) {
-                        continue;
-                    }
+                    if (!name || !price) continue;
 
                     productsHTML += `
                         <div class="bg-white rounded-lg shadow-md overflow-hidden product-card flex flex-col">
-                            <a href="#">
-                                <img src="${imageUrl}" alt="${name}" class="w-full aspect-square object-cover" onerror="this.onerror=null;this.src='https://placehold.co/300x300/ffffff/2c3e50?text=Error+Img';">
-                            </a>
+                            <a href="#"><img src="${imageUrl}" alt="${name}" class="w-full aspect-square object-cover" onerror="this.onerror=null;this.src='https://placehold.co/300x300/ffffff/2c3e50?text=Error+Img';"></a>
                             <div class="p-4 flex flex-col flex-grow">
                                 <h3 class="text-sm font-semibold text-gray-800 flex-grow product-title" title="${name}">${name}</h3>
                                 <p class="text-lg font-bold text-gray-900 mt-2">Bs. ${price}</p>
-                                <button class="w-full mt-4 bg-accent text-white py-2 rounded-lg text-sm font-semibold hover-bg-accent-dark transition-colors">
-                                    Añadir al carrito
-                                </button>
+                                <button class="w-full mt-4 bg-accent text-white py-2 rounded-lg text-sm font-semibold hover-bg-accent-dark transition-colors">Añadir al carrito</button>
                             </div>
-                        </div>
-                    `;
+                        </div>`;
                 }
 
-                if (productsHTML === '') {
-                    productGrid.innerHTML = '<p class="col-span-full text-center text-gray-500">No se encontraron productos con formato válido.</p>';
-                } else {
-                    productGrid.innerHTML = productsHTML;
-                }
+                productGrid.innerHTML = productsHTML || '<p class="col-span-full text-center text-gray-500">No se encontraron productos válidos.</p>';
 
             } catch (error) {
                 console.error('Error al cargar los productos:', error);
                 productGrid.innerHTML = `<p class="col-span-full text-center text-red-500"><strong>Error:</strong> No se pudieron cargar los productos. <br><span class="text-sm text-gray-600">${error.message}</span></p>`;
             }
         }
-
-        // Llamamos a la función cuando la página se carga
         document.addEventListener('DOMContentLoaded', loadProducts);
     </script>
 </body>
