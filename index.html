@@ -24,16 +24,16 @@
         }
         /* Color Primario */
         .bg-primary {
-            background-color: #2c3e50;
+            background-color: #1f2937;
         }
         .text-primary {
-            color: #2c3e50;
+            color: #1f2937;
         }
         .border-primary {
-            border-color: #2c3e50;
+            border-color: #1f2937;
         }
         .hover-bg-primary-dark:hover {
-            background-color: #212f3c;
+            background-color: #111827;
         }
         /* Color de Acento */
         .bg-accent {
@@ -136,36 +136,56 @@
             </div>
 
             <!-- Cabecera principal -->
-            <div class="container mx-auto px-4 py-4 flex justify-between items-center">
-                <!-- Logo -->
-                <a href="#" class="text-3xl font-bold text-white">Arelyshop</a>
+            <div class="container mx-auto px-4 py-4">
+                <!-- Fila superior: Contenedor para móvil y escritorio -->
+                <div class="flex justify-between items-center">
+                    <!-- Izquierda: Hamburguesa (Móvil) / Logo (Escritorio) -->
+                    <div class="flex-1 md:flex-initial">
+                        <button id="mobile-menu-button" class="md:hidden text-white hover:text-gray-300">
+                             <i class="fas fa-bars text-xl"></i>
+                        </button>
+                        <a href="#" class="hidden md:block text-3xl font-bold text-white">Arelyshop</a>
+                    </div>
 
-                <!-- Barra de búsqueda -->
-                <div class="hidden md:flex flex-grow max-w-2xl mx-8">
-                    <input type="text" placeholder="Buscar en Arelyshop..." class="w-full px-4 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
-                    <button class="bg-accent text-white px-6 py-2 rounded-r-md hover-bg-accent-dark transition-colors">
-                        <i class="fas fa-search"></i>
-                    </button>
+                    <!-- Centro: Logo (Móvil) / Búsqueda (Escritorio) -->
+                    <div class="flex-1 text-center md:flex-grow md:max-w-2xl md:mx-8">
+                        <a href="#" class="md:hidden text-3xl font-bold text-white">Arelyshop</a>
+                        <div class="hidden md:flex w-full">
+                            <input type="text" placeholder="Buscar en Arelyshop..." class="w-full px-4 py-2 border border-gray-300 bg-white text-gray-800 rounded-l-md focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent">
+                            <button class="bg-accent text-white px-6 py-2 rounded-r-md hover-bg-accent-dark transition-colors">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Derecha: Iconos -->
+                    <div class="flex-1 flex justify-end items-center space-x-4">
+                        <a href="https://wa.me/59167500044" target="_blank" class="text-white hover:text-gray-300">
+                            <img src="https://multicenter.vtexassets.com/assets/vtex/assets-builder/multicenter.fizzmod-template/1.0.61/img/whatsapp___137df0507289306e032f910d2b76935c.png" alt="WhatsApp" class="h-6 w-6">
+                        </a>
+                        <a href="#" class="text-white hover:text-gray-300 transition-colors relative">
+                            <i class="fas fa-shopping-cart text-xl"></i>
+                            <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
+                        </a>
+                    </div>
                 </div>
-
-                <!-- Iconos de usuario y carrito -->
-                <div class="flex items-center space-x-6">
-                    <a href="#" class="text-white hover:text-gray-300 transition-colors relative">
-                        <i class="fas fa-shopping-cart text-xl"></i>
-                        <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
-                    </a>
-                    <button id="mobile-menu-button" class="md:hidden text-white hover:text-gray-300">
-                         <i class="fas fa-bars text-xl"></i>
-                    </button>
+                <!-- Fila inferior: Barra de búsqueda (Móvil) -->
+                <div class="mt-4 md:hidden">
+                    <div class="flex w-full">
+                        <input type="text" placeholder="Buscar en Arelyshop..." class="w-full px-4 py-2 border border-gray-300 bg-white text-gray-800 rounded-l-md focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent">
+                        <button class="bg-accent text-white px-6 py-2 rounded-r-md hover-bg-accent-dark transition-colors">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
             
             <!-- Menú de categorías -->
-            <nav class="bg-gray-200 text-primary">
+            <nav class="bg-primary">
                  <div class="container mx-auto px-4 hidden md:flex items-center justify-center space-x-12 py-2">
-                     <a href="#" class="font-semibold hover:underline">Inicio</a>
-                     <a href="#" class="hover:underline">Catalogo</a>
-                     <a href="https://wa.me/59167500044" target="_blank" class="hover:underline flex items-center">
+                     <a href="#" class="font-semibold text-white hover:underline">Inicio</a>
+                     <a href="#" class="text-white hover:underline">Catalogo</a>
+                     <a href="https://wa.me/59167500044" target="_blank" class="text-white hover:underline flex items-center">
                          <img src="https://multicenter.vtexassets.com/assets/vtex/assets-builder/multicenter.fizzmod-template/1.0.61/img/whatsapp___137df0507289306e032f910d2b76935c.png" alt="WhatsApp" class="h-5 w-5 mr-2">
                          WhatsApp
                      </a>
@@ -175,9 +195,6 @@
         
         <!-- Menú móvil -->
         <div id="mobile-menu" class="hidden md:hidden bg-white p-4">
-            <div class="mb-4">
-                 <input type="text" placeholder="Buscar..." class="w-full px-4 py-2 border rounded-md">
-            </div>
             <a href="#" class="block py-2 text-gray-700 hover:bg-gray-100">Inicio</a>
             <a href="#" class="block py-2 text-gray-700 hover:bg-gray-100">Catalogo</a>
             <a href="https://wa.me/59167500044" target="_blank" class="block py-2 text-gray-700 hover:bg-gray-100 flex items-center">
