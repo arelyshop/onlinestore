@@ -117,10 +117,6 @@
                 <div class="hidden md:flex items-center justify-between">
                     <div class="flex items-center space-x-4">
                         <a href="#" class="text-3xl font-bold text-primary">Arelyshop</a>
-                        <button id="desktop-menu-button" class="flex items-center space-x-2 text-primary bg-gray-100 px-4 py-2 rounded-md hover:bg-gray-200">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" /></svg>
-                            <span>Categorías</span>
-                        </button>
                     </div>
                     <div class="flex-1 max-w-lg mx-4 relative">
                          <span class="absolute inset-y-0 left-0 flex items-center pl-3">
@@ -129,10 +125,7 @@
                          <input type="text" placeholder="¿Qué estás buscando?" class="w-full pl-10 pr-4 py-2 border border-gray-300 bg-white text-gray-800 rounded-full focus:outline-none focus:ring-2 focus:ring-accent">
                     </div>
                     <div class="flex items-center space-x-6">
-                        <a href="https://wa.me/59167500044" target="_blank" class="text-primary hover:text-gray-600">
-                           <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" class="h-8 w-8">
-                        </a>
-                        <a href="#" class="text-primary hover:text-gray-600 relative">
+                        <a href="#" class="text-gray-800 hover:text-gray-600 relative">
                             <i class="fas fa-shopping-cart text-2xl"></i>
                             <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
                         </a>
@@ -147,10 +140,18 @@
                         </button>
                         <a href="#" class="text-2xl font-bold text-primary">Arelyshop</a>
                         <div class="flex items-center space-x-4">
-                             <a href="https://wa.me/59167500044" target="_blank" class="text-primary hover:text-gray-600">
-                                <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" class="h-7 w-7">
+                             <a href="https://wa.me/59167500044" target="_blank" class="hover:opacity-80">
+                                <svg class="w-7 h-7" viewBox="0 0 16 16">
+                                    <defs>
+                                        <linearGradient id="whatsapp-gradient-mobile" x1="0%" y1="0%" x2="0%" y2="100%">
+                                            <stop offset="0%" style="stop-color:#3fc250;stop-opacity:1" />
+                                            <stop offset="100%" style="stop-color:#28b63e;stop-opacity:1" />
+                                        </linearGradient>
+                                    </defs>
+                                    <path fill="url(#whatsapp-gradient-mobile)" d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.56 6.56 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592m3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.73.73 0 0 0-.529.247c-.182.198-.691.677-.691 1.654s.71 1.916.81 2.049c.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232"/>
+                                </svg>
                             </a>
-                            <a href="#" class="text-primary hover:text-gray-600 relative">
+                            <a href="#" class="text-gray-800 hover:text-gray-600 relative">
                                 <i class="fas fa-shopping-cart text-xl"></i>
                                 <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
                             </a>
@@ -164,6 +165,14 @@
                     </div>
                 </div>
             </div>
+            <!-- Menú de Navegación -->
+            <nav class="bg-white">
+                 <div class="container mx-auto px-4 hidden md:flex items-center justify-center space-x-12 py-2">
+                     <a href="#" class="font-semibold text-primary hover:text-gray-600">Inicio</a>
+                     <a href="#" class="text-primary hover:text-gray-600">Catalogo</a>
+                     <a href="https://wa.me/59167500044" target="_blank" class="text-primary hover:text-gray-600">WhatsApp</a>
+                 </div>
+            </nav>
         </header>
         
         <!-- Menú móvil desplegable -->
@@ -171,7 +180,15 @@
             <a href="#" class="block py-2 text-gray-700 hover:bg-gray-200 rounded-md">Inicio</a>
             <a href="#" class="block py-2 text-gray-700 hover:bg-gray-200 rounded-md">Catalogo</a>
             <a href="https://wa.me/59167500044" target="_blank" class="flex items-center py-2 text-gray-700 hover:bg-gray-200 rounded-md">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" class="h-5 w-5 mr-2">
+                <svg class="w-5 h-5 mr-2" viewBox="0 0 16 16">
+                    <defs>
+                        <linearGradient id="whatsapp-gradient-menu" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" style="stop-color:#3fc250;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#28b63e;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <path fill="url(#whatsapp-gradient-menu)" d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.56 6.56 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592m3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.73.73 0 0 0-.529.247c-.182.198-.691.677-.691 1.654s.71 1.916.81 2.049c.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232"/>
+                </svg>
                 WhatsApp
             </a>
         </div>
