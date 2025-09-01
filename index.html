@@ -39,12 +39,14 @@
         .hero-section {
             /* Para móvil, establecemos una relación de aspecto de 4:3 */
             aspect-ratio: 4 / 3;
+            background-position: center;
+            background-size: cover;
         }
         @media (min-width: 768px) {
             .hero-section {
-                /* Para pantallas más grandes, usamos vh y reseteamos aspect-ratio */
-                min-height: 80vh;
-                aspect-ratio: auto;
+                /* Para pantallas más grandes, la portada ocupa la altura completa */
+                min-height: 100vh;
+                aspect-ratio: auto; /* Se anula el aspect-ratio de móvil */
             }
         }
     </style>
@@ -80,20 +82,21 @@
         </div>
     </header>
 
+    <!-- Hero Section -->
+    <section class="hero-section text-white relative flex flex-col justify-center" style="background-image: url('https://lh3.googleusercontent.com/d/1IdzWIfD27EGcW-3UyszUgkYfNrvXpRRn=w1900?authuser=0');">
+        <div class="absolute inset-0 bg-black opacity-40"></div>
+        <div class="relative z-10 p-6 sm:p-8 md:p-12 w-full md:w-3/4 lg:w-1/2 container mx-auto">
+            <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 leading-tight">Lo mejor de<br>UGREEN aquí!</h1>
+            <p class="text-sm sm:text-lg mb-6">Variedad de accesorios rápidos y divertidos para tus gadgets.</p>
+            <a href="#productos" class="bg-accent text-white font-bold py-3 px-8 text-lg rounded-lg hover:bg-accent-dark transition-colors inline-block">Ver Catálogo</a>
+        </div>
+    </section>
+
     <!-- Main Content -->
     <main class="container mx-auto px-6 py-8">
-        <!-- Hero Section -->
-        <section class="hero-section rounded-lg shadow-lg mb-12 text-white relative bg-cover bg-center flex flex-col justify-center" style="background-image: url('https://lh3.googleusercontent.com/d/1IdzWIfD27EGcW-3UyszUgkYfNrvXpRRn=w1900?authuser=0');">
-            <div class="absolute inset-0 bg-black opacity-40 rounded-lg"></div>
-            <div class="relative z-10 p-6 sm:p-8 md:p-12 w-full md:w-3/4 lg:w-1/2">
-                <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 leading-tight">Lo mejor de<br>UGREEN aquí!</h1>
-                <p class="text-sm sm:text-lg mb-6">Variedad de accesorios rápidos y divertidos para tus gadgets.</p>
-                <a href="#productos" class="bg-accent text-white font-bold py-3 px-8 text-lg rounded-lg hover:bg-accent-dark transition-colors inline-block">Ver Catálogo</a>
-            </div>
-        </section>
 
         <!-- WhatsApp Contact Section -->
-        <section id="whatsapp-contact" class="mb-12">
+        <section id="whatsapp-contact" class="mb-12 mt-8">
             <div class="bg-white rounded-lg shadow-lg p-8 text-center">
                 <h2 class="text-2xl font-bold text-gray-800 mb-4">¿Tienes alguna consulta?</h2>
                 <p class="text-gray-600 mb-6">Contáctanos directamente por WhatsApp. Estamos para ayudarte.</p>
@@ -248,5 +251,4 @@
 
 </body>
 </html>
-
 
