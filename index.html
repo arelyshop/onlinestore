@@ -37,16 +37,17 @@
         }
         /* Asegurando que la imagen de fondo cubra bien la sección hero */
         .hero-section {
-            /* Para móvil, establecemos una relación de aspecto de 4:3 */
-            aspect-ratio: 4 / 3;
+            /* Imagen de fondo y altura para móvil */
+            background-image: url('https://lh3.googleusercontent.com/d/19PRWyGTskAD7P5WdPhA0tzV9tKP9bvtD=w1900?authuser=0');
             background-position: center;
             background-size: cover;
+            min-height: 70vh;
         }
         @media (min-width: 768px) {
             .hero-section {
-                /* Para pantallas más grandes, la portada ocupa la altura completa */
+                /* Imagen de fondo y altura para pantallas más grandes */
+                background-image: url('https://lh3.googleusercontent.com/d/1IdzWIfD27EGcW-3UyszUgkYfNrvXpRRn=w1900?authuser=0');
                 min-height: 100vh;
-                aspect-ratio: auto; /* Se anula el aspect-ratio de móvil */
             }
         }
     </style>
@@ -83,12 +84,12 @@
     </header>
 
     <!-- Hero Section -->
-    <section class="hero-section text-white relative flex flex-col justify-center" style="background-image: url('https://lh3.googleusercontent.com/d/1IdzWIfD27EGcW-3UyszUgkYfNrvXpRRn=w1900?authuser=0');">
+    <section class="hero-section text-white relative flex flex-col justify-center">
         <div class="absolute inset-0 bg-black opacity-40"></div>
         <div class="relative z-10 p-6 sm:p-8 md:p-12 w-full md:w-3/4 lg:w-1/2 container mx-auto">
             <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 leading-tight">Lo mejor de<br>UGREEN aquí!</h1>
             <p class="text-sm sm:text-lg mb-6">Variedad de accesorios rápidos y divertidos para tus gadgets.</p>
-            <a href="#productos" class="bg-accent text-white font-bold py-3 px-8 text-lg rounded-lg hover:bg-accent-dark transition-colors inline-block">Ver Catálogo</a>
+            <a href="https://arelyshopbo.mitiendanube.com/productos/" target="_blank" rel="noopener noreferrer" class="bg-accent text-white font-bold py-3 px-8 text-lg rounded-lg hover:bg-accent-dark transition-colors inline-block">Ver Catálogo</a>
         </div>
     </section>
 
@@ -251,4 +252,5 @@
 
 </body>
 </html>
+
 
