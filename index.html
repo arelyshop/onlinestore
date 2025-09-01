@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arelyshop.com - Accesorios UGREEN</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Feather Icons -->
+    <script src="https://unpkg.com/feather-icons"></script>
+    
+    <!-- Custom Styles -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+        /* Definiendo colores personalizados para UGREEN */
+        .bg-accent {
+            background-color: #00B368;
+        }
+        .bg-accent-dark {
+            background-color: #009957;
+        }
+        .text-accent {
+            color: #00B368;
+        }
+        .border-accent {
+            border-color: #00B368;
+        }
+        /* Asegurando que la imagen de fondo cubra bien la sección hero */
+        .hero-section {
+            min-height: 60vh;
+        }
+        @media (min-width: 768px) {
+            .hero-section {
+                min-height: 80vh;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <!-- Header -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="text-2xl font-bold text-gray-800">
+                <a href="#">Arelyshop<span class="text-accent">.com</span></a>
+            </div>
+            <nav class="hidden md:flex space-x-8">
+                <a href="#productos" class="text-gray-600 hover:text-accent transition-colors">Productos</a>
+                <a href="#nosotros" class="text-gray-600 hover:text-accent transition-colors">Nosotros</a>
+                <a href="#contacto" class="text-gray-600 hover:text-accent transition-colors">Contacto</a>
+            </nav>
+            <a href="#productos" class="hidden md:inline-block bg-accent text-white font-bold py-2 px-6 rounded-lg hover:bg-accent-dark transition-colors">
+                Comprar
+            </a>
+            <button id="mobile-menu-button" class="md:hidden">
+                <i data-feather="menu" class="text-gray-800"></i>
+            </button>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden px-6 pt-2 pb-4">
+             <a href="#productos" class="block py-2 text-gray-600 hover:text-accent transition-colors">Productos</a>
+             <a href="#nosotros" class="block py-2 text-gray-600 hover:text-accent transition-colors">Nosotros</a>
+             <a href="#contacto" class="block py-2 text-gray-600 hover:text-accent transition-colors">Contacto</a>
+             <a href="#productos" class="block mt-2 bg-accent text-white text-center font-bold py-2 px-6 rounded-lg hover:bg-accent-dark transition-colors">
+                Comprar
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-6 py-8">
+        <!-- Hero Section -->
+        <section class="hero-section rounded-lg shadow-lg mb-12 text-white relative bg-cover bg-center flex flex-col justify-center" style="background-image: url('https://lh3.googleusercontent.com/d/1IdzWIfD27EGcW-3UyszUgkYfNrvXpRRn=w1900?authuser=0');">
+            <div class="absolute inset-0 bg-black opacity-40 rounded-lg"></div>
+            <div class="relative z-10 p-6 sm:p-8 md:p-12 w-full md:w-3/4 lg:w-1/2">
+                <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 leading-tight">Lo mejor de<br>UGREEN aquí!</h1>
+                <p class="text-sm sm:text-lg mb-6">Variedad de accesorios rápidos y divertidos para tus gadgets.</p>
+                <a href="#productos" class="bg-accent text-white font-bold py-3 px-8 text-lg rounded-lg hover:bg-accent-dark transition-colors inline-block">Ver Catálogo</a>
+            </div>
+        </section>
+
+        <!-- WhatsApp Contact Section -->
+        <section id="whatsapp-contact" class="mb-12">
+            <div class="bg-white rounded-lg shadow-lg p-8 text-center">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">¿Tienes alguna consulta?</h2>
+                <p class="text-gray-600 mb-6">Contáctanos directamente por WhatsApp. Estamos para ayudarte.</p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="https://wa.me/59167500044" target="_blank" rel="noopener noreferrer" class="bg-green-500 text-white font-bold py-3 px-6 rounded-lg hover:bg-green-600 transition-colors flex items-center justify-center shadow-lg transform hover:-translate-y-1">
+                        <svg class="w-6 h-6 mr-3" viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M 76.735 13.079 C 68.315 4.649 57.117 0.005 45.187 0 C 20.605 0 0.599 20.005 0.589 44.594 c -0.003 7.86 2.05 15.532 5.953 22.296 L 0.215 90 l 23.642 -6.202 c 6.514 3.553 13.848 5.426 21.312 5.428 h 0.018 c 0.001 0 -0.001 0 0 0 c 24.579 0 44.587 -20.007 44.597 -44.597 C 89.789 32.713 85.155 21.509 76.735 13.079 z M 27.076 46.217 c -0.557 -0.744 -4.55 -6.042 -4.55 -11.527 c 0 -5.485 2.879 -8.181 3.9 -9.296 c 1.021 -1.115 2.229 -1.394 2.972 -1.394 s 1.487 0.007 2.136 0.039 c 0.684 0.035 1.603 -0.26 2.507 1.913 c 0.929 2.231 3.157 7.717 3.436 8.274 c 0.279 0.558 0.464 1.208 0.093 1.952 c -0.371 0.743 -0.557 1.208 -1.114 1.859 c -0.557 0.651 -1.17 1.453 -1.672 1.952 c -0.558 0.556 -1.139 1.159 -0.489 2.274 c 0.65 1.116 2.886 4.765 6.199 7.72 c 4.256 3.797 7.847 4.973 8.961 5.531 c 1.114 0.558 1.764 0.465 2.414 -0.279 c 0.65 -0.744 2.786 -3.254 3.529 -4.369 c 0.743 -1.115 1.486 -0.929 2.507 -0.558 c 1.022 0.372 6.5 3.068 7.614 3.625 c 1.114 0.558 1.857 0.837 2.136 1.302 c 0.279 0.465 0.279 2.696 -0.65 5.299 c -0.929 2.603 -5.381 4.979 -7.522 5.298 c -1.92 0.287 -4.349 0.407 -7.019 -0.442 c -1.618 -0.513 -3.694 -1.199 -6.353 -2.347 C 34.934 58.216 27.634 46.961 27.076 46.217 z" style="fill: white; fill-rule: evenodd;"/>
+                        </svg>
+                        WhatsApp Diego
+                    </a>
+                     <a href="https://wa.me/59171393074" target="_blank" rel="noopener noreferrer" class="bg-green-500 text-white font-bold py-3 px-6 rounded-lg hover:bg-green-600 transition-colors flex items-center justify-center shadow-lg transform hover:-translate-y-1">
+                        <svg class="w-6 h-6 mr-3" viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M 76.735 13.079 C 68.315 4.649 57.117 0.005 45.187 0 C 20.605 0 0.599 20.005 0.589 44.594 c -0.003 7.86 2.05 15.532 5.953 22.296 L 0.215 90 l 23.642 -6.202 c 6.514 3.553 13.848 5.426 21.312 5.428 h 0.018 c 0.001 0 -0.001 0 0 0 c 24.579 0 44.587 -20.007 44.597 -44.597 C 89.789 32.713 85.155 21.509 76.735 13.079 z M 27.076 46.217 c -0.557 -0.744 -4.55 -6.042 -4.55 -11.527 c 0 -5.485 2.879 -8.181 3.9 -9.296 c 1.021 -1.115 2.229 -1.394 2.972 -1.394 s 1.487 0.007 2.136 0.039 c 0.684 0.035 1.603 -0.26 2.507 1.913 c 0.929 2.231 3.157 7.717 3.436 8.274 c 0.279 0.558 0.464 1.208 0.093 1.952 c -0.371 0.743 -0.557 1.208 -1.114 1.859 c -0.557 0.651 -1.17 1.453 -1.672 1.952 c -0.558 0.556 -1.139 1.159 -0.489 2.274 c 0.65 1.116 2.886 4.765 6.199 7.72 c 4.256 3.797 7.847 4.973 8.961 5.531 c 1.114 0.558 1.764 0.465 2.414 -0.279 c 0.65 -0.744 2.786 -3.254 3.529 -4.369 c 0.743 -1.115 1.486 -0.929 2.507 -0.558 c 1.022 0.372 6.5 3.068 7.614 3.625 c 1.114 0.558 1.857 0.837 2.136 1.302 c 0.279 0.465 0.279 2.696 -0.65 5.299 c -0.929 2.603 -5.381 4.979 -7.522 5.298 c -1.92 0.287 -4.349 0.407 -7.019 -0.442 c -1.618 -0.513 -3.694 -1.199 -6.353 -2.347 C 34.934 58.216 27.634 46.961 27.076 46.217 z" style="fill: white; fill-rule: evenodd;"/>
+                        </svg>
+                        WhatsApp Alejandra
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Featured Products Section -->
+        <section id="productos" class="mb-12">
+            <h2 class="text-3xl font-bold text-center mb-2">Productos Destacados</h2>
+            <p class="text-center text-gray-500 mb-8">Soluciones innovadoras para tu vida digital.</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Product Card 1 -->
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300">
+                    <img src="https://placehold.co/400x300/e2e8f0/334155?text=Cargador+Nexode" alt="Cargador GaN" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h3 class="font-bold text-xl mb-2">Cargador Nexode 100W</h3>
+                        <p class="text-gray-600 text-sm mb-4">Carga ultra-rápida para todos tus dispositivos con tecnología GaN.</p>
+                        <a href="#" class="font-bold text-accent hover:text-accent-dark transition-colors">Ver más &rarr;</a>
+                    </div>
+                </div>
+                <!-- Product Card 2 -->
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300">
+                    <img src="https://placehold.co/400x300/e2e8f0/334155?text=USB-C+Hub" alt="USB-C Hub" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h3 class="font-bold text-xl mb-2">Hub USB-C 9 en 1</h3>
+                        <p class="text-gray-600 text-sm mb-4">Expande la conectividad de tu laptop con HDMI 4K, USB 3.0 y más.</p>
+                        <a href="#" class="font-bold text-accent hover:text-accent-dark transition-colors">Ver más &rarr;</a>
+                    </div>
+                </div>
+                <!-- Product Card 3 -->
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300">
+                    <img src="https://placehold.co/400x300/e2e8f0/334155?text=Cables+Resistentes" alt="Cables" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h3 class="font-bold text-xl mb-2">Cables MFi Reforzados</h3>
+                        <p class="text-gray-600 text-sm mb-4">Cables de alta durabilidad para iPhone y iPad, certificados por Apple.</p>
+                        <a href="#" class="font-bold text-accent hover:text-accent-dark transition-colors">Ver más &rarr;</a>
+                    </div>
+                </div>
+                <!-- Product Card 4 -->
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300">
+                    <img src="https://placehold.co/400x300/e2e8f0/334155?text=Soporte+Celular" alt="Soporte para Celular" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h3 class="font-bold text-xl mb-2">Soporte de Escritorio</h3>
+                        <p class="text-gray-600 text-sm mb-4">Diseño elegante y ajustable para mantener tu celular a la vista.</p>
+                        <a href="#" class="font-bold text-accent hover:text-accent-dark transition-colors">Ver más &rarr;</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Us Section -->
+        <section id="nosotros" class="bg-white rounded-lg shadow-lg p-8 md:p-12 mb-12 flex flex-col md:flex-row items-center gap-8">
+            <div class="md:w-1/2">
+                <h2 class="text-3xl font-bold mb-4">¿Por qué Arelyshop.com?</h2>
+                <p class="text-gray-600 mb-6">En Arelyshop.com, creemos que la tecnología debe ser accesible y fácil de usar. Nos dedicamos a crear accesorios de alta calidad con un diseño centrado en el usuario para simplificar y mejorar tu experiencia digital día a día.</p>
+                <div class="space-y-4">
+                    <div class="flex items-start">
+                        <div class="bg-accent text-white rounded-full p-2 mr-4">
+                           <i data-feather="award" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold">Calidad Garantizada</h4>
+                            <p class="text-gray-600 text-sm">Materiales premium y rigurosos controles de calidad.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <div class="bg-accent text-white rounded-full p-2 mr-4">
+                           <i data-feather="zap" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold">Innovación Constante</h4>
+                            <p class="text-gray-600 text-sm">Siempre a la vanguardia de la tecnología para ofrecerte lo último.</p>
+                        </div>
+                    </div>
+                     <div class="flex items-start">
+                        <div class="bg-accent text-white rounded-full p-2 mr-4">
+                           <i data-feather="users" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold">Soporte al Cliente</h4>
+                            <p class="text-gray-600 text-sm">Un equipo listo para ayudarte con cualquier consulta.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="md:w-1/2">
+                <img src="https://placehold.co/600x400/00B368/FFFFFF?text=Arelyshop.com" alt="Arelyshop.com Team" class="rounded-lg shadow-md w-full">
+            </div>
+        </section>
+
+    </main>
+    
+    <!-- Footer -->
+    <footer id="contacto" class="bg-gray-800 text-white">
+        <div class="container mx-auto px-6 py-10">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Arelyshop<span class="text-accent">.com</span></h3>
+                    <p class="text-gray-400">Simplificando tu vida digital con accesorios de alta calidad.</p>
+                </div>
+                <div>
+                    <h3 class="font-bold mb-4">Enlaces Rápidos</h3>
+                    <ul class="text-gray-400 space-y-2">
+                        <li><a href="#" class="hover:text-white transition-colors">Inicio</a></li>
+                        <li><a href="#productos" class="hover:text-white transition-colors">Productos</a></li>
+                        <li><a href="#nosotros" class="hover:text-white transition-colors">Nosotros</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-bold mb-4">Síguenos</h3>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors"><i data-feather="facebook"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors"><i data-feather="instagram"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors"><i data-feather="twitter"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-6 text-center text-gray-500 text-sm">
+                &copy; <span id="year"></span> Arelyshop.com. Todos los derechos reservados.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Feather Icons
+        feather.replace();
+
+        // Mobile Menu Toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Set current year in footer
+        document.getElementById('year').textContent = new Date().getFullYear();
+    </script>
+
+</body>
+</html>
+
