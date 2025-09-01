@@ -37,11 +37,14 @@
         }
         /* Asegurando que la imagen de fondo cubra bien la sección hero */
         .hero-section {
-            min-height: 60vh;
+            /* Para móvil, establecemos una relación de aspecto de 4:3 */
+            aspect-ratio: 4 / 3;
         }
         @media (min-width: 768px) {
             .hero-section {
+                /* Para pantallas más grandes, usamos vh y reseteamos aspect-ratio */
                 min-height: 80vh;
+                aspect-ratio: auto;
             }
         }
     </style>
@@ -245,4 +248,5 @@
 
 </body>
 </html>
+
 
