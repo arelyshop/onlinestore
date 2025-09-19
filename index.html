@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -306,10 +308,12 @@
         <section class="container mx-auto px-4 md:px-0 mt-8">
             <div class="md:w-[85%] md:mx-auto">
                 <h2 class="text-2xl font-bold text-center text-gray-800 mb-8">Productos Destacados</h2>
-                <!-- Contenedor de productos que se llenará dinámicamente -->
-                <div id="product-grid" class="grid grid-cols-2 md:grid-cols-5 gap-6">
-                    <!-- Los productos se cargarán aquí desde la base de datos -->
-                    <p id="loading-message" class="col-span-full text-center text-gray-500">Cargando productos...</p>
+                <!-- Product Grid -->
+                <div id="product-grid" class="grid grid-cols-2 md:grid-cols-5 gap-4">
+                    <!-- Products will be injected here by JavaScript -->
+                    <div class="col-span-full text-center text-gray-500" id="loading-message">
+                        Cargando productos...
+                    </div>
                 </div>
             </div>
         </section>
@@ -336,7 +340,7 @@
         <div class="p-4 border-t">
             <div class="flex justify-between items-center font-bold text-lg mb-4">
                 <span>Total:</span>
-                <span id="cart-total">Bs. 0</span>
+                <span id="cart-total">Bs. 0.00</span>
             </div>
             <button id="whatsapp-order-btn" class="w-full bg-green-500 text-white py-3 rounded-lg font-semibold hover:bg-green-600 transition-colors flex items-center justify-center space-x-2">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="currentColor" viewBox="0 0 16 16">
@@ -416,95 +420,125 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const productGrid = document.getElementById('product-grid');
-            const loadingMessage = document.getElementById('loading-message');
-
-            // --- Cargar Productos Dinámicamente ---
-            async function fetchAndRenderProducts() {
-                try {
-                    // Llamar a la función serverless de Netlify
-                    const response = await fetch('/.netlify/functions/get-products');
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    const products = await response.json();
-
-                    // Limpiar el contenedor de productos
-                    productGrid.innerHTML = ''; 
-
-                    if (products.length === 0) {
-                        productGrid.innerHTML = '<p class="col-span-full text-center text-gray-500">No hay productos disponibles en este momento.</p>';
-                        return;
-                    }
-
-                    // Renderizar cada producto
-                    products.forEach(product => {
-                        const hasDiscount = product.discount_price && parseFloat(product.discount_price) > 0;
-                        const price = hasDiscount ? parseFloat(product.discount_price) : parseFloat(product.sale_price);
-
-                        const priceHTML = hasDiscount
-                            ? `<div class="mt-1 flex items-baseline space-x-2">
-                                 <span class="text-gray-500 line-through">Bs. ${Math.round(product.sale_price)}</span>
-                                 <span class="font-bold text-red-600">Bs. ${Math.round(product.discount_price)}</span>
-                               </div>`
-                            : `<p class="text-gray-600 mt-1">Bs. ${Math.round(product.sale_price)}</p>`;
-                        
-                        const productCard = document.createElement('div');
-                        productCard.className = 'bg-white rounded-lg shadow-md overflow-hidden group flex flex-col';
-                        productCard.innerHTML = `
-                            <a href="#" class="block">
-                                <div class="aspect-square overflow-hidden">
-                                    <img src="${product.photo_url_1 || 'https://placehold.co/400x400/e2e8f0/cbd5e0?text=Producto'}" alt="${product.name}" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110">
-                                </div>
-                                <div class="p-2 pb-1">
-                                    <div class="product-title-container">
-                                        <h3 class="font-semibold text-gray-800">${product.name}</h3>
-                                    </div>
-                                    ${priceHTML}
-                                </div>
-                            </a>
-                            <div class="p-2 pt-0">
-                                <button class="add-to-cart-btn w-full bg-black text-white text-sm py-1.5 px-1 rounded-lg hover:bg-gray-800 transition-colors" data-name="${product.name}" data-price="${price}">
-                                    Agregar al Carrito
-                                </button>
-                            </div>
-                        `;
-                        productGrid.appendChild(productCard);
-                    });
-
-                } catch (error) {
-                    console.error('Error al cargar los productos:', error);
-                    loadingMessage.textContent = 'Error al cargar los productos. Por favor, intenta de nuevo más tarde.';
-                    loadingMessage.className = 'col-span-full text-center text-red-500';
-                }
-            }
-
-            // Llamar a la función para cargar productos al iniciar la página
-            fetchAndRenderProducts();
-
-
             // Set current year in footer
             const yearSpan = document.getElementById('current-year');
             if(yearSpan) {
                 yearSpan.textContent = new Date().getFullYear();
             }
 
-            // --- Shopping Cart Logic ---
+            // --- Shopping Cart Logic (Global state) ---
+            let cart = [];
             const cartFlyout = document.getElementById('cart-flyout');
             const cartOverlay = document.getElementById('cart-overlay');
             const closeCartBtn = document.getElementById('close-cart-btn');
             const mobileCartBtn = document.getElementById('mobile-cart-btn');
             const desktopCartBtn = document.getElementById('desktop-cart-btn');
-            
-            // Se usará delegación de eventos para los botones "Agregar al Carrito"
             const cartItemsContainer = document.getElementById('cart-items-container');
             const cartTotalEl = document.getElementById('cart-total');
             const mobileCartCount = document.getElementById('mobile-cart-count');
             const desktopCartCount = document.getElementById('desktop-cart-count');
             const whatsappOrderBtn = document.getElementById('whatsapp-order-btn');
 
-            let cart = [];
+            // --- Product Loading Logic ---
+            async function fetchProducts() {
+                const loadingMessage = document.getElementById('loading-message');
+                try {
+                    const response = await fetch('/.netlify/functions/get-products');
+                    if (!response.ok) {
+                        throw new Error(`Error HTTP: ${response.status}`);
+                    }
+                    const products = await response.json();
+                    displayProducts(products);
+                } catch (error) {
+                    console.error('Error fetching products:', error);
+                    loadingMessage.textContent = 'Error al cargar los productos. Por favor, intenta de nuevo más tarde.';
+                    loadingMessage.classList.add('text-red-500');
+                }
+            }
 
+            function displayProducts(products) {
+                const container = document.getElementById('product-grid');
+                const loadingMessage = document.getElementById('loading-message');
+                
+                if (!container || !loadingMessage) return;
+
+                container.innerHTML = ''; // Clear loading message
+
+                if (products.length === 0) {
+                    container.innerHTML = '<p class="col-span-full text-center text-gray-500">No se encontraron productos.</p>';
+                    return;
+                }
+
+                products.forEach(product => {
+                    let priceHTML = '';
+                    let discountBadgeHTML = '';
+
+                    // Check for a valid discount price
+                    if (product.discount_price && product.sale_price && product.discount_price < product.sale_price) {
+                        const discountPercentage = Math.round(((product.sale_price - product.discount_price) / product.sale_price) * 100);
+                        
+                        priceHTML = `
+                            <div class="mt-1 flex items-baseline justify-center space-x-2 flex-wrap">
+                                <span class="text-gray-500 line-through text-sm">Bs. ${Math.round(product.sale_price)}</span>
+                                <span class="font-bold text-red-600 text-base">Bs. ${Math.round(product.discount_price)}</span>
+                            </div>
+                        `;
+
+                        discountBadgeHTML = `
+                            <div class="absolute bottom-1 left-1 w-12 h-auto z-10">
+                                <svg id="Capa_2" data-name="Capa 2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 302.44 402.78">
+                                    <defs>
+                                        <linearGradient id="Degradado_sin_nombre_13_new" data-name="Degradado sin nombre 13" x1="151.22" y1="402.78" x2="151.22" y2="0" gradientUnits="userSpaceOnUse">
+                                            <stop offset="0" stop-color="#e20919"/>
+                                            <stop offset="1" stop-color="#fb6404"/>
+                                        </linearGradient>
+                                    </defs>
+                                    <g id="Capa_1-2" data-name="Capa 1">
+                                        <path fill="url(#Degradado_sin_nombre_13_new)" fill-rule="evenodd" d="M61.01,179.91C51.45,94.39,101.43,34.24,195.1,0c-57.38,74.43,48.9,155.06,54.76,232.36,13.74-23.43,21.53-54.72,23.08-96.52,70.24,110.2,12.01,290.3-142.57,264.42-14.19-2.37-27.87-6.85-40.33-13.52C33.68,356.62,0,291.04,0,228.4c0-39.92,17.08-75.57,39.18-103.89,2.95,27.75,9.24,48.44,21.83,55.4Z"/>
+                                    </g>
+                                    <text x="151.22" y="280" font-family="Inter, sans-serif" font-weight="bold" fill="white" text-anchor="middle">
+                                        <tspan font-size="80">${discountPercentage}%</tspan>
+                                        <tspan x="151.22" dy="80" font-size="90">OFF</tspan>
+                                    </text>
+                                </svg>
+                            </div>
+                        `;
+
+                    } else {
+                        priceHTML = `<p class="text-gray-600 mt-1 text-center font-semibold">Bs. ${Math.round(product.sale_price)}</p>`;
+                    }
+
+                    const productCard = document.createElement('div');
+                    productCard.className = 'bg-white rounded-lg shadow-md overflow-hidden group flex flex-col';
+                    productCard.innerHTML = `
+                        <a href="#" class="block">
+                            <div class="aspect-square overflow-hidden relative">
+                                ${discountBadgeHTML}
+                                <img src="${product.photo_url_1 || 'https://placehold.co/400x400/e2e8f0/cbd5e0?text=Producto'}" alt="${product.name}" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110" onerror="this.onerror=null;this.src='https://placehold.co/400x400/e2e8f0/cbd5e0?text=Error';">
+                            </div>
+                            <div class="p-2 pb-0 text-center">
+                                <div class="product-title-container">
+                                    <h3 class="font-semibold text-gray-800 text-sm">${product.name}</h3>
+                                </div>
+                                ${priceHTML}
+                            </div>
+                        </a>
+                        <div class="mt-auto p-2">
+                            <button class="add-to-cart-btn w-full bg-black text-white text-sm py-1.5 px-1 rounded-lg hover:bg-gray-800 transition-colors" data-name="${product.name}" data-price="${product.discount_price || product.sale_price}">
+                                Agregar al Carrito
+                            </button>
+                        </div>
+                    `;
+                    container.appendChild(productCard);
+                });
+
+                // Re-bind events to the new buttons
+                document.querySelectorAll('.add-to-cart-btn').forEach(button => {
+                    button.addEventListener('click', handleAddToCart);
+                });
+            }
+            
+            // --- Cart interaction logic ---
             const isMobile = () => window.innerWidth < 768;
 
             function adjustFlyoutPosition(flyoutEl, overlayEl) {
@@ -522,19 +556,19 @@
                     overlayEl.style.height = `${availableHeight}px`;
                 }
             }
-
+            
             const openCart = () => {
                 if (isMobile()) {
-                    cartFlyout.classList.remove('md:max-w-sm'); // Use md prefix to specify desktop size
-                    cartFlyout.classList.add('w-72'); // Mobile width
+                    cartFlyout.classList.remove('md:max-w-sm');
+                    cartFlyout.classList.add('w-72');
                     adjustFlyoutPosition(cartFlyout, cartOverlay);
                 } else {
                     cartFlyout.classList.remove('w-72');
                     cartFlyout.classList.add('md:max-w-sm');
-                    cartFlyout.style.top = '0px'; // Reset for desktop
-                    cartFlyout.style.height = '100%'; // Reset for desktop
-                    cartOverlay.style.top = '0px'; // Reset for desktop
-                    cartOverlay.style.height = '100%'; // Reset for desktop
+                    cartFlyout.style.top = '0px';
+                    cartFlyout.style.height = '100%';
+                    cartOverlay.style.top = '0px';
+                    cartOverlay.style.height = '100%';
                 }
                 
                 cartFlyout.classList.remove('translate-x-full');
@@ -547,6 +581,94 @@
                 cartOverlay.classList.add('hidden');
                 document.body.style.overflow = '';
             };
+            
+             const renderCart = () => {
+                cartItemsContainer.innerHTML = ''; // Clear current items
+                if (cart.length === 0) {
+                    cartItemsContainer.innerHTML = '<p class="text-gray-500 text-center">Tu carrito está vacío.</p>';
+                } else {
+                    cart.forEach((item, index) => {
+                        const cartItem = document.createElement('div');
+                        cartItem.className = 'flex justify-between items-center mb-4 pb-4 border-b';
+                        cartItem.innerHTML = `
+                            <div>
+                                <h4 class="font-semibold">${item.name}</h4>
+                                <p class="text-gray-600">Bs. ${parseFloat(item.price).toFixed(2)}</p>
+                            </div>
+                            <button class="remove-from-cart-btn text-red-500 hover:text-red-700" data-index="${index}">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm4 0a1 1 0 012 0v6a1 1 0 11-2 0V8z" clip-rule="evenodd" /></svg>
+                            </button>
+                        `;
+                        cartItemsContainer.appendChild(cartItem);
+                    });
+                }
+                updateCartTotal();
+                updateCartCount();
+            };
+
+            const updateCartTotal = () => {
+                const total = cart.reduce((sum, item) => sum + parseFloat(item.price), 0);
+                cartTotalEl.textContent = `Bs. ${total.toFixed(2)}`;
+            };
+
+            const updateCartCount = () => {
+                const count = cart.length;
+                mobileCartCount.textContent = count;
+                desktopCartCount.textContent = count;
+            };
+
+            const handleAddToCart = (e) => {
+                const button = e.currentTarget;
+                const name = button.dataset.name;
+                const price = parseFloat(button.dataset.price);
+                cart.push({ name, price });
+                renderCart();
+                
+                const cartIcons = [document.getElementById('mobile-cart-btn'), document.getElementById('desktop-cart-btn')];
+                cartIcons.forEach(icon => {
+                    if (icon) {
+                        icon.classList.add('cart-bounce-animation');
+                        setTimeout(() => icon.classList.remove('cart-bounce-animation'), 500);
+                    }
+                });
+            };
+            
+            const handleRemoveFromCart = (e) => {
+                 if (e.target.closest('.remove-from-cart-btn')) {
+                    const button = e.target.closest('.remove-from-cart-btn');
+                    const index = parseInt(button.dataset.index, 10);
+                    cart.splice(index, 1);
+                    renderCart();
+                }
+            };
+            
+            const handleWhatsappOrder = () => {
+                if (cart.length === 0) {
+                    alert("Tu carrito está vacío. Agrega productos antes de realizar un pedido.");
+                    return;
+                }
+
+                let message = '¡Hola! Quisiera hacer el siguiente pedido:\n\n';
+                cart.forEach(item => {
+                    message += `- ${item.name} (Bs. ${parseFloat(item.price).toFixed(2)})\n`;
+                });
+
+                const total = cart.reduce((sum, item) => sum + parseFloat(item.price), 0);
+                message += `\n*Total a pagar: Bs. ${total.toFixed(2)}*`;
+
+                const whatsappNumber = '59167500044';
+                const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+                
+                window.open(whatsappUrl, '_blank');
+            };
+            
+            // Initial event listeners for cart
+            if(mobileCartBtn) mobileCartBtn.addEventListener('click', openCart);
+            if(desktopCartBtn) desktopCartBtn.addEventListener('click', openCart);
+            if(closeCartBtn) closeCartBtn.addEventListener('click', closeCart);
+            if(cartOverlay) cartOverlay.addEventListener('click', closeCart);
+            cartItemsContainer.addEventListener('click', handleRemoveFromCart);
+            if(whatsappOrderBtn) whatsappOrderBtn.addEventListener('click', handleWhatsappOrder);
             
             // --- Sidenav Logic ---
             const mobileMenuBtn = document.getElementById('mobile-menu-btn');
@@ -567,113 +689,10 @@
                 sidenavOverlay.classList.add('hidden');
                 document.body.style.overflow = '';
             };
-
-            const renderCart = () => {
-                cartItemsContainer.innerHTML = ''; // Clear current items
-                if (cart.length === 0) {
-                    cartItemsContainer.innerHTML = '<p class="text-gray-500 text-center">Tu carrito está vacío.</p>';
-                } else {
-                    cart.forEach((item, index) => {
-                        const cartItem = document.createElement('div');
-                        cartItem.className = 'flex justify-between items-center mb-4 pb-4 border-b';
-                        cartItem.innerHTML = `
-                            <div>
-                                <h4 class="font-semibold">${item.name}</h4>
-                                <p class="text-gray-600">Bs. ${item.price}</p>
-                            </div>
-                            <button class="remove-from-cart-btn text-red-500 hover:text-red-700" data-index="${index}">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm4 0a1 1 0 012 0v6a1 1 0 11-2 0V8z" clip-rule="evenodd" /></svg>
-                            </button>
-                        `;
-                        cartItemsContainer.appendChild(cartItem);
-                    });
-                }
-                updateCartTotal();
-                updateCartCount();
-            };
-
-            const updateCartTotal = () => {
-                const total = cart.reduce((sum, item) => sum + item.price, 0);
-                cartTotalEl.textContent = `Bs. ${total}`;
-            };
-
-            const updateCartCount = () => {
-                const count = cart.length;
-                mobileCartCount.textContent = count;
-                desktopCartCount.textContent = count;
-            };
-
-            const handleAddToCart = (e) => {
-                // Usar delegación de eventos
-                const button = e.target.closest('.add-to-cart-btn');
-                if (!button) return;
-
-                const name = button.dataset.name;
-                const price = parseFloat(button.dataset.price);
-                cart.push({ name, price });
-                renderCart();
-                
-                // Animate cart icons
-                const cartIcons = [document.getElementById('mobile-cart-btn'), document.getElementById('desktop-cart-btn')];
-                cartIcons.forEach(icon => {
-                    if (icon) {
-                        icon.classList.add('cart-bounce-animation');
-                        setTimeout(() => {
-                            icon.classList.remove('cart-bounce-animation');
-                        }, 500); // Animation duration is 0.5s
-                    }
-                });
-            };
             
-            const handleRemoveFromCart = (e) => {
-                 if (e.target.closest('.remove-from-cart-btn')) {
-                    const button = e.target.closest('.remove-from-cart-btn');
-                    const index = parseInt(button.dataset.index, 10);
-                    cart.splice(index, 1);
-                    renderCart();
-                }
-            };
-            
-            const handleWhatsappOrder = () => {
-                if (cart.length === 0) {
-                    // Reemplazado alert() por un mensaje en la UI
-                    const originalText = whatsappOrderBtn.querySelector('span').textContent;
-                    whatsappOrderBtn.querySelector('span').textContent = 'El carrito está vacío';
-                    whatsappOrderBtn.classList.add('bg-yellow-500', 'hover:bg-yellow-600');
-                    setTimeout(() => {
-                         whatsappOrderBtn.querySelector('span').textContent = originalText;
-                         whatsappOrderBtn.classList.remove('bg-yellow-500', 'hover:bg-yellow-600');
-                    }, 2000);
-                    return;
-                }
-
-                let message = '¡Hola! Quisiera hacer el siguiente pedido:\n\n';
-                cart.forEach(item => {
-                    message += `- ${item.name} (Bs. ${item.price})\n`;
-                });
-
-                const total = cart.reduce((sum, item) => sum + item.price, 0);
-                message += `\n*Total a pagar: Bs. ${total}*`;
-
-                const whatsappNumber = '59167500044';
-                const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
-                
-                window.open(whatsappUrl, '_blank');
-            };
-
-
-            // Event Listeners
-            if(mobileCartBtn) mobileCartBtn.addEventListener('click', openCart);
-            if(desktopCartBtn) desktopCartBtn.addEventListener('click', openCart);
-            if(closeCartBtn) closeCartBtn.addEventListener('click', closeCart);
-            if(cartOverlay) cartOverlay.addEventListener('click', closeCart);
-            
-            // Delegación de eventos para el botón de agregar
-            document.body.addEventListener('click', handleAddToCart);
-
-            cartItemsContainer.addEventListener('click', handleRemoveFromCart);
-            if(whatsappOrderBtn) whatsappOrderBtn.addEventListener('click', handleWhatsappOrder);
-
+            if (mobileMenuBtn) mobileMenuBtn.addEventListener('click', openSidenav);
+            if (closeSidenavBtn) closeSidenavBtn.addEventListener('click', closeSidenav);
+            if (sidenavOverlay) sidenavOverlay.addEventListener('click', closeSidenav);
 
             // Banner Carousel Logic
             const bannerTrack = document.querySelector('.banner-carousel-track');
@@ -736,12 +755,8 @@
                     }, 5000);
                 }
             }
-            
-            if (mobileMenuBtn) mobileMenuBtn.addEventListener('click', openSidenav);
-            if (closeSidenavBtn) closeSidenavBtn.addEventListener('click', closeSidenav);
-            if (sidenavOverlay) sidenavOverlay.addEventListener('click', closeSidenav);
 
-            // Mobile categories accordion
+            // Mobile accordions in sidenav
             const mobileCategoriesBtn = document.getElementById('mobile-categories-btn');
             const mobileCategoriesSubmenu = document.getElementById('mobile-categories-submenu');
             const mobileCategoriesArrow = document.getElementById('mobile-categories-arrow');
@@ -753,7 +768,6 @@
                 });
             }
 
-            // Mobile marcas accordion
             const mobileMarcasBtn = document.getElementById('mobile-marcas-btn');
             const mobileMarcasSubmenu = document.getElementById('mobile-marcas-submenu');
             const mobileMarcasArrow = document.getElementById('mobile-marcas-arrow');
@@ -772,37 +786,24 @@
             const desktopMarcasSubmenu = document.getElementById('desktop-marcas-submenu');
 
             if (desktopCategoriesContainer && desktopCategoriesSubmenu) {
-                desktopCategoriesContainer.addEventListener('mouseenter', () => {
-                    desktopCategoriesSubmenu.classList.remove('hidden');
-                });
-                desktopCategoriesContainer.addEventListener('mouseleave', () => {
-                    desktopCategoriesSubmenu.classList.add('hidden');
-                });
+                desktopCategoriesContainer.addEventListener('mouseenter', () => desktopCategoriesSubmenu.classList.remove('hidden'));
+                desktopCategoriesContainer.addEventListener('mouseleave', () => desktopCategoriesSubmenu.classList.add('hidden'));
             }
 
             if (desktopMarcasContainer && desktopMarcasSubmenu) {
-                desktopMarcasContainer.addEventListener('mouseenter', () => {
-                    desktopMarcasSubmenu.classList.remove('hidden');
-                });
-                desktopMarcasContainer.addEventListener('mouseleave', () => {
-                    desktopMarcasSubmenu.classList.add('hidden');
-                });
+                desktopMarcasContainer.addEventListener('mouseenter', () => desktopMarcasSubmenu.classList.remove('hidden'));
+                desktopMarcasContainer.addEventListener('mouseleave', () => desktopMarcasSubmenu.classList.add('hidden'));
             }
             
              // --- Promo Banner Logic ---
             const promoBannerCloseBtn = document.querySelector('#promo-banner button');
             if (promoBannerCloseBtn) {
                 promoBannerCloseBtn.addEventListener('click', () => {
-                    // Use a short timeout to ensure the banner is removed from layout calculation
                     setTimeout(() => {
                         const isCartOpen = !cartOverlay.classList.contains('hidden');
                         const isSidenavOpen = !sidenavOverlay.classList.contains('hidden');
-                        if (isCartOpen && isMobile()) {
-                            adjustFlyoutPosition(cartFlyout, cartOverlay);
-                        }
-                        if (isSidenavOpen && isMobile()) {
-                            adjustFlyoutPosition(sidenav, sidenavOverlay);
-                        }
+                        if (isCartOpen && isMobile()) adjustFlyoutPosition(cartFlyout, cartOverlay);
+                        if (isSidenavOpen && isMobile()) adjustFlyoutPosition(sidenav, sidenavOverlay);
                     }, 50); 
                 });
             }
@@ -816,9 +817,7 @@
                     if (isSidenavOpen) adjustFlyoutPosition(sidenav, sidenavOverlay);
                     if (isCartOpen) adjustFlyoutPosition(cartFlyout, cartOverlay);
                 } else {
-                    // If switching to desktop, reset mobile-specific styles
-                    if (isSidenavOpen) closeSidenav(); // Close sidenav as it's mobile-only
-                    
+                    if (isSidenavOpen) closeSidenav();
                     if (isCartOpen) {
                         cartFlyout.classList.remove('w-72');
                         cartFlyout.classList.add('md:max-w-sm');
@@ -830,6 +829,8 @@
                 }
             });
 
+            // Initial call to fetch products
+            fetchProducts();
         });
     </script>
 </body>
