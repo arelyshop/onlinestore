@@ -1,40 +1,45 @@
-// functions/get-products.js
+// netlify/functions/get-products.js
 
-// Importamos el cliente de PostgreSQL
 const { Pool } = require('pg');
 
 exports.handler = async (event, context) => {
-  // Obtenemos la URL de conexión desde las variables de entorno de Netlify
   const connectionString = process.env.DATABASE_URL;
-  
-  // Creamos un nuevo pool de conexiones
+
+  // Verificamos si la variable de entorno existe
+  if (!connectionString) {
+    console.error('DATABASE_URL environment variable is not set.');
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: 'Database connection string is missing.' }),
+    };
+  }
+
   const pool = new Pool({
     connectionString,
+    // Neon y otras bases de datos en la nube requieren SSL
+    ssl: {
+      rejectUnauthorized: false
+    }
   });
 
   try {
-    // Hacemos una consulta a la base de datos para obtener todos los productos
     const { rows } = await pool.query('SELECT * FROM products ORDER BY created_at DESC');
-    
-    // Cerramos la conexión
     await pool.end();
-
     return {
       statusCode: 200,
       headers: {
         'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*', // Permitir peticiones desde cualquier origen
+        'Access-Control-Allow-Origin': '*',
       },
-      // Devolvemos los productos en formato JSON
       body: JSON.stringify(rows),
     };
   } catch (error) {
-    console.error('Error fetching products:', error);
-    // Cerramos la conexión en caso de error
+    console.error('Database Query Error:', error);
     await pool.end();
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: 'Failed to fetch products' }),
+      // Devolvemos un error más detallado para facilitar el diagnóstico
+      body: JSON.stringify({ error: 'Failed to fetch products', details: error.message }),
     };
   }
 };
