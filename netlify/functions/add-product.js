@@ -1,17 +1,32 @@
-// functions/add-product.js
+// netlify/functions/add-product.js
 
 const { Pool } = require('pg');
 
 exports.handler = async (event, context) => {
-  // Solo permitimos peticiones POST
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: 'Method Not Allowed' };
   }
 
+  const connectionString = process.env.DATABASE_URL;
+
+  if (!connectionString) {
+    console.error('DATABASE_URL environment variable is not set.');
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: 'Database connection string is missing.' }),
+    };
+  }
+
   try {
     const product = JSON.parse(event.body);
-    const connectionString = process.env.DATABASE_URL;
-    const pool = new Pool({ connectionString });
+    
+    const pool = new Pool({
+      connectionString,
+      // Neon y otras bases de datos en la nube requieren SSL
+      ssl: {
+        rejectUnauthorized: false
+      }
+    });
 
     const query = `
       INSERT INTO products (
