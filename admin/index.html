@@ -1,1 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Agregar Producto</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto p-8">
+        <h1 class="text-3xl font-bold mb-6">Agregar Nuevo Producto</h1>
+        
+        <form id="add-product-form" class="bg-white p-8 rounded-lg shadow-md">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Columna 1 -->
+                <div>
+                    <div class="mb-4">
+                        <label for="name" class="block text-gray-700 font-semibold mb-2">Nombre del Producto</label>
+                        <input type="text" id="name" name="name" class="w-full px-3 py-2 border border-gray-300 rounded-lg" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="sku" class="block text-gray-700 font-semibold mb-2">SKU</label>
+                        <input type="text" id="sku" name="sku" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                    </div>
+                    <div class="mb-4">
+                        <label for="description" class="block text-gray-700 font-semibold mb-2">Descripción</label>
+                        <textarea id="description" name="description" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-lg"></textarea>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div>
+                           <label for="sale_price" class="block text-gray-700 font-semibold mb-2">Precio (Venta)</label>
+                           <input type="number" step="0.01" id="sale_price" name="sale_price" class="w-full px-3 py-2 border border-gray-300 rounded-lg" required>
+                        </div>
+                        <div>
+                           <label for="discount_price" class="block text-gray-700 font-semibold mb-2">Oferta (Descuento)</label>
+                           <input type="number" step="0.01" id="discount_price" name="discount_price" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div>
+                           <label for="purchase_price" class="block text-gray-700 font-semibold mb-2">Precio (Compra)</label>
+                           <input type="number" step="0.01" id="purchase_price" name="purchase_price" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                        </div>
+                        <div>
+                           <label for="wholesale_price" class="block text-gray-700 font-semibold mb-2">Precio (Mayoreo)</label>
+                           <input type="number" step="0.01" id="wholesale_price" name="wholesale_price" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                        </div>
+                    </div>
+                     <div class="mb-4">
+                        <label for="stock" class="block text-gray-700 font-semibold mb-2">Cantidad (Stock)</label>
+                        <input type="number" id="stock" name="stock" class="w-full px-3 py-2 border border-gray-300 rounded-lg" required>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                         <div>
+                            <label for="category" class="block text-gray-700 font-semibold mb-2">Categoría</label>
+                            <input type="text" id="category" name="category" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                        </div>
+                        <div>
+                            <label for="brand" class="block text-gray-700 font-semibold mb-2">Marca</label>
+                            <input type="text" id="brand" name="brand" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                        </div>
+                    </div>
+                     <div class="mt-4">
+                        <label for="barcode" class="block text-gray-700 font-semibold mb-2">Código de Barras</label>
+                        <input type="text" id="barcode" name="barcode" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                    </div>
+                </div>
+
+                <!-- Columna 2 -->
+                <div>
+                    <label class="block text-gray-700 font-semibold mb-2">URLs de las Fotos</label>
+                    <div class="space-y-2">
+                        <input type="url" id="photo_url_1" name="photo_url_1" placeholder="URL de la Foto 1 (Principal)" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                        <input type="url" id="photo_url_2" name="photo_url_2" placeholder="URL de la Foto 2" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                        <input type="url" id="photo_url_3" name="photo_url_3" placeholder="URL de la Foto 3" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                        <input type="url" id="photo_url_4" name="photo_url_4" placeholder="URL de la Foto 4" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                        <input type="url" id="photo_url_5" name="photo_url_5" placeholder="URL de la Foto 5" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                        <input type="url" id="photo_url_6" name="photo_url_6" placeholder="URL de la Foto 6" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                        <input type="url" id="photo_url_7" name="photo_url_7" placeholder="URL de la Foto 7" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                        <input type="url" id="photo_url_8" name="photo_url_8" placeholder="URL de la Foto 8" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8">
+                <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors">
+                    Agregar Producto
+                </button>
+            </div>
+        </form>
+        
+        <div id="status-message" class="mt-4 text-center"></div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
 
