@@ -11,7 +11,8 @@ document.addEventListener('DOMContentLoaded', () => {
      * @returns {string} La URL convertida o la original si no es un enlace de Drive válido.
      */
     function convertGoogleDriveUrl(url) {
-        // Expresión regular para extraer el ID del archivo de la URL de Google Drive.
+        // Expresión regular para extraer el ID del archivo de la URL de Google Drive,
+        // sin importar los parámetros que sigan (ej. ?usp=sharing o ?usp=drive_link).
         const regex = /\/file\/d\/([a-zA-Z0-9_-]+)/;
         const match = url.match(regex);
 
@@ -94,5 +95,4 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
-
 
