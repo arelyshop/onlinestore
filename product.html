@@ -518,7 +518,7 @@
                 const snippet = description.substring(0, snippetLength) + '...';
                 descriptionHTML = `<div>
                                     <div id="description-snippet" class="text-gray-600 mt-4 whitespace-pre-wrap">${formatDescription(snippet)}</div>
-                                    <div id="description-full" class="text-gray-600 mt-4 whitespace-pre-wrap hidden custom-scrollbar" style="max-height: 200px; overflow-y: auto;">${formatDescription(description)}</div>
+                                    <div id="description-full" class="text-gray-600 mt-4 whitespace-pre-wrap hidden">${formatDescription(description)}</div>
                                     <button id="toggle-description-btn" class="text-blue-600 hover:underline mt-2">Ver más</button>
                                </div>`;
             } else {
