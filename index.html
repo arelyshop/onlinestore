@@ -429,6 +429,7 @@
             // Global state
             let allProducts = []; // Master list of all products
             let cart = [];
+            let searchTimer; // Timer to auto-hide results
 
             // --- Element Selectors ---
             const yearSpan = document.getElementById('current-year');
@@ -588,8 +589,10 @@
                 });
             }
             
-            // --- NEW Search Popup Logic ---
+            // --- Search Popup Logic ---
             function handleSearchPopup(event) {
+                clearTimeout(searchTimer); // Reset timer on every keypress
+
                 const searchTerm = event.target.value.toLowerCase();
                 const resultsContainer = event.target.id === 'mobile-search-input' ? mobileSearchResults : desktopSearchResults;
                 
@@ -605,7 +608,7 @@
                 );
 
                 if (filteredProducts.length > 0) {
-                    filteredProducts.forEach(product => {
+                    filteredProducts.slice(0, 10).forEach(product => { // Show max 10 results
                         const resultItem = document.createElement('a');
                         resultItem.href = '#'; // Replace with product page URL later
                         resultItem.className = 'flex items-center p-2 hover:bg-gray-100 transition-colors';
@@ -625,6 +628,11 @@
                     resultsContainer.innerHTML = `<p class="p-4 text-center text-sm text-gray-500">No se encontraron productos.</p>`;
                 }
                 resultsContainer.classList.remove('hidden');
+
+                // Set a timer to hide the results after 10 seconds of inactivity
+                searchTimer = setTimeout(() => {
+                    resultsContainer.classList.add('hidden');
+                }, 10000); // 10000 milliseconds = 10 seconds
             }
             
             mobileSearchInput.addEventListener('input', handleSearchPopup);
