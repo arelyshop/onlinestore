@@ -252,13 +252,17 @@
 
     <!-- Main Content -->
     <main class="flex-grow">
-        <section class="container mx-auto px-4 md:px-0 mt-8">
+        <!-- Portada - Full width on mobile, contained on desktop -->
+        <div class="w-full md:container md:mx-auto md:mt-8">
             <div class="md:w-[85%] md:mx-auto">
-                <!-- Portada -->
-                <div class="w-full md:rounded-lg overflow-hidden mb-8">
+                <div class="w-full md:rounded-lg overflow-hidden">
                     <img src="/images/portada-catalogo.webp" alt="Portada del Catálogo" class="w-full h-auto">
                 </div>
+            </div>
+        </div>
 
+        <section class="container mx-auto px-4 md:px-0 mt-8">
+            <div class="md:w-[85%] md:mx-auto">
                 <h2 id="page-title" class="text-2xl font-bold text-center text-gray-800 mb-8">Todos los Productos</h2>
                 <!-- Product Grid -->
                 <div id="product-grid" class="grid grid-cols-2 md:grid-cols-5 gap-4">
