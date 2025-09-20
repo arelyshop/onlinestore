@@ -90,7 +90,7 @@
                            <img src="/images/logo-movil.svg" alt="Arelyshop" class="h-full w-auto">
                         </a>
                         <div class="relative flex-1">
-                            <input name="code" data-hj-allow="" id="i-search" class="js-txtSearch w-full pl-8 pr-4 py-2 text-sm text-gray-900 rounded-full focus:outline-none" autocomplete="off" type="text" value="" placeholder="¿Qué estás buscando?" enterkeyhint="search">
+                            <input id="mobile-search-input" class="w-full pl-8 pr-4 py-2 text-sm text-gray-900 rounded-full focus:outline-none" autocomplete="off" type="text" placeholder="¿Qué estás buscando?" enterkeyhint="search">
                             <div class="absolute left-2 top-1/2 -translate-y-1/2">
                                 <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                             </div>
@@ -121,7 +121,7 @@
                     <!-- Desktop Search Bar -->
                     <div class="flex-1 max-w-2xl mx-4">
                         <div class="relative">
-                            <input type="text" placeholder="¿Qué estás buscando?" class="w-full pl-10 pr-4 py-2 text-gray-900 rounded-full focus:outline-none focus:ring-2 focus:ring-white">
+                            <input type="text" id="desktop-search-input" placeholder="¿Qué estás buscando?" class="w-full pl-10 pr-4 py-2 text-gray-900 rounded-full focus:outline-none focus:ring-2 focus:ring-white" autocomplete="off">
                             <div class="absolute left-4 top-1/2 -translate-y-1/2">
                                 <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                             </div>
@@ -168,9 +168,7 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1F2937"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/></svg>
                             </button>
                             <div id="desktop-categories-submenu" class="absolute left-0 top-full pt-2 w-48 bg-white rounded-md shadow-lg hidden z-50 text-left">
-                                <a href="#" class="block pl-6 pr-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Celulares (Próximamente)</a>
-                                <a href="#" class="block pl-6 pr-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Laptops (Próximamente)</a>
-                                <a href="#" class="block pl-6 pr-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Audio y Video (Próximamente)</a>
+                                <!-- Dynamic categories will be injected here -->
                             </div>
                         </div>
 
@@ -181,11 +179,7 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1F2937"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/></svg>
                             </button>
                             <div id="desktop-marcas-submenu" class="absolute left-0 top-full pt-2 w-48 bg-white rounded-md shadow-lg hidden z-50 text-left">
-                                <a href="#" class="block pl-6 pr-4 py-2 text-sm text-gray-700 hover:bg-gray-100">UGREEN</a>
-                                <a href="#" class="block pl-6 pr-4 py-2 text-sm text-gray-700 hover:bg-gray-100">BASEUS</a>
-                                <a href="#" class="block pl-6 pr-4 py-2 text-sm text-gray-700 hover:bg-gray-100">ANKER</a>
-                                <a href="#" class="block pl-6 pr-4 py-2 text-sm text-gray-700 hover:bg-gray-100">BELKIN</a>
-                                <a href="#" class="block pl-6 pr-4 py-2 text-sm text-gray-700 hover:bg-gray-100">ORICO</a>
+                                <!-- Dynamic brands will be injected here -->
                             </div>
                         </div>
 
@@ -221,9 +215,7 @@
                     <svg id="mobile-categories-arrow" class="w-5 h-5 transition-transform" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="currentColor"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/></svg>
                 </button>
                 <div id="mobile-categories-submenu" class="hidden pl-8">
-                    <a href="#" class="block py-2 px-4 text-gray-600 hover:bg-gray-100 rounded-lg">Celulares (Próximamente)</a>
-                    <a href="#" class="block py-2 px-4 text-gray-600 hover:bg-gray-100 rounded-lg">Laptops (Próximamente)</a>
-                    <a href="#" class="block py-2 px-4 text-gray-600 hover:bg-gray-100 rounded-lg">Audio y Video (Próximamente)</a>
+                    <!-- Dynamic categories will be injected here -->
                 </div>
             </div>
 
@@ -234,11 +226,7 @@
                     <svg id="mobile-marcas-arrow" class="w-5 h-5 transition-transform" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="currentColor"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/></svg>
                 </button>
                 <div id="mobile-marcas-submenu" class="hidden pl-8">
-                    <a href="#" class="block py-2 px-4 text-gray-600 hover:bg-gray-100 rounded-lg">UGREEN</a>
-                    <a href="#" class="block py-2 px-4 text-gray-600 hover:bg-gray-100 rounded-lg">BASEUS</a>
-                    <a href="#" class="block py-2 px-4 text-gray-600 hover:bg-gray-100 rounded-lg">ANKER</a>
-                    <a href="#" class="block py-2 px-4 text-gray-600 hover:bg-gray-100 rounded-lg">BELKIN</a>
-                    <a href="#" class="block py-2 px-4 text-gray-600 hover:bg-gray-100 rounded-lg">ORICO</a>
+                    <!-- Dynamic brands will be injected here -->
                 </div>
             </div>
             
@@ -420,14 +408,12 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Set current year in footer
-            const yearSpan = document.getElementById('current-year');
-            if(yearSpan) {
-                yearSpan.textContent = new Date().getFullYear();
-            }
-
-            // --- Shopping Cart Logic (Global state) ---
+            // Global state
+            let allProducts = []; // Master list of all products
             let cart = [];
+
+            // --- Element Selectors ---
+            const yearSpan = document.getElementById('current-year');
             const cartFlyout = document.getElementById('cart-flyout');
             const cartOverlay = document.getElementById('cart-overlay');
             const closeCartBtn = document.getElementById('close-cart-btn');
@@ -438,34 +424,77 @@
             const mobileCartCount = document.getElementById('mobile-cart-count');
             const desktopCartCount = document.getElementById('desktop-cart-count');
             const whatsappOrderBtn = document.getElementById('whatsapp-order-btn');
+            const mobileSearchInput = document.getElementById('mobile-search-input');
+            const desktopSearchInput = document.getElementById('desktop-search-input');
 
-            // --- Product Loading Logic ---
-            async function fetchProducts() {
+            // --- Initial Setup ---
+            if(yearSpan) {
+                yearSpan.textContent = new Date().getFullYear();
+            }
+
+            // --- Product & Filter Logic ---
+            async function initializeShop() {
                 const loadingMessage = document.getElementById('loading-message');
                 try {
                     const response = await fetch('/.netlify/functions/get-products');
                     if (!response.ok) {
                         throw new Error(`Error HTTP: ${response.status}`);
                     }
-                    const products = await response.json();
-                    displayProducts(products);
+                    allProducts = await response.json();
+                    displayProducts(allProducts);
+                    populateFilterMenus(allProducts);
                 } catch (error) {
                     console.error('Error fetching products:', error);
                     loadingMessage.textContent = 'Error al cargar los productos. Por favor, intenta de nuevo más tarde.';
                     loadingMessage.classList.add('text-red-500');
                 }
             }
+            
+            function populateFilterMenus(products) {
+                const categories = [...new Set(products.map(p => p.category).filter(Boolean))].sort();
+                const brands = [...new Set(products.map(p => p.brand).filter(Boolean))].sort();
+
+                const categoryMenuDesktop = document.getElementById('desktop-categories-submenu');
+                const categoryMenuMobile = document.getElementById('mobile-categories-submenu');
+                const brandMenuDesktop = document.getElementById('desktop-marcas-submenu');
+                const brandMenuMobile = document.getElementById('mobile-marcas-submenu');
+
+                // Populate Categories
+                const categoryLinks = categories.map(category => 
+                    `<a href="#" class="block pl-6 pr-4 py-2 text-sm text-gray-700 hover:bg-gray-100 filter-link" data-type="category" data-value="${category}">${category}</a>`
+                ).join('');
+                categoryMenuDesktop.innerHTML = categoryLinks;
+                categoryMenuMobile.innerHTML = categoryLinks.replace(/pl-6/g, 'py-2 px-4'); // Adjust padding for mobile
+                
+                // Populate Brands
+                const brandLinks = brands.map(brand => 
+                    `<a href="#" class="block pl-6 pr-4 py-2 text-sm text-gray-700 hover:bg-gray-100 filter-link" data-type="brand" data-value="${brand}">${brand}</a>`
+                ).join('');
+                brandMenuDesktop.innerHTML = brandLinks;
+                brandMenuMobile.innerHTML = brandLinks.replace(/pl-6/g, 'py-2 px-4');
+
+                // Add event listeners to all new filter links
+                document.querySelectorAll('.filter-link').forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const type = e.target.dataset.type;
+                        const value = e.target.dataset.value;
+                        const filteredProducts = allProducts.filter(p => p[type] === value);
+                        displayProducts(filteredProducts);
+                        closeSidenav(); // Close mobile menu on selection
+                    });
+                });
+            }
+
 
             function displayProducts(products) {
                 const container = document.getElementById('product-grid');
-                const loadingMessage = document.getElementById('loading-message');
-                
-                if (!container || !loadingMessage) return;
+                if (!container) return;
 
-                container.innerHTML = ''; // Clear loading message
+                container.innerHTML = ''; // Clear previous products or loading message
 
                 if (products.length === 0) {
-                    container.innerHTML = '<p class="col-span-full text-center text-gray-500">No se encontraron productos.</p>';
+                    container.innerHTML = '<p class="col-span-full text-center text-gray-500">No se encontraron productos que coincidan con tu búsqueda.</p>';
                     return;
                 }
 
@@ -488,13 +517,13 @@
                             <div class="absolute bottom-1 left-1 w-12 h-auto z-10">
                                 <svg id="Capa_2" data-name="Capa 2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 302.44 402.78">
                                     <defs>
-                                        <linearGradient id="Degradado_sin_nombre_13_new" data-name="Degradado sin nombre 13" x1="151.22" y1="402.78" x2="151.22" y2="0" gradientUnits="userSpaceOnUse">
+                                        <linearGradient id="Degradado_sin_nombre_13_new_${product.id}" data-name="Degradado sin nombre 13" x1="151.22" y1="402.78" x2="151.22" y2="0" gradientUnits="userSpaceOnUse">
                                             <stop offset="0" stop-color="#e20919"/>
                                             <stop offset="1" stop-color="#fb6404"/>
                                         </linearGradient>
                                     </defs>
-                                    <g id="Capa_1-2" data-name="Capa 1">
-                                        <path fill="url(#Degradado_sin_nombre_13_new)" fill-rule="evenodd" d="M61.01,179.91C51.45,94.39,101.43,34.24,195.1,0c-57.38,74.43,48.9,155.06,54.76,232.36,13.74-23.43,21.53-54.72,23.08-96.52,70.24,110.2,12.01,290.3-142.57,264.42-14.19-2.37-27.87-6.85-40.33-13.52C33.68,356.62,0,291.04,0,228.4c0-39.92,17.08-75.57,39.18-103.89,2.95,27.75,9.24,48.44,21.83,55.4Z"/>
+                                    <g>
+                                        <path fill="url(#Degradado_sin_nombre_13_new_${product.id})" fill-rule="evenodd" d="M61.01,179.91C51.45,94.39,101.43,34.24,195.1,0c-57.38,74.43,48.9,155.06,54.76,232.36,13.74-23.43,21.53-54.72,23.08-96.52,70.24,110.2,12.01,290.3-142.57,264.42-14.19-2.37-27.87-6.85-40.33-13.52C33.68,356.62,0,291.04,0,228.4c0-39.92,17.08-75.57,39.18-103.89,2.95,27.75,9.24,48.44,21.83,55.4Z"/>
                                     </g>
                                     <text x="151.22" y="280" font-family="Inter, sans-serif" font-weight="bold" fill="white" text-anchor="middle">
                                         <tspan font-size="80">${discountPercentage}%</tspan>
@@ -538,6 +567,18 @@
                 });
             }
             
+            // --- Search Logic ---
+            function handleSearch() {
+                const searchTerm = this.value.toLowerCase();
+                const filteredProducts = allProducts.filter(product => 
+                    product.name.toLowerCase().includes(searchTerm)
+                );
+                displayProducts(filteredProducts);
+            }
+            
+            mobileSearchInput.addEventListener('input', handleSearch);
+            desktopSearchInput.addEventListener('input', handleSearch);
+
             // --- Cart interaction logic ---
             const isMobile = () => window.innerWidth < 768;
 
@@ -675,7 +716,6 @@
             const sidenav = document.getElementById('sidenav');
             const sidenavOverlay = document.getElementById('sidenav-overlay');
             const closeSidenavBtn = document.getElementById('close-sidenav');
-
 
             const openSidenav = () => {
                 adjustFlyoutPosition(sidenav, sidenavOverlay);
@@ -829,8 +869,8 @@
                 }
             });
 
-            // Initial call to fetch products
-            fetchProducts();
+            // Initial call to fetch products and set up the shop
+            initializeShop();
         });
     </script>
 </body>
