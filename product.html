@@ -475,26 +475,30 @@
 
             if (product.discount_price && product.sale_price && product.discount_price < product.sale_price) {
                 const discountPercentage = Math.round(((product.sale_price - product.discount_price) / product.sale_price) * 100);
-                priceHTML = `<div class="flex items-baseline space-x-2"><span class="text-2xl font-bold text-red-600">Bs. ${Math.round(product.discount_price)}</span><span class="text-lg text-gray-500 line-through">Bs. ${Math.round(product.sale_price)}</span></div>`;
-                discountBadgeHTML = `
-                    <div class="w-8 h-auto ml-3">
-                        <svg data-name="Capa 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 302.44 402.78">
-                            <defs>
-                                <linearGradient id="discount-gradient-${product.id}" x1="151.22" y1="402.78" x2="151.22" y2="0" gradientUnits="userSpaceOnUse">
-                                    <stop offset="0" stop-color="#e20919"/><stop offset="1" stop-color="#fb6404"/>
-                                </linearGradient>
-                            </defs>
-                            <g>
-                                <path fill="url(#discount-gradient-${product.id})" fill-rule="evenodd" d="M61.01,179.91C51.45,94.39,101.43,34.24,195.1,0c-57.38,74.43,48.9,155.06,54.76,232.36,13.74-23.43,21.53-54.72,23.08-96.52,70.24,110.2,12.01,290.3-142.57,264.42-14.19-2.37-27.87-6.85-40.33-13.52C33.68,356.62,0,291.04,0,228.4c0-39.92,17.08-75.57,39.18-103.89,2.95,27.75,9.24,48.44,21.83,55.4Z"/>
-                            </g>
-                            <text x="151.22" y="280" font-family="Inter, sans-serif" font-weight="bold" fill="white" text-anchor="middle">
-                                <tspan font-size="80">${discountPercentage}%</tspan>
-                                <tspan x="151.22" dy="80" font-size="90">OFF</tspan>
-                            </text>
-                        </svg>
-                    </div>`;
+                priceHTML = `<div class="flex items-baseline space-x-2">
+                                <span class="text-2xl font-bold text-red-600">Bs. ${Math.round(product.discount_price)}</span>
+                                <span class="text-lg text-gray-500 line-through">Bs. ${Math.round(product.sale_price)}</span>
+                                <div class="w-8 h-auto">
+                                    <svg data-name="Capa 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 302.44 402.78">
+                                        <defs>
+                                            <linearGradient id="discount-gradient-${product.id}" x1="151.22" y1="402.78" x2="151.22" y2="0" gradientUnits="userSpaceOnUse">
+                                                <stop offset="0" stop-color="#e20919"/><stop offset="1" stop-color="#fb6404"/>
+                                            </linearGradient>
+                                        </defs>
+                                        <g>
+                                            <path fill="url(#discount-gradient-${product.id})" fill-rule="evenodd" d="M61.01,179.91C51.45,94.39,101.43,34.24,195.1,0c-57.38,74.43,48.9,155.06,54.76,232.36,13.74-23.43,21.53-54.72,23.08-96.52,70.24,110.2,12.01,290.3-142.57,264.42-14.19-2.37-27.87-6.85-40.33-13.52C33.68,356.62,0,291.04,0,228.4c0-39.92,17.08-75.57,39.18-103.89,2.95,27.75,9.24,48.44,21.83,55.4Z"/>
+                                        </g>
+                                        <text x="151.22" y="280" font-family="Inter, sans-serif" font-weight="bold" fill="white" text-anchor="middle">
+                                            <tspan font-size="80">${discountPercentage}%</tspan>
+                                            <tspan x="151.22" dy="80" font-size="90">OFF</tspan>
+                                        </text>
+                                    </svg>
+                                </div>
+                            </div>`;
+                discountBadgeHTML = ``;
             } else {
                 priceHTML = `<p class="text-2xl font-bold text-gray-900">Bs. ${Math.round(product.sale_price)}</p>`;
+                discountBadgeHTML = ``;
             }
 
             if (isOutOfStock) {
@@ -549,7 +553,7 @@
                         <h1 class="text-2xl font-bold text-gray-900">${product.name}</h1>
                         <p class="text-sm text-gray-500 mt-1">SKU: ${product.sku || 'No disponible'}</p>
                         
-                        <div class="mt-2 flex items-end">${priceHTML} ${discountBadgeHTML}</div>
+                        <div class="mt-2">${priceHTML} ${discountBadgeHTML}</div>
                         ${stockHTML}
                         
                         <div class="mt-4">
@@ -850,3 +854,5 @@
 
 </body>
 </html>
+
+
