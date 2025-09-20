@@ -422,7 +422,6 @@
                 photoUrls.push('https://placehold.co/600x600/e2e8f0/cbd5e0?text=Sin+Imagen');
             }
             
-            // Price, Discount, and Stock Logic
             let priceHTML = '';
             let discountBadgeHTML = '';
             let stockHTML = '';
@@ -432,7 +431,7 @@
                 const discountPercentage = Math.round(((product.sale_price - product.discount_price) / product.sale_price) * 100);
                 priceHTML = `<div class="flex items-baseline space-x-2"><span class="text-2xl font-bold text-red-600">Bs. ${Math.round(product.discount_price)}</span><span class="text-lg text-gray-500 line-through">Bs. ${Math.round(product.sale_price)}</span></div>`;
                 discountBadgeHTML = `
-                    <div class="w-16 h-auto ml-4">
+                    <div class="w-12 h-auto ml-4">
                         <svg data-name="Capa 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 302.44 402.78">
                             <defs>
                                 <linearGradient id="discount-gradient-${product.id}" x1="151.22" y1="402.78" x2="151.22" y2="0" gradientUnits="userSpaceOnUse">
@@ -461,7 +460,7 @@
             }
 
             const description = product.description || 'No hay descripción disponible.';
-            const snippetLength = 200;
+            const snippetLength = 800; // Increased snippet length
             const hasLongDescription = description.length > snippetLength;
             let descriptionHTML = hasLongDescription 
                 ? `<div>
