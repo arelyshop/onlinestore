@@ -596,8 +596,8 @@
                 resultsContainer.innerHTML = '';
 
                 if (searchTerm.length === 0) {
-                    // Don't hide the container, just show a helpful message.
                     resultsContainer.innerHTML = `<p class="p-4 text-center text-sm text-gray-500">Comienza a escribir para ver resultados.</p>`;
+                    // Keep it visible
                     resultsContainer.classList.remove('hidden');
                     return;
                 }
@@ -631,34 +631,19 @@
             
             mobileSearchInput.addEventListener('input', handleSearchPopup);
             desktopSearchInput.addEventListener('input', handleSearchPopup);
+            
+            mobileSearchInput.addEventListener('focus', handleSearchPopup);
+            desktopSearchInput.addEventListener('focus', handleSearchPopup);
 
-            // Show results on focus if there's already text
-            const showResultsOnFocus = (event) => {
-                 if (event.target.value.length > 0) {
-                    handleSearchPopup(event);
-                 } else {
-                    const resultsContainer = event.target.id === 'mobile-search-input' ? mobileSearchResults : desktopSearchResults;
-                    resultsContainer.innerHTML = `<p class="p-4 text-center text-sm text-gray-500">Comienza a escribir para ver resultados.</p>`;
-                    resultsContainer.classList.remove('hidden');
-                 }
+            const hideResultsWithDelay = (resultsContainer) => {
+                // This delay allows a click on a search result to register before the container is hidden.
+                setTimeout(() => {
+                    resultsContainer.classList.add('hidden');
+                }, 200); 
             };
 
-            mobileSearchInput.addEventListener('focus', showResultsOnFocus);
-            desktopSearchInput.addEventListener('focus', showResultsOnFocus);
-
-
-            // Hide search results when clicking anywhere outside the search containers
-            document.addEventListener('click', function(event) {
-                const mobileContainer = document.getElementById('mobile-search-container');
-                const desktopContainer = document.getElementById('desktop-search-container');
-
-                if (!mobileContainer.contains(event.target)) {
-                    mobileSearchResults.classList.add('hidden');
-                }
-                 if (!desktopContainer.contains(event.target)) {
-                    desktopSearchResults.classList.add('hidden');
-                }
-            });
+            mobileSearchInput.addEventListener('blur', () => hideResultsWithDelay(mobileSearchResults));
+            desktopSearchInput.addEventListener('blur', () => hideResultsWithDelay(desktopSearchResults));
 
             // --- Cart interaction logic ---
             const isMobile = () => window.innerWidth < 768;
