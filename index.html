@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="h-full">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -72,7 +72,7 @@
         }
     </style>
 </head>
-<body class="bg-gray-100">
+<body class="bg-gray-100 min-h-screen flex flex-col">
 
     <!-- Promotional Banner -->
     <div id="promo-banner" class="bg-[#4F07C8] p-1 relative text-center z-50">
@@ -279,7 +279,7 @@
     </div>
     
     <!-- Main Content -->
-    <main>
+    <main class="flex-grow">
         <div class="md:container md:mx-auto">
              <div class="md:w-[85%] md:mx-auto">
                 <!-- Banner Carousel -->
@@ -588,15 +588,17 @@
                 });
             }
             
-            // --- NEW Search Popup Logic ---
+            // --- Search Popup Logic ---
             function handleSearchPopup(event) {
                 const searchTerm = event.target.value.toLowerCase();
                 const resultsContainer = event.target.id === 'mobile-search-input' ? mobileSearchResults : desktopSearchResults;
                 
                 resultsContainer.innerHTML = '';
 
-                if (searchTerm.length < 2) {
-                    resultsContainer.classList.add('hidden');
+                if (searchTerm.length === 0) {
+                    // Don't hide the container, just show a helpful message.
+                    resultsContainer.innerHTML = `<p class="p-4 text-center text-sm text-gray-500">Comienza a escribir para ver resultados.</p>`;
+                    resultsContainer.classList.remove('hidden');
                     return;
                 }
 
@@ -630,7 +632,22 @@
             mobileSearchInput.addEventListener('input', handleSearchPopup);
             desktopSearchInput.addEventListener('input', handleSearchPopup);
 
-            // Hide search results when clicking outside
+            // Show results on focus if there's already text
+            const showResultsOnFocus = (event) => {
+                 if (event.target.value.length > 0) {
+                    handleSearchPopup(event);
+                 } else {
+                    const resultsContainer = event.target.id === 'mobile-search-input' ? mobileSearchResults : desktopSearchResults;
+                    resultsContainer.innerHTML = `<p class="p-4 text-center text-sm text-gray-500">Comienza a escribir para ver resultados.</p>`;
+                    resultsContainer.classList.remove('hidden');
+                 }
+            };
+
+            mobileSearchInput.addEventListener('focus', showResultsOnFocus);
+            desktopSearchInput.addEventListener('focus', showResultsOnFocus);
+
+
+            // Hide search results when clicking anywhere outside the search containers
             document.addEventListener('click', function(event) {
                 const mobileContainer = document.getElementById('mobile-search-container');
                 const desktopContainer = document.getElementById('desktop-search-container');
