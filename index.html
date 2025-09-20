@@ -561,7 +561,7 @@
                     const productCard = document.createElement('div');
                     productCard.className = 'bg-white rounded-lg shadow-md overflow-hidden group flex flex-col';
                     productCard.innerHTML = `
-                        <a href="#" class="block">
+                        <a href="product.html?id=${product.id}" class="block">
                             <div class="aspect-square overflow-hidden relative">
                                 ${discountBadgeHTML}
                                 <img src="${product.photo_url_1 || 'https://placehold.co/400x400/e2e8f0/cbd5e0?text=Producto'}" alt="${product.name}" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110" onerror="this.onerror=null;this.src='https://placehold.co/400x400/e2e8f0/cbd5e0?text=Error';">
@@ -597,9 +597,7 @@
 
                 if (searchTerm.length === 0) {
                     resultsContainer.innerHTML = `<p class="p-4 text-center text-sm text-gray-500">Comienza a escribir para ver resultados.</p>`;
-                    // Keep it visible
-                    resultsContainer.classList.remove('hidden');
-                    return;
+                    return; // Don't hide, just show the message
                 }
 
                 const filteredProducts = allProducts.filter(product =>
@@ -609,7 +607,7 @@
                 if (filteredProducts.length > 0) {
                     filteredProducts.slice(0, 10).forEach(product => { // Show max 10 results
                         const resultItem = document.createElement('a');
-                        resultItem.href = '#'; // Replace with product page URL later
+                        resultItem.href = `product.html?id=${product.id}`; // Link to product page
                         resultItem.className = 'flex items-center p-2 hover:bg-gray-100 transition-colors';
                         
                         const finalPrice = product.discount_price || product.sale_price;
@@ -626,24 +624,30 @@
                 } else {
                     resultsContainer.innerHTML = `<p class="p-4 text-center text-sm text-gray-500">No se encontraron productos.</p>`;
                 }
+            }
+            
+            function showResults(event) {
+                const resultsContainer = event.target.id === 'mobile-search-input' ? mobileSearchResults : desktopSearchResults;
+                handleSearchPopup(event); // Populate results
                 resultsContainer.classList.remove('hidden');
+            }
+
+            function hideResults(event) {
+                 const resultsContainer = event.target.id === 'mobile-search-input' ? mobileSearchResults : desktopSearchResults;
+                 // Delay hiding to allow clicks on results to register
+                 setTimeout(() => {
+                     resultsContainer.classList.add('hidden');
+                 }, 200);
             }
             
             mobileSearchInput.addEventListener('input', handleSearchPopup);
             desktopSearchInput.addEventListener('input', handleSearchPopup);
             
-            mobileSearchInput.addEventListener('focus', handleSearchPopup);
-            desktopSearchInput.addEventListener('focus', handleSearchPopup);
-
-            const hideResultsWithDelay = (resultsContainer) => {
-                // This delay allows a click on a search result to register before the container is hidden.
-                setTimeout(() => {
-                    resultsContainer.classList.add('hidden');
-                }, 200); 
-            };
-
-            mobileSearchInput.addEventListener('blur', () => hideResultsWithDelay(mobileSearchResults));
-            desktopSearchInput.addEventListener('blur', () => hideResultsWithDelay(desktopSearchResults));
+            mobileSearchInput.addEventListener('focus', showResults);
+            desktopSearchInput.addEventListener('focus', showResults);
+            
+            mobileSearchInput.addEventListener('blur', hideResults);
+            desktopSearchInput.addEventListener('blur', hideResults);
 
             // --- Cart interaction logic ---
             const isMobile = () => window.innerWidth < 768;
