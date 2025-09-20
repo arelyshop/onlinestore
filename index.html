@@ -56,6 +56,20 @@
             height: 1.25em; /* Height of the fade, equal to one line */
             background: linear-gradient(to top, white, rgba(255, 255, 255, 0));
         }
+        /* Custom scrollbar for search results */
+        .search-results-container::-webkit-scrollbar {
+            width: 8px;
+        }
+        .search-results-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        .search-results-container::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+        .search-results-container::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
     </style>
 </head>
 <body class="bg-gray-100">
@@ -89,11 +103,13 @@
                         <a href="index.html" class="h-9 flex-shrink-0">
                            <img src="/images/logo-movil.svg" alt="Arelyshop" class="h-full w-auto">
                         </a>
-                        <div class="relative flex-1">
+                        <div class="relative flex-1" id="mobile-search-container">
                             <input id="mobile-search-input" class="w-full pl-8 pr-4 py-2 text-sm text-gray-900 rounded-full focus:outline-none" autocomplete="off" type="text" placeholder="¿Qué estás buscando?" enterkeyhint="search">
                             <div class="absolute left-2 top-1/2 -translate-y-1/2">
                                 <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                             </div>
+                             <!-- Search results popup for mobile -->
+                            <div id="mobile-search-results" class="search-results-container absolute top-full mt-2 w-full bg-white rounded-lg shadow-lg hidden z-[60] max-h-80 overflow-y-auto"></div>
                         </div>
                     </div>
                     
@@ -119,13 +135,15 @@
                     </div>
 
                     <!-- Desktop Search Bar -->
-                    <div class="flex-1 max-w-2xl mx-4">
+                    <div class="flex-1 max-w-2xl mx-4 relative" id="desktop-search-container">
                         <div class="relative">
                             <input type="text" id="desktop-search-input" placeholder="¿Qué estás buscando?" class="w-full pl-10 pr-4 py-2 text-gray-900 rounded-full focus:outline-none focus:ring-2 focus:ring-white" autocomplete="off">
                             <div class="absolute left-4 top-1/2 -translate-y-1/2">
                                 <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                             </div>
                         </div>
+                        <!-- Search results popup for desktop -->
+                        <div id="desktop-search-results" class="search-results-container absolute top-full mt-2 w-full bg-white rounded-lg shadow-lg hidden z-[60] max-h-96 overflow-y-auto"></div>
                     </div>
                     
                     <!-- Desktop Icons -->
@@ -426,6 +444,9 @@
             const whatsappOrderBtn = document.getElementById('whatsapp-order-btn');
             const mobileSearchInput = document.getElementById('mobile-search-input');
             const desktopSearchInput = document.getElementById('desktop-search-input');
+            const mobileSearchResults = document.getElementById('mobile-search-results');
+            const desktopSearchResults = document.getElementById('desktop-search-results');
+
 
             // --- Initial Setup ---
             if(yearSpan) {
@@ -567,17 +588,60 @@
                 });
             }
             
-            // --- Search Logic ---
-            function handleSearch() {
-                const searchTerm = this.value.toLowerCase();
-                const filteredProducts = allProducts.filter(product => 
+            // --- NEW Search Popup Logic ---
+            function handleSearchPopup(event) {
+                const searchTerm = event.target.value.toLowerCase();
+                const resultsContainer = event.target.id === 'mobile-search-input' ? mobileSearchResults : desktopSearchResults;
+                
+                resultsContainer.innerHTML = '';
+
+                if (searchTerm.length < 2) {
+                    resultsContainer.classList.add('hidden');
+                    return;
+                }
+
+                const filteredProducts = allProducts.filter(product =>
                     product.name.toLowerCase().includes(searchTerm)
                 );
-                displayProducts(filteredProducts);
+
+                if (filteredProducts.length > 0) {
+                    filteredProducts.forEach(product => {
+                        const resultItem = document.createElement('a');
+                        resultItem.href = '#'; // Replace with product page URL later
+                        resultItem.className = 'flex items-center p-2 hover:bg-gray-100 transition-colors';
+                        
+                        const finalPrice = product.discount_price || product.sale_price;
+
+                        resultItem.innerHTML = `
+                            <img src="${product.photo_url_1 || 'https://placehold.co/100x100/e2e8f0/cbd5e0?text=Img'}" alt="${product.name}" class="w-12 h-12 object-cover rounded-md mr-4">
+                            <div class="flex-1">
+                                <p class="text-sm font-semibold text-gray-800">${product.name}</p>
+                                <p class="text-xs text-gray-600">Bs. ${Math.round(finalPrice)}</p>
+                            </div>
+                        `;
+                        resultsContainer.appendChild(resultItem);
+                    });
+                } else {
+                    resultsContainer.innerHTML = `<p class="p-4 text-center text-sm text-gray-500">No se encontraron productos.</p>`;
+                }
+                resultsContainer.classList.remove('hidden');
             }
             
-            mobileSearchInput.addEventListener('input', handleSearch);
-            desktopSearchInput.addEventListener('input', handleSearch);
+            mobileSearchInput.addEventListener('input', handleSearchPopup);
+            desktopSearchInput.addEventListener('input', handleSearchPopup);
+
+            // Hide search results when clicking outside
+            document.addEventListener('click', function(event) {
+                const mobileContainer = document.getElementById('mobile-search-container');
+                const desktopContainer = document.getElementById('desktop-search-container');
+
+                if (!mobileContainer.contains(event.target)) {
+                    mobileSearchResults.classList.add('hidden');
+                }
+                 if (!desktopContainer.contains(event.target)) {
+                    desktopSearchResults.classList.add('hidden');
+                }
+            });
 
             // --- Cart interaction logic ---
             const isMobile = () => window.innerWidth < 768;
