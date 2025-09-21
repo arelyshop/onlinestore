@@ -561,27 +561,62 @@
                         
                         <div class="mt-2 flex items-end">${priceHTML} ${discountBadgeHTML}</div>
                         ${stockHTML}
-
-                        <!-- Quantity Selector -->
-                        <div class="mt-6">
-                            <label for="quantity-input" class="block text-sm font-medium text-gray-700 mb-2">Cantidad:</label>
-                            <div class="flex items-center border border-gray-300 rounded-lg overflow-hidden max-w-[150px]">
-                                <button id="quantity-minus" class="px-4 py-2 text-lg font-bold text-gray-600 hover:bg-gray-100 focus:outline-none">-</button>
-                                <input id="quantity-input" type="number" value="1" min="1" max="${product.stock || 99}" class="w-full text-center font-semibold border-l border-r focus:outline-none">
-                                <button id="quantity-plus" class="px-4 py-2 text-lg font-bold text-gray-600 hover:bg-gray-100 focus:outline-none">+</button>
+                        
+                        <!-- Actions: Quantity and Add to Cart -->
+                        <div class="mt-8 flex items-center space-x-4">
+                            <!-- Quantity Selector -->
+                            <div class="flex items-center border border-gray-300 rounded-lg overflow-hidden">
+                                <button id="quantity-minus" class="p-3 text-gray-600 hover:bg-gray-100 focus:outline-none">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path></svg>
+                                </button>
+                                <input id="quantity-input" type="number" value="1" min="1" max="${product.stock || 99}" class="w-14 text-center font-semibold border-l border-r focus:outline-none py-2">
+                                <button id="quantity-plus" class="p-3 text-gray-600 hover:bg-gray-100 focus:outline-none">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v12m6-6H6"></path></svg>
+                                </button>
+                            </div>
+                            
+                            <!-- Add to Cart Button -->
+                            <div class="flex-1">
+                                <button class="add-to-cart-btn w-full bg-black text-white text-base py-3 px-4 rounded-lg hover:bg-gray-800 transition-colors flex items-center justify-center space-x-2 ${isOutOfStock ? 'opacity-50 cursor-not-allowed' : ''}" 
+                                    data-id="${product.id}"
+                                    data-name="${product.name}" 
+                                    data-price="${product.discount_price || product.sale_price}"
+                                    data-photo_url_1="${product.photo_url_1 || ''}"
+                                    ${isOutOfStock ? 'disabled' : ''}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="currentColor" viewBox="0 -960 960 960"><path d="M440-600v-120H320v-80h120v-120h80v120h120v80H520v120h-80ZM280-80q-33 0-56.5-23.5T200-160q0-33 23.5-56.5T280-240q33 0 56.5 23.5T360-160q0 33-23.5 56.5T280-80Zm400 0q-33 0-56.5-23.5T600-160q0-33 23.5-56.5T680-240q33 0 56.5 23.5T760-160q0 33-23.5 56.5T680-80ZM40-800v-80h131l170 360h280l156-280h91L692-482q-11 20-29.5 31T622-440H324l-44 80h480v80H280q-45 0-68.5-39t-1.5-79l54-98-144-304H40Z"/></svg>
+                                    <span>${isOutOfStock ? 'Agotado' : 'Agregar'}</span>
+                                </button>
                             </div>
                         </div>
-                        
-                        <div class="mt-6">
-                             <button class="add-to-cart-btn w-full bg-black text-white text-lg py-3 px-4 rounded-lg hover:bg-gray-800 transition-colors flex items-center justify-center space-x-2 ${isOutOfStock ? 'opacity-50 cursor-not-allowed' : ''}" 
-                                data-id="${product.id}"
-                                data-name="${product.name}" 
-                                data-price="${product.discount_price || product.sale_price}"
-                                data-photo_url_1="${product.photo_url_1 || ''}"
-                                ${isOutOfStock ? 'disabled' : ''}>
-                                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M440-600v-120H320v-80h120v-120h80v120h120v80H520v120h-80ZM280-80q-33 0-56.5-23.5T200-160q0-33 23.5-56.5T280-240q33 0 56.5 23.5T360-160q0 33-23.5 56.5T280-80Zm400 0q-33 0-56.5-23.5T600-160q0-33 23.5-56.5T680-240q33 0 56.5 23.5T760-160q0 33-23.5 56.5T680-80ZM40-800v-80h131l170 360h280l156-280h91L692-482q-11 20-29.5 31T622-440H324l-44 80h480v80H280q-45 0-68.5-39t-1.5-79l54-98-144-304H40Z"/></svg>
-                                <span>${isOutOfStock ? 'Agotado' : 'Agregar al Carrito'}</span>
-                            </button>
+
+                        <!-- Shipping Methods -->
+                        <div class="mt-8">
+                            <h3 class="font-semibold text-gray-800 mb-3">Métodos de envío</h3>
+                            <div class="border rounded-lg p-4 space-y-4">
+                                <!-- Home Delivery -->
+                                <div class="flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-gray-600 mr-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                      <path d="M9 17a2 2 0 100-4 2 2 0 000 4z"></path>
+                                      <path d="M19 17a2 2 0 100-4 2 2 0 000 4z"></path>
+                                      <path d="M13 17H9m10 0h-2M3 17H1V6a1 1 0 011-1h14a1 1 0 011 1v4l4 2v5h-2M3 11h10"></path>
+                                    </svg>
+                                    <div>
+                                        <p class="font-semibold">Entrega a Domicilio</p>
+                                        <p class="text-sm text-gray-500">Recibe tu pedido en la puerta de tu casa.</p>
+                                    </div>
+                                </div>
+                                <div class="border-t my-2"></div>
+                                <!-- Warehouse Pickup -->
+                                <div class="flex items-center">
+                                     <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-gray-600 mr-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                      <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                                    </svg>
+                                    <div>
+                                        <p class="font-semibold">Recoger por Almacén</p>
+                                        <p class="text-sm text-gray-500">Acércate a nuestro almacén para recoger tu pedido.</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         
                         <div class="mt-6 flex-grow">
