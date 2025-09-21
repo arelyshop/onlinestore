@@ -326,7 +326,7 @@
                     <h3 class="font-bold text-lg mb-4">Categorías</h3>
                     <ul class="space-y-2 text-sm text-gray-400">
                         <li><a href="/" class="hover:underline">Inicio</a></li>
-                        <li><a href="https://arelyshop.com/all-products" class="hover:underline">Productos</a></li>
+                        <li><a href="all-products.html" class="hover:underline">Productos</a></li>
                         <li><a href="/contacto/" class="hover:underline">Contacto</a></li>
                     </ul>
                 </div>
@@ -451,7 +451,6 @@
 
         function formatDescription(text) {
             if (!text) return '';
-            // Reemplaza *texto* con <strong>texto</strong> para negrita
             return text.replace(/\*(.*?)\*/g, '<strong>$1</strong>');
         }
         
@@ -509,7 +508,7 @@
             }
 
             const description = product.description || 'No hay descripción disponible.';
-            const snippetLength = 800; // Increased snippet length
+            const snippetLength = 800;
             const hasLongDescription = description.length > snippetLength;
             let descriptionHTML = '';
 
@@ -524,16 +523,13 @@
                 descriptionHTML = `<p class="text-gray-600 mt-4 whitespace-pre-wrap">${formatDescription(description)}</p>`;
             }
 
-
             container.innerHTML = `
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:w-[85%] md:mx-auto">
                     <!-- Image Gallery -->
                     <div>
-                        <div class="relative overflow-hidden">
-                            <div id="main-image-container" class="aspect-square bg-white rounded-lg shadow-md mb-4 overflow-hidden flex transition-transform duration-500 ease-in-out" style="transform: translateX(0%);">
-                                ${photoUrls.map(url => `
-                                    <img src="${url}" alt="${product.name}" class="w-full h-full object-cover rounded-lg flex-shrink-0">
-                                `).join('')}
+                        <div class="relative">
+                            <div id="main-image-container" class="aspect-square bg-white rounded-lg shadow-md mb-4 overflow-hidden">
+                                <img id="main-product-image" src="${photoUrls[0]}" alt="${product.name}" class="w-full h-full object-cover rounded-lg">
                             </div>
                             <button id="prev-image-btn" class="absolute top-1/2 left-4 -translate-y-1/2 bg-white/50 hover:bg-white p-2 rounded-full shadow-md transition">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
@@ -580,7 +576,8 @@
         
         function setupProductPageEventListeners(photoUrls, hasLongDescription) {
             // Setup Gallery
-            const imageContainer = document.getElementById('main-image-container');
+            const mainImage = document.getElementById('main-product-image');
+            const mainImageContainer = document.getElementById('main-image-container');
             const prevBtn = document.getElementById('prev-image-btn');
             const nextBtn = document.getElementById('next-image-btn');
             const thumbnails = document.querySelectorAll('#thumbnail-container img');
@@ -590,7 +587,7 @@
                 if (index >= photoUrls.length) index = 0;
                 if (index < 0) index = photoUrls.length - 1;
                 
-                imageContainer.style.transform = `translateX(-${index * 100}%)`;
+                mainImage.src = photoUrls[index];
                 currentIndex = index;
 
                 thumbnails.forEach((thumb, i) => {
@@ -603,13 +600,13 @@
 
             prevBtn.addEventListener('click', () => showImage(currentIndex - 1));
             nextBtn.addEventListener('click', () => showImage(currentIndex + 1));
-            thumbnails.forEach((thumb) => {
-                thumb.addEventListener('click', (e) => showImage(parseInt(e.target.dataset.index)));
+            thumbnails.forEach((thumb, index) => {
+                thumb.addEventListener('click', () => showImage(index));
             });
             
             let touchStartX = 0;
-            imageContainer.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; }, { passive: true });
-            imageContainer.addEventListener('touchend', (e) => {
+            mainImageContainer.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; }, { passive: true });
+            mainImageContainer.addEventListener('touchend', (e) => {
                 const touchEndX = e.changedTouches[0].clientX;
                 if (touchStartX - touchEndX > 50) { // Swipe left
                     showImage(currentIndex + 1);
