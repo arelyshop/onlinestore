@@ -51,6 +51,15 @@
                 display: none;
             }
         }
+        /* Hide number input arrows */
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col">
@@ -326,7 +335,7 @@
                     <h3 class="font-bold text-lg mb-4">Categorías</h3>
                     <ul class="space-y-2 text-sm text-gray-400">
                         <li><a href="/" class="hover:underline">Inicio</a></li>
-                        <li><a href="https://arelyshop.com/all-products" class="hover:underline">Productos</a></li>
+                        <li><a href="all-products.html" class="hover:underline">Productos</a></li>
                         <li><a href="/contacto/" class="hover:underline">Contacto</a></li>
                     </ul>
                 </div>
@@ -382,7 +391,7 @@
     document.addEventListener('DOMContentLoaded', function () {
         // --- GLOBAL STATE ---
         let allProducts = [];
-        let cart = [];
+        let cart = []; // Now stores objects with { id, name, price, quantity, photo_url_1 }
         let currentProduct = null;
 
         // --- ELEMENT SELECTORS ---
@@ -451,7 +460,6 @@
 
         function formatDescription(text) {
             if (!text) return '';
-            // Reemplaza *texto* con <strong>texto</strong> para negrita
             return text.replace(/\*(.*?)\*/g, '<strong>$1</strong>');
         }
         
@@ -508,8 +516,8 @@
                  stockHTML = `<p class="mt-2 font-semibold text-lg text-green-600">En stock</p>`;
             }
 
-            const description = product.description || 'No hay  disponible.';
-            const snippetLength = 800; // Increased snippet length
+            const description = product.description || 'No hay descripción disponible.';
+            const snippetLength = 800;
             const hasLongDescription = description.length > snippetLength;
             let descriptionHTML = '';
 
@@ -524,16 +532,13 @@
                 descriptionHTML = `<p class="text-gray-600 mt-4 whitespace-pre-wrap">${formatDescription(description)}</p>`;
             }
 
-
             container.innerHTML = `
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:w-[85%] md:mx-auto">
                     <!-- Image Gallery -->
                     <div>
-                        <div class="relative overflow-hidden">
-                            <div id="main-image-container" class="aspect-square bg-white rounded-lg shadow-md mb-4 overflow-hidden flex transition-transform duration-500 ease-in-out" style="transform: translateX(0%);">
-                                ${photoUrls.map(url => `
-                                    <img src="${url}" alt="${product.name}" class="w-full h-full object-cover rounded-lg flex-shrink-0">
-                                `).join('')}
+                        <div class="relative">
+                            <div id="main-image-container" class="aspect-square bg-white rounded-lg shadow-md mb-4 overflow-hidden">
+                                <img id="main-product-image" src="${photoUrls[0]}" alt="${product.name}" class="w-full h-full object-cover rounded-lg">
                             </div>
                             <button id="prev-image-btn" class="absolute top-1/2 left-4 -translate-y-1/2 bg-white/50 hover:bg-white p-2 rounded-full shadow-md transition">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
@@ -556,11 +561,23 @@
                         
                         <div class="mt-2 flex items-end">${priceHTML} ${discountBadgeHTML}</div>
                         ${stockHTML}
+
+                        <!-- Quantity Selector -->
+                        <div class="mt-6">
+                            <label for="quantity-input" class="block text-sm font-medium text-gray-700 mb-2">Cantidad:</label>
+                            <div class="flex items-center border border-gray-300 rounded-lg overflow-hidden max-w-[150px]">
+                                <button id="quantity-minus" class="px-4 py-2 text-lg font-bold text-gray-600 hover:bg-gray-100 focus:outline-none">-</button>
+                                <input id="quantity-input" type="number" value="1" min="1" max="${product.stock || 99}" class="w-full text-center font-semibold border-l border-r focus:outline-none">
+                                <button id="quantity-plus" class="px-4 py-2 text-lg font-bold text-gray-600 hover:bg-gray-100 focus:outline-none">+</button>
+                            </div>
+                        </div>
                         
-                        <div class="mt-4">
+                        <div class="mt-6">
                              <button class="add-to-cart-btn w-full bg-black text-white text-lg py-3 px-4 rounded-lg hover:bg-gray-800 transition-colors flex items-center justify-center space-x-2 ${isOutOfStock ? 'opacity-50 cursor-not-allowed' : ''}" 
+                                data-id="${product.id}"
                                 data-name="${product.name}" 
                                 data-price="${product.discount_price || product.sale_price}"
+                                data-photo_url_1="${product.photo_url_1 || ''}"
                                 ${isOutOfStock ? 'disabled' : ''}>
                                 <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M440-600v-120H320v-80h120v-120h80v120h120v80H520v120h-80ZM280-80q-33 0-56.5-23.5T200-160q0-33 23.5-56.5T280-240q33 0 56.5 23.5T360-160q0 33-23.5 56.5T280-80Zm400 0q-33 0-56.5-23.5T600-160q0-33 23.5-56.5T680-240q33 0 56.5 23.5T760-160q0 33-23.5 56.5T680-80ZM40-800v-80h131l170 360h280l156-280h91L692-482q-11 20-29.5 31T622-440H324l-44 80h480v80H280q-45 0-68.5-39t-1.5-79l54-98-144-304H40Z"/></svg>
                                 <span>${isOutOfStock ? 'Agotado' : 'Agregar al Carrito'}</span>
@@ -580,7 +597,8 @@
         
         function setupProductPageEventListeners(photoUrls, hasLongDescription) {
             // Setup Gallery
-            const imageContainer = document.getElementById('main-image-container');
+            const mainImage = document.getElementById('main-product-image');
+            const mainImageContainer = document.getElementById('main-image-container');
             const prevBtn = document.getElementById('prev-image-btn');
             const nextBtn = document.getElementById('next-image-btn');
             const thumbnails = document.querySelectorAll('#thumbnail-container img');
@@ -590,7 +608,7 @@
                 if (index >= photoUrls.length) index = 0;
                 if (index < 0) index = photoUrls.length - 1;
                 
-                imageContainer.style.transform = `translateX(-${index * 100}%)`;
+                mainImage.src = photoUrls[index];
                 currentIndex = index;
 
                 thumbnails.forEach((thumb, i) => {
@@ -603,13 +621,13 @@
 
             prevBtn.addEventListener('click', () => showImage(currentIndex - 1));
             nextBtn.addEventListener('click', () => showImage(currentIndex + 1));
-            thumbnails.forEach((thumb) => {
-                thumb.addEventListener('click', (e) => showImage(parseInt(e.target.dataset.index)));
+            thumbnails.forEach((thumb, index) => {
+                thumb.addEventListener('click', () => showImage(index));
             });
             
             let touchStartX = 0;
-            imageContainer.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; }, { passive: true });
-            imageContainer.addEventListener('touchend', (e) => {
+            mainImageContainer.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; }, { passive: true });
+            mainImageContainer.addEventListener('touchend', (e) => {
                 const touchEndX = e.changedTouches[0].clientX;
                 if (touchStartX - touchEndX > 50) { // Swipe left
                     showImage(currentIndex + 1);
@@ -622,6 +640,26 @@
                 prevBtn.style.display = 'none';
                 nextBtn.style.display = 'none';
             }
+
+            // Quantity Selector
+            const quantityInput = document.getElementById('quantity-input');
+            const quantityMinus = document.getElementById('quantity-minus');
+            const quantityPlus = document.getElementById('quantity-plus');
+            const maxStock = parseInt(quantityInput.max, 10);
+
+            quantityMinus.addEventListener('click', () => {
+                let currentValue = parseInt(quantityInput.value, 10);
+                if (currentValue > 1) {
+                    quantityInput.value = currentValue - 1;
+                }
+            });
+
+            quantityPlus.addEventListener('click', () => {
+                let currentValue = parseInt(quantityInput.value, 10);
+                 if (currentValue < maxStock) {
+                    quantityInput.value = currentValue + 1;
+                }
+            });
 
             // Add to Cart button
             document.querySelector('.add-to-cart-btn').addEventListener('click', handleAddToCart);
@@ -771,11 +809,13 @@
         const renderCart = () => {
             cartItemsContainer.innerHTML = cart.length === 0 ? '<p class="text-gray-500 text-center">Tu carrito está vacío.</p>' : cart.map((item, index) => `
                 <div class="flex justify-between items-center mb-4 pb-4 border-b">
-                    <div>
-                        <h4 class="font-semibold">${item.name}</h4>
+                     <img src="${item.photo_url_1 || 'https://placehold.co/100x100/e2e8f0/cbd5e0?text=Img'}" alt="${item.name}" class="w-16 h-16 object-cover rounded-md mr-4">
+                    <div class="flex-1">
+                        <h4 class="font-semibold text-sm">${item.name}</h4>
                         <p class="text-gray-600">Bs. ${parseFloat(item.price).toFixed(2)}</p>
+                        <p class="text-gray-500 text-sm">Cantidad: ${item.quantity}</p>
                     </div>
-                    <button class="remove-from-cart-btn text-red-500 hover:text-red-700" data-index="${index}">
+                    <button class="remove-from-cart-btn text-red-500 hover:text-red-700" data-id="${item.id}">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm4 0a1 1 0 012 0v6a1 1 0 11-2 0V8z" clip-rule="evenodd" /></svg>
                     </button>
                 </div>
@@ -785,19 +825,34 @@
         };
 
         const updateCartTotal = () => {
-            const total = cart.reduce((sum, item) => sum + parseFloat(item.price), 0);
+            const total = cart.reduce((sum, item) => sum + (parseFloat(item.price) * item.quantity), 0);
             cartTotalEl.textContent = `Bs. ${total.toFixed(2)}`;
         };
 
         const updateCartCount = () => {
-            const count = cart.length;
+            const count = cart.reduce((sum, item) => sum + item.quantity, 0);
             mobileCartCount.textContent = count;
             desktopCartCount.textContent = count;
         };
 
         const handleAddToCart = (e) => {
             const button = e.currentTarget;
-            cart.push({ name: button.dataset.name, price: parseFloat(button.dataset.price) });
+            const quantityInput = document.getElementById('quantity-input');
+            const quantity = parseInt(quantityInput.value, 10);
+            
+            const productId = parseInt(button.dataset.id, 10);
+            const name = button.dataset.name;
+            const price = parseFloat(button.dataset.price);
+            const photo_url_1 = button.dataset.photo_url_1;
+
+            const existingItem = cart.find(item => item.id === productId);
+
+            if (existingItem) {
+                existingItem.quantity += quantity;
+            } else {
+                cart.push({ id: productId, name, price, quantity, photo_url_1 });
+            }
+
             renderCart();
             [mobileCartBtn, desktopCartBtn].forEach(icon => {
                 if (icon) {
@@ -809,16 +864,25 @@
         
         cartItemsContainer.addEventListener('click', (e) => {
              if (e.target.closest('.remove-from-cart-btn')) {
-                cart.splice(parseInt(e.target.closest('.remove-from-cart-btn').dataset.index, 10), 1);
+                const button = e.target.closest('.remove-from-cart-btn');
+                const productIdToRemove = parseInt(button.dataset.id, 10);
+                cart = cart.filter(item => item.id !== productIdToRemove);
                 renderCart();
             }
         });
         
         whatsappOrderBtn.addEventListener('click', () => {
-            if (cart.length === 0) return alert("Tu carrito está vacío.");
-            let message = '¡Hola! Quisiera hacer el siguiente pedido:\n\n' + cart.map(item => `- ${item.name} (Bs. ${parseFloat(item.price).toFixed(2)})`).join('\n');
-            const total = cart.reduce((sum, item) => sum + parseFloat(item.price), 0);
-            message += `\n\n*Total a pagar: Bs. ${total.toFixed(2)}*`;
+            if (cart.length === 0) {
+                alert("Tu carrito está vacío.");
+                return;
+            }
+            
+            let message = '¡Hola! Quisiera hacer el siguiente pedido:\n\n';
+            cart.forEach(item => {
+                message += `- ${item.quantity} x ${item.name} (Bs. ${parseFloat(item.price).toFixed(2)})\n`;
+            });
+            const total = cart.reduce((sum, item) => sum + (parseFloat(item.price) * item.quantity), 0);
+            message += `\n*Total a pagar: Bs. ${total.toFixed(2)}*`;
             window.open(`https://wa.me/59167500044?text=${encodeURIComponent(message)}`, '_blank');
         });
         
