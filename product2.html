@@ -508,7 +508,7 @@
                  stockHTML = `<p class="mt-2 font-semibold text-lg text-green-600">En stock</p>`;
             }
 
-            const description = product.description || 'No hay descripción disponible.';
+            const description = product.description || 'No hay  disponible.';
             const snippetLength = 800; // Increased snippet length
             const hasLongDescription = description.length > snippetLength;
             let descriptionHTML = '';
@@ -568,7 +568,7 @@
                         </div>
                         
                         <div class="mt-6 flex-grow">
-                            <h2 class="text-lg font-semibold text-gray-800 border-b pb-2">Descripción</h2>
+                            <h2 class="text-lg font-semibold text-gray-800 border-b pb-2">Descripción:</h2>
                             ${descriptionHTML}
                         </div>
                     </div>
