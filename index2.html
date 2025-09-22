@@ -39,12 +39,9 @@
             animation: cart-bounce 0.5s ease;
         }
         /* Product title clamp */
-        .product-title-container {
-            height: 2.5em; /* 1.25em line-height * 2 */
-        }
-        .product-title-container h3 {
+        .product-title {
+            height: 2.5em; /* Matches 2 lines with 1.25em line-height */
             line-height: 1.25em;
-            height: 100%; /* Fill the container */
             overflow: hidden;
             display: -webkit-box;
             -webkit-box-orient: vertical;
@@ -550,9 +547,7 @@
                                 <img src="${product.photo_url_1 || 'https://placehold.co/400x400/e2e8f0/cbd5e0?text=Producto'}" alt="${product.name}" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110" onerror="this.onerror=null;this.src='https://placehold.co/400x400/e2e8f0/cbd5e0?text=Error';">
                             </div>
                             <div class="p-2 pb-0 text-center">
-                                <div class="product-title-container">
-                                    <h3 class="font-semibold text-gray-800 text-sm">${product.name}</h3>
-                                </div>
+                                <h3 class="product-title font-semibold text-gray-800 text-sm">${product.name}</h3>
                                 ${priceHTML}
                             </div>
                         </a>
@@ -928,5 +923,3 @@
     </script>
 </body>
 </html>
-
-
