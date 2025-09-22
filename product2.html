@@ -655,8 +655,31 @@
                 const grid = document.getElementById('similar-products-grid');
                 grid.innerHTML = similarProducts.map(product => {
                      let priceHTML = '';
+                     let discountBadgeHTML = '';
+
                      if (product.discount_price && product.sale_price && product.discount_price < product.sale_price) {
+                        const discountPercentage = Math.round(((product.sale_price - product.discount_price) / product.sale_price) * 100);
                         priceHTML = `<div class="mt-1 flex items-baseline justify-center space-x-2 flex-wrap"><span class="text-gray-500 line-through text-sm">Bs. ${Math.round(product.sale_price)}</span><span class="font-bold text-red-600 text-base">Bs. ${Math.round(product.discount_price)}</span></div>`;
+                        
+                        discountBadgeHTML = `
+                            <div class="absolute bottom-1 left-1 w-12 h-auto z-10">
+                                <svg data-name="Capa 2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 302.44 402.78">
+                                    <defs>
+                                        <linearGradient id="Degradado_sin_nombre_13_new_${product.id}" data-name="Degradado sin nombre 13" x1="151.22" y1="402.78" x2="151.22" y2="0" gradientUnits="userSpaceOnUse">
+                                            <stop offset="0" stop-color="#e20919"/>
+                                            <stop offset="1" stop-color="#fb6404"/>
+                                        </linearGradient>
+                                    </defs>
+                                    <g>
+                                        <path fill="url(#Degradado_sin_nombre_13_new_${product.id})" fill-rule="evenodd" d="M61.01,179.91C51.45,94.39,101.43,34.24,195.1,0c-57.38,74.43,48.9,155.06,54.76,232.36,13.74-23.43,21.53-54.72,23.08-96.52,70.24,110.2,12.01,290.3-142.57,264.42-14.19-2.37-27.87-6.85-40.33-13.52C33.68,356.62,0,291.04,0,228.4c0-39.92,17.08-75.57,39.18-103.89,2.95,27.75,9.24,48.44,21.83,55.4Z"/>
+                                    </g>
+                                    <text x="151.22" y="280" font-family="Inter, sans-serif" font-weight="bold" fill="white" text-anchor="middle">
+                                        <tspan font-size="80">${discountPercentage}%</tspan>
+                                        <tspan x="151.22" dy="80" font-size="90">OFF</tspan>
+                                    </text>
+                                </svg>
+                            </div>
+                        `;
                     } else {
                         priceHTML = `<p class="text-gray-600 mt-1 text-center font-semibold">Bs. ${Math.round(product.sale_price)}</p>`;
                     }
@@ -664,6 +687,7 @@
                         <div class="bg-white rounded-lg shadow-md overflow-hidden group flex flex-col">
                             <a href="product.html?id=${product.id}" class="block">
                                 <div class="aspect-square overflow-hidden relative">
+                                    ${discountBadgeHTML}
                                     <img src="${product.photo_url_1 || 'https://placehold.co/400x400/e2e8f0/cbd5e0?text=Producto'}" alt="${product.name}" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110" onerror="this.onerror=null;this.src='https://placehold.co/400x400/e2e8f0/cbd5e0?text=Error';">
                                 </div>
                                 <div class="p-2 pb-0 text-center">
@@ -886,4 +910,5 @@
 
 </body>
 </html>
+
 
