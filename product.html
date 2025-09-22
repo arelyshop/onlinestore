@@ -539,7 +539,7 @@
                     <div>
                         <div class="relative">
                             <div id="main-image-container" class="aspect-square bg-white rounded-lg shadow-md mb-4 overflow-hidden">
-                                <img id="main-product-image" src="${photoUrls[0]}" alt="${product.name}" class="w-full h-full object-cover rounded-lg">
+                                <img id="main-product-image" src="${photoUrls[0]}" alt="${product.name}" class="w-full h-full object-contain rounded-lg bg-white">
                             </div>
                             <button id="prev-image-btn" class="absolute top-1/2 left-4 -translate-y-1/2 bg-white/50 hover:bg-white p-2 rounded-full shadow-md transition">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
@@ -550,7 +550,7 @@
                         </div>
                         <div id="thumbnail-container" class="custom-scrollbar flex space-x-2 overflow-x-auto pb-2">
                             ${photoUrls.map((url, index) => `
-                                <img src="${url}" alt="Thumbnail ${index + 1}" class="w-20 h-20 flex-shrink-0 object-cover rounded-md cursor-pointer border-2 ${index === 0 ? 'thumbnail-active' : 'border-transparent'} hover:border-gray-400 transition" data-index="${index}">
+                                <img src="${url}" alt="Thumbnail ${index + 1}" class="bg-white w-20 h-20 flex-shrink-0 object-contain rounded-md cursor-pointer border-2 ${index === 0 ? 'thumbnail-active' : 'border-transparent'} hover:border-gray-400 transition" data-index="${index}">
                             `).join('')}
                         </div>
                     </div>
