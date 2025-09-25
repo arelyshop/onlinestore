@@ -80,7 +80,10 @@
                                 </div>
                                 <div>
                                     <label for="sku" class="block text-gray-700 font-semibold mb-2">SKU</label>
-                                    <input type="text" id="sku" name="sku" class="w-full px-3 py-2 border rounded-lg">
+                                    <div class="flex items-center space-x-2">
+                                        <input type="text" id="sku" name="sku" class="w-full px-3 py-2 border rounded-lg">
+                                        <button type="button" id="suggest-sku-btn" class="text-sm bg-gray-600 text-white font-bold py-2 px-3 rounded-lg hover:bg-gray-700 transition-colors whitespace-nowrap">Sugerir</button>
+                                    </div>
                                 </div>
                                 <div class="md:col-span-2">
                                     <label for="description" class="block text-gray-700 font-semibold mb-2">Descripción</label>
@@ -107,12 +110,35 @@
                                     <input type="number" id="stock" name="stock" class="w-full px-3 py-2 border rounded-lg" required>
                                 </div>
                                 <div>
-                                    <label for="category" class="block text-gray-700 font-semibold mb-2">Categoría</label>
-                                    <input type="text" id="category" name="category" class="w-full px-3 py-2 border rounded-lg">
+                                    <label for="category-select" class="block text-gray-700 font-semibold mb-2">Categoría</label>
+                                    <select id="category-select" name="category-select" class="w-full px-3 py-2 border rounded-lg">
+                                        <option value="">Seleccionar categoría...</option>
+                                        <option>Cargadores & Cables</option>
+                                        <option>Power Banks</option>
+                                        <option>Hub Multipuertos</option>
+                                        <option>Adaptadores & Convertidores</option>
+                                        <option>Teclados & Mouse</option>
+                                        <option>Accesorios para Laptop</option>
+                                        <option>Mochilas & Organizadores</option>
+                                        <option>Accesorios de Escritorio</option>
+                                        <option value="custom">Otra...</option>
+                                    </select>
+                                    <input type="text" id="category-custom" name="category-custom" class="w-full px-3 py-2 border rounded-lg mt-2 hidden" placeholder="Escribir categoría personalizada">
                                 </div>
                                  <div>
-                                    <label for="brand" class="block text-gray-700 font-semibold mb-2">Marca</label>
-                                    <input type="text" id="brand" name="brand" class="w-full px-3 py-2 border rounded-lg">
+                                    <label for="brand-select" class="block text-gray-700 font-semibold mb-2">Marca</label>
+                                    <select id="brand-select" name="brand-select" class="w-full px-3 py-2 border rounded-lg">
+                                        <option value="">Seleccionar marca...</option>
+                                        <option>UGREEN</option>
+                                        <option>BASEUS</option>
+                                        <option>ANKER</option>
+                                        <option>ORICO</option>
+                                        <option>BELKIN</option>
+                                        <option>UNI</option>
+                                        <option>BENFEI</option>
+                                        <option value="custom">Otra...</option>
+                                    </select>
+                                    <input type="text" id="brand-custom" name="brand-custom" class="w-full px-3 py-2 border rounded-lg mt-2 hidden" placeholder="Escribir marca personalizada">
                                 </div>
                                 <div>
                                     <label for="barcode" class="block text-gray-700 font-semibold mb-2">Código de Barras</label>
