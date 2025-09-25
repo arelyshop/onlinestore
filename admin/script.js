@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <p class="font-semibold text-gray-800">${product.name}</p>
                     <p class="text-sm text-gray-500">SKU: ${product.sku || 'N/A'}</p>
                 </div>
-                <div class="text-sm text-gray-600">Stock: ${product.stock}</div>
+                <div class="text-sm text-gray-600">Stock: ${product.stock || 0}</div>
             </div>
         `).join('');
     };
@@ -128,9 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
         statusMessageEl.className = 'mt-4 text-center font-semibold';
         categoryCustomInput.classList.add('hidden');
         brandCustomInput.classList.add('hidden');
-        if (productListEl.querySelector('.bg-blue-100')) {
-             productListEl.querySelector('.bg-blue-100').classList.remove('bg-blue-100');
-        }
+        renderProductList(allProducts); // Re-render to clear selection highlight
     };
 
     /**
@@ -145,7 +143,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const formData = new FormData(productForm);
         const productData = Object.fromEntries(formData.entries());
         
-        // Handle custom category/brand logic
         productData.category = categorySelect.value === 'custom' ? categoryCustomInput.value : categorySelect.value;
         productData.brand = brandSelect.value === 'custom' ? brandCustomInput.value : brandSelect.value;
         delete productData['category-select'];
@@ -153,7 +150,6 @@ document.addEventListener('DOMContentLoaded', () => {
         delete productData['brand-select'];
         delete productData['brand-custom'];
 
-        // Convert numbers, handling empty strings as null
         const numericFields = ['sale_price', 'discount_price', 'purchase_price', 'wholesale_price', 'stock'];
         numericFields.forEach(field => {
             productData[field] = productData[field] === '' ? null : Number(productData[field]);
@@ -161,10 +157,8 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const isUpdating = !!currentProductId;
         const url = isUpdating ? `${API_URL}/update-product` : `${API_URL}/add-product`;
-        // Using POST for both as Netlify functions often simplify to POST, but method could be changed
-        const method = 'POST'; 
-        
-        // Add ID for updates
+        const method = isUpdating ? 'PUT' : 'POST'; // <-- THIS IS THE KEY FIX
+
         if(isUpdating) {
             productData.id = currentProductId;
         }
@@ -177,14 +171,19 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             
             if (!response.ok) {
-                 const errorData = await response.json();
-                throw new Error(errorData.error || 'Server error');
+                 const errorText = await response.text();
+                 try {
+                     const errorData = JSON.parse(errorText);
+                     throw new Error(errorData.error || 'Server error');
+                 } catch (e) {
+                     throw new Error(errorText); // If the error response wasn't JSON
+                 }
             }
 
             statusMessageEl.textContent = `¡Producto ${isUpdating ? 'actualizado' : 'agregado'} con éxito!`;
             statusMessageEl.className = 'mt-4 text-center font-semibold text-green-600';
 
-            await fetchAndRenderProducts(); // Refresh the list
+            await fetchAndRenderProducts();
             setTimeout(resetForm, 2000);
 
         } catch (error) {
@@ -210,7 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
              const response = await fetch(`${API_URL}/delete-product`, {
-                method: 'POST', // Or 'DELETE' if your function is set up for it
+                method: 'DELETE', // Using DELETE method
                 body: JSON.stringify({ id: currentProductId }),
                 headers: { 'Content-Type': 'application/json' },
             });
