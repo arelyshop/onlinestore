@@ -524,8 +524,8 @@
 
                     const isOutOfStock = product.stock <= 0;
 
-                    // Check for a valid discount price
-                    if (product.discount_price && product.sale_price && product.discount_price < product.sale_price) {
+                    // Check for a valid discount price, ONLY if the product is in stock
+                    if (!isOutOfStock && product.discount_price && product.sale_price && product.discount_price < product.sale_price) {
                         const discountPercentage = Math.round(((product.sale_price - product.discount_price) / product.sale_price) * 100);
                         
                         priceHTML = `
@@ -956,4 +956,5 @@
     </script>
 </body>
 </html>
+
 
