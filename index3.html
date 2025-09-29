@@ -68,16 +68,22 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%) rotate(-45deg);
-            background-color: rgba(0, 0, 0, 0.6);
+            background-color: rgba(0, 0, 0, 0.7);
             color: white;
             font-weight: bold;
-            padding: 8px 60px;
-            font-size: 1.5rem; /* 24px */
-            line-height: 2rem; /* 32px */
+            padding: 6px 12px;
+            font-size: 1rem; /* 16px */
             border-radius: 8px;
-            text-align: center;
             z-index: 10;
             pointer-events: none; /* Allows clicks to go through to the link */
+            display: flex;
+            align-items: center;
+            gap: 0.375rem; /* 6px */
+            white-space: nowrap;
+        }
+        .sold-out-watermark svg {
+            width: 1em;
+            height: 1em;
         }
         /* Custom smooth transition for flyout menus */
         #sidenav, #cart-flyout {
@@ -568,7 +574,7 @@
                     }
 
                     if (isOutOfStock) {
-                        stockOverlayHTML = `<div class="sold-out-watermark">AGOTADO</div>`;
+                        stockOverlayHTML = `<div class="sold-out-watermark"><span>AGOTADO</span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="white"><path d="M620-520q25 0 42.5-17.5T680-580q0-25-17.5-42.5T620-640q-25 0-42.5 17.5T560-580q0 25 17.5 42.5T620-520Zm-280 0q25 0 42.5-17.5T400-580q0-25-17.5-42.5T340-640q-25 0-42.5 17.5T280-580q0 25 17.5 42.5T340-520Zm140 100q-68 0-123.5 38.5T276-280h66q22-37 58.5-58.5T480-360q43 0 79.5 21.5T618-280h66q-25-63-80.5-101.5T480-420Zm0 340q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-400Zm0 320q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Z"/></svg></div>`;
                         addToCartButtonHTML = `
                             <button class="w-full bg-gray-400 text-white text-sm py-1.5 px-1 rounded-lg cursor-not-allowed" disabled>
                                 Agotado
@@ -981,6 +987,7 @@
     </script>
 </body>
 </html>
+
 
 
 
