@@ -678,16 +678,17 @@
                 const headerRect = header.getBoundingClientRect();
                 const totalTopOffset = headerRect.bottom;
 
-                // Use window.innerHeight which correctly accounts for the visible viewport
-                // on mobile, including when the browser's address bar is visible.
-                const availableHeight = window.innerHeight - totalTopOffset;
+                // Use the 'dvh' (dynamic viewport height) unit. This modern CSS unit is designed 
+                // specifically for mobile browsers and automatically adjusts for the appearance and 
+                // disappearance of the address bar, solving both the 1px gap and content cutoff issues.
+                const calculatedHeight = `calc(100dvh - ${totalTopOffset}px)`;
 
                 flyoutEl.style.top = `${totalTopOffset}px`;
-                flyoutEl.style.height = `${availableHeight}px`;
+                flyoutEl.style.height = calculatedHeight;
                 
                 if (overlayEl) {
                     overlayEl.style.top = `${totalTopOffset}px`;
-                    overlayEl.style.height = `${availableHeight}px`;
+                    overlayEl.style.height = calculatedHeight;
                 }
             }
             
@@ -980,6 +981,7 @@
     </script>
 </body>
 </html>
+
 
 
 
