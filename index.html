@@ -62,6 +62,23 @@
         .search-results-container::-webkit-scrollbar-thumb:hover {
             background: #555;
         }
+        /* Watermark for sold out products */
+        .sold-out-watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            background-color: rgba(0, 0, 0, 0.6);
+            color: white;
+            font-weight: bold;
+            padding: 8px 60px;
+            font-size: 1.5rem; /* 24px */
+            line-height: 2rem; /* 32px */
+            border-radius: 8px;
+            text-align: center;
+            z-index: 10;
+            pointer-events: none; /* Allows clicks to go through to the link */
+        }
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col">
@@ -502,9 +519,13 @@
                 products.forEach(product => {
                     let priceHTML = '';
                     let discountBadgeHTML = '';
+                    let stockOverlayHTML = '';
+                    let addToCartButtonHTML = '';
 
-                    // Check for a valid discount price
-                    if (product.discount_price && product.sale_price && product.discount_price < product.sale_price) {
+                    const isOutOfStock = product.stock <= 0;
+
+                    // Check for a valid discount price, ONLY if the product is in stock
+                    if (!isOutOfStock && product.discount_price && product.sale_price && product.discount_price < product.sale_price) {
                         const discountPercentage = Math.round(((product.sale_price - product.discount_price) / product.sale_price) * 100);
                         
                         priceHTML = `
@@ -538,13 +559,27 @@
                         priceHTML = `<p class="text-gray-600 mt-1 text-center font-semibold">Bs. ${Math.round(product.sale_price)}</p>`;
                     }
 
+                    if (isOutOfStock) {
+                        stockOverlayHTML = `<div class="sold-out-watermark">AGOTADO</div>`;
+                        addToCartButtonHTML = `
+                            <button class="w-full bg-gray-400 text-white text-sm py-1.5 px-1 rounded-lg cursor-not-allowed" disabled>
+                                Agotado
+                            </button>`;
+                    } else {
+                        addToCartButtonHTML = `
+                            <button class="add-to-cart-btn w-full bg-black text-white text-sm py-1.5 px-1 rounded-lg hover:bg-gray-800 transition-colors" data-name="${product.name}" data-price="${product.discount_price || product.sale_price}">
+                                Agregar al Carrito
+                            </button>`;
+                    }
+
                     const productCard = document.createElement('div');
                     productCard.className = 'bg-white rounded-lg shadow-md overflow-hidden group flex flex-col';
                     productCard.innerHTML = `
                         <a href="product.html?id=${product.id}" class="block">
                             <div class="aspect-square overflow-hidden relative">
+                                ${stockOverlayHTML}
                                 ${discountBadgeHTML}
-                                <img src="${product.photo_url_1 || 'https://placehold.co/400x400/e2e8f0/cbd5e0?text=Producto'}" alt="${product.name}" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110" onerror="this.onerror=null;this.src='https://placehold.co/400x400/e2e8f0/cbd5e0?text=Error';">
+                                <img src="${product.photo_url_1 || 'https://placehold.co/400x400/e2e8f0/cbd5e0?text=Producto'}" alt="${product.name}" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110 ${isOutOfStock ? 'opacity-50' : ''}" onerror="this.onerror=null;this.src='https://placehold.co/400x400/e2e8f0/cbd5e0?text=Error';">
                             </div>
                             <div class="p-2 pb-0 text-center">
                                 <h3 class="product-title font-semibold text-gray-800 text-sm">${product.name}</h3>
@@ -552,9 +587,7 @@
                             </div>
                         </a>
                         <div class="mt-auto p-2">
-                            <button class="add-to-cart-btn w-full bg-black text-white text-sm py-1.5 px-1 rounded-lg hover:bg-gray-800 transition-colors" data-name="${product.name}" data-price="${product.discount_price || product.sale_price}">
-                                Agregar al Carrito
-                            </button>
+                           ${addToCartButtonHTML}
                         </div>
                     `;
                     container.appendChild(productCard);
@@ -923,3 +956,5 @@
     </script>
 </body>
 </html>
+
+
