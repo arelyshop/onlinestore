@@ -83,6 +83,10 @@
         #sidenav, #cart-flyout {
             transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
+        /* New styles for overlay fade */
+        #sidenav-overlay, #cart-overlay {
+            transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col">
@@ -226,7 +230,7 @@
     </header>
 
     <!-- Sidenav Menu (For Mobile) -->
-    <div id="sidenav-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden md:hidden"></div>
+    <div id="sidenav-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden opacity-0 md:hidden"></div>
     <div id="sidenav" class="fixed top-0 left-0 w-72 bg-white shadow-lg transform -translate-x-full z-40 md:hidden flex flex-col">
         <div class="flex justify-between items-center py-2 px-4 border-b flex-shrink-0">
             <h2 class="text-xl font-bold">MENÚ</h2>
@@ -340,7 +344,7 @@
     </main>
 
     <!-- Floating Cart -->
-    <div id="cart-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 md:z-50 hidden"></div>
+    <div id="cart-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 md:z-50 hidden opacity-0"></div>
     <div id="cart-flyout" class="fixed top-0 right-0 h-full w-full md:max-w-sm bg-white shadow-lg transform translate-x-full z-40 md:z-50 flex flex-col">
         <!-- Cart Header -->
         <div class="flex justify-between items-center p-4 border-b flex-shrink-0">
@@ -699,12 +703,18 @@
                 
                 cartFlyout.classList.remove('translate-x-full');
                 cartOverlay.classList.remove('hidden');
+                requestAnimationFrame(() => {
+                    cartOverlay.classList.remove('opacity-0');
+                });
                 document.body.style.overflow = 'hidden';
             };
 
             const closeCart = () => {
                 cartFlyout.classList.add('translate-x-full');
-                cartOverlay.classList.add('hidden');
+                cartOverlay.classList.add('opacity-0');
+                setTimeout(() => {
+                    cartOverlay.classList.add('hidden');
+                }, 500); // Match CSS transition duration
                 document.body.style.overflow = '';
             };
             
@@ -806,12 +816,18 @@
                 adjustFlyoutPosition(sidenav, sidenavOverlay);
                 sidenav.classList.remove('-translate-x-full');
                 sidenavOverlay.classList.remove('hidden');
+                requestAnimationFrame(() => {
+                    sidenavOverlay.classList.remove('opacity-0');
+                });
                 document.body.style.overflow = 'hidden';
             };
 
             const closeSidenav = () => {
                 sidenav.classList.add('-translate-x-full');
-                sidenavOverlay.classList.add('hidden');
+                sidenavOverlay.classList.add('opacity-0');
+                setTimeout(() => {
+                    sidenavOverlay.classList.add('hidden');
+                }, 500); // Match transition duration
                 document.body.style.overflow = '';
             };
             
@@ -960,7 +976,4 @@
     </script>
 </body>
 </html>
-
-
-
 
