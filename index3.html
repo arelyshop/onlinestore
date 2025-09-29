@@ -677,17 +677,17 @@
                 
                 const headerRect = header.getBoundingClientRect();
                 const totalTopOffset = headerRect.bottom;
-                
-                // Use `calc` with the `vh` unit. This is more reliable on mobile browsers 
-                // for full-height calculations and avoids sub-pixel rendering gaps.
-                const calculatedHeight = `calc(100vh - ${totalTopOffset}px)`;
+
+                // Use window.innerHeight which correctly accounts for the visible viewport
+                // on mobile, including when the browser's address bar is visible.
+                const availableHeight = window.innerHeight - totalTopOffset;
 
                 flyoutEl.style.top = `${totalTopOffset}px`;
-                flyoutEl.style.height = calculatedHeight;
+                flyoutEl.style.height = `${availableHeight}px`;
                 
                 if (overlayEl) {
                     overlayEl.style.top = `${totalTopOffset}px`;
-                    overlayEl.style.height = calculatedHeight;
+                    overlayEl.style.height = `${availableHeight}px`;
                 }
             }
             
@@ -980,4 +980,5 @@
     </script>
 </body>
 </html>
+
 
