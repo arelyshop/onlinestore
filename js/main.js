@@ -10,7 +10,13 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!response.ok) throw new Error(`Could not load ${component}`);
             const text = await response.text();
             const element = document.querySelector(selector);
-            if (element) element.innerHTML = text;
+            if (element) {
+                // Use a temporary wrapper to parse the component HTML
+                const tempWrapper = document.createElement('div');
+                tempWrapper.innerHTML = text;
+                // Replace the placeholder with the actual component's child nodes
+                element.replaceWith(...tempWrapper.childNodes);
+            }
         } catch (error) {
             console.error(error);
         }
@@ -186,32 +192,38 @@ document.addEventListener('DOMContentLoaded', function () {
                 // If it's the cart, make it full width. Otherwise, keep sidenav at w-72.
                 if (flyoutEl === cartFlyout) {
                     flyoutEl.classList.add('w-full');
-                    flyoutEl.classList.remove('w-72', 'md:max-w-sm');
+                    flyoutEl.classList.remove('w-72', 'md:w-96');
                 } else {
                     flyoutEl.classList.add('w-72');
-                    flyoutEl.classList.remove('w-full', 'md:max-w-sm');
+                    flyoutEl.classList.remove('w-full', 'md:w-96');
                 }
                 adjustFlyoutPosition(flyoutEl, overlayEl);
             } else {
                  if(flyoutEl === cartFlyout) {
                     flyoutEl.classList.remove('w-72', 'w-full');
-                    flyoutEl.classList.add('md:max-w-sm');
+                    flyoutEl.classList.add('md:w-96');
                 }
                 flyoutEl.style.top = '0px';
                 flyoutEl.style.height = '100%';
-                overlayEl.style.top = '0px';
-                overlayEl.style.height = '100%';
+                if (overlayEl) {
+                    overlayEl.style.top = '0px';
+                    overlayEl.style.height = '100%';
+                }
             }
-            flyoutEl.classList.remove('-translate-x-full', 'translate-x-full');
-            overlayEl.classList.remove('hidden');
-            requestAnimationFrame(() => overlayEl.classList.remove('opacity-0'));
+            if (flyoutEl) flyoutEl.classList.remove('-translate-x-full', 'translate-x-full');
+            if (overlayEl) {
+                overlayEl.classList.remove('hidden');
+                requestAnimationFrame(() => overlayEl.classList.remove('opacity-0'));
+            }
             document.body.style.overflow = 'hidden';
         };
 
         const closeFlyout = (flyoutEl, overlayEl, direction) => {
-            flyoutEl.classList.add(direction === 'left' ? '-translate-x-full' : 'translate-x-full');
-            overlayEl.classList.add('opacity-0');
-            setTimeout(() => overlayEl.classList.add('hidden'), 500);
+            if (flyoutEl) flyoutEl.classList.add(direction === 'left' ? '-translate-x-full' : 'translate-x-full');
+            if (overlayEl) {
+                overlayEl.classList.add('opacity-0');
+                setTimeout(() => overlayEl.classList.add('hidden'), 500);
+            }
             document.body.style.overflow = '';
         };
 
@@ -233,6 +245,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const resultsContainer = input.id.includes('mobile') ? searchResultsContainers[0] : searchResultsContainers[1];
             const searchTerm = input.value.toLowerCase();
             
+            if (!resultsContainer) return;
             resultsContainer.innerHTML = '';
             if (searchTerm.length === 0) {
                 resultsContainer.innerHTML = `<p class="p-4 text-center text-sm text-gray-500">Comienza a escribir...</p>`;
@@ -253,8 +266,14 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         };
 
-        const showResults = (e) => (e.target.id.includes('mobile') ? searchResultsContainers[0] : searchResultsContainers[1]).classList.remove('hidden');
-        const hideResults = (e) => setTimeout(() => (e.target.id.includes('mobile') ? searchResultsContainers[0] : searchResultsContainers[1]).classList.add('hidden'), 200);
+        const showResults = (e) => {
+            const resultsContainer = e.target.id.includes('mobile') ? searchResultsContainers[0] : searchResultsContainers[1];
+            if (resultsContainer) resultsContainer.classList.remove('hidden');
+        }
+        const hideResults = (e) => {
+            const resultsContainer = e.target.id.includes('mobile') ? searchResultsContainers[0] : searchResultsContainers[1];
+            if (resultsContainer) setTimeout(() => resultsContainer.classList.add('hidden'), 200);
+        }
         const handleSearchRedirect = (e) => {
             if (e.key === 'Enter' && e.target.value.trim()) {
                 e.preventDefault();
@@ -278,7 +297,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         document.getElementById('whatsapp-order-btn')?.addEventListener('click', () => {
-            if (cart.length === 0) return alert("Tu carrito está vacío.");
+            if (cart.length === 0) return; // Removed alert for better UX
             let message = '¡Hola! Quisiera hacer el siguiente pedido:\n\n' + cart.map(item => `- ${item.name} (Bs. ${item.price.toFixed(2)})`).join('\n');
             const total = cart.reduce((sum, item) => sum + item.price, 0);
             message += `\n\n*Total a pagar: Bs. ${total.toFixed(2)}*`;
@@ -315,13 +334,15 @@ document.addEventListener('DOMContentLoaded', function () {
         const brandMenuDesk = document.getElementById('desktop-marcas-submenu');
         const brandMenuMob = document.getElementById('mobile-marcas-submenu');
 
-        const catLinks = categories.map(c => `<a href="all-products.html?category=${encodeURIComponent(c)}" class="block pl-6 pr-4 py-2 text-sm text-gray-700 hover:bg-gray-100">${c}</a>`).join('');
-        const brandLinks = brands.map(b => `<a href="all-products.html?brand=${encodeURIComponent(b)}" class="block pl-6 pr-4 py-2 text-sm text-gray-700 hover:bg-gray-100">${b}</a>`).join('');
+        const createLinks = (items, type) => items.map(item => `<a href="all-products.html?${type}=${encodeURIComponent(item)}" class="block pl-6 pr-4 py-2 text-sm text-gray-700 hover:bg-gray-100">${item}</a>`).join('');
+
+        const catLinks = createLinks(categories, 'category');
+        const brandLinks = createLinks(brands, 'brand');
         
         if (catMenuDesk) catMenuDesk.innerHTML = catLinks;
-        if (catMenuMob) catMenuMob.innerHTML = catLinks.replace(/pl-6/g, 'py-2 px-4');
+        if (catMenuMob) catMenuMob.innerHTML = catLinks.replace(/pl-6 pr-4 py-2/g, 'py-2 px-4');
         if (brandMenuDesk) brandMenuDesk.innerHTML = brandLinks;
-        if (brandMenuMob) brandMenuMob.innerHTML = brandLinks.replace(/pl-6/g, 'py-2 px-4');
+        if (brandMenuMob) brandMenuMob.innerHTML = brandLinks.replace(/pl-6 pr-4 py-2/g, 'py-2 px-4');
     }
 
     // --- INITIALIZATION ---
@@ -337,5 +358,4 @@ document.addEventListener('DOMContentLoaded', function () {
 
     init();
 });
-
 
