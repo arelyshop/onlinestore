@@ -183,12 +183,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const openFlyout = (flyoutEl, overlayEl) => {
             if (isMobile()) {
-                flyoutEl.classList.remove('md:max-w-sm');
-                flyoutEl.classList.add('w-72');
+                // If it's the cart, make it full width. Otherwise, keep sidenav at w-72.
+                if (flyoutEl === cartFlyout) {
+                    flyoutEl.classList.add('w-full');
+                    flyoutEl.classList.remove('w-72', 'md:max-w-sm');
+                } else {
+                    flyoutEl.classList.add('w-72');
+                    flyoutEl.classList.remove('w-full', 'md:max-w-sm');
+                }
                 adjustFlyoutPosition(flyoutEl, overlayEl);
             } else {
                  if(flyoutEl === cartFlyout) {
-                    flyoutEl.classList.remove('w-72');
+                    flyoutEl.classList.remove('w-72', 'w-full');
                     flyoutEl.classList.add('md:max-w-sm');
                 }
                 flyoutEl.style.top = '0px';
@@ -331,3 +337,4 @@ document.addEventListener('DOMContentLoaded', function () {
 
     init();
 });
+
