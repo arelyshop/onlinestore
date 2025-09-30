@@ -605,30 +605,24 @@
                     }
 
                     const productCard = document.createElement('div');
-                    productCard.className = 'bg-white rounded-lg shadow-md overflow-hidden group flex flex-col';
+                    productCard.className = 'bg-white rounded-lg shadow-md overflow-hidden group';
                     productCard.innerHTML = `
-                        <a href="product.html?id=${product.id}" class="block">
+                        <a href="product.html?id=${product.id}" class="block h-full flex flex-col">
                             <div class="aspect-square overflow-hidden relative">
                                 ${stockOverlayHTML}
                                 ${discountBadgeHTML}
                                 <img src="${product.photo_url_1 || 'https://placehold.co/400x400/e2e8f0/cbd5e0?text=Producto'}" alt="${product.name}" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110 ${isOutOfStock ? 'opacity-50' : ''}" onerror="this.onerror=null;this.src='https://placehold.co/400x400/e2e8f0/cbd5e0?text=Error';">
                             </div>
-                            <div class="p-2 pb-0 text-center">
+                            <div class="p-2 text-center mt-auto">
                                 <h3 class="product-title font-semibold text-gray-800 text-sm">${product.name}</h3>
                                 ${priceHTML}
                             </div>
                         </a>
-                        <div class="mt-auto p-2">
-                           ${addToCartButtonHTML}
-                        </div>
                     `;
                     container.appendChild(productCard);
                 });
 
-                // Re-bind events to the new buttons
-                document.querySelectorAll('.add-to-cart-btn').forEach(button => {
-                    button.addEventListener('click', handleAddToCart);
-                });
+                // Event listeners for Add to Cart buttons are not needed on this page.
             }
             
             // --- Search Popup Logic ---
@@ -1018,6 +1012,7 @@
     </script>
 </body>
 </html>
+
 
 
 
