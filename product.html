@@ -37,6 +37,10 @@
         .sold-out-watermark svg { width: 1em; height: 1em; }
         #sidenav, #cart-flyout { transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
         #sidenav-overlay, #cart-overlay { transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        /* Style for smooth snap-back animation on main image */
+        #main-product-image {
+            transition: transform 0.3s ease-out;
+        }
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col">
@@ -116,12 +120,10 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:w-[85%] md:mx-auto">
                     <!-- Image Gallery -->
                     <div>
-                        <div class="relative">
-                            <div id="main-image-container" class="aspect-square bg-white rounded-lg shadow-md mb-4 overflow-hidden">
-                                <img id="main-product-image" src="${photoUrls[0]}" alt="${currentProduct.name}" class="w-full h-full object-contain rounded-lg bg-white">
-                            </div>
-                            <button id="prev-image-btn" class="absolute top-1/2 left-4 -translate-y-1/2 bg-white/50 hover:bg-white p-2 rounded-full shadow-md transition"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></button>
-                            <button id="next-image-btn" class="absolute top-1/2 right-4 -translate-y-1/2 bg-white/50 hover:bg-white p-2 rounded-full shadow-md transition"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></button>
+                        <div id="main-image-container" class="relative aspect-square bg-white rounded-lg shadow-md mb-4 overflow-hidden cursor-grab active:cursor-grabbing">
+                            <img id="main-product-image" src="${photoUrls[0]}" alt="${currentProduct.name}" class="w-full h-full object-contain rounded-lg bg-white pointer-events-none">
+                            <button id="prev-image-btn" class="absolute top-1/2 left-4 -translate-y-1/2 bg-white/50 hover:bg-white p-2 rounded-full shadow-md transition hidden md:block"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></button>
+                            <button id="next-image-btn" class="absolute top-1/2 right-4 -translate-y-1/2 bg-white/50 hover:bg-white p-2 rounded-full shadow-md transition hidden md:block"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></button>
                         </div>
                         <div id="thumbnail-container" class="custom-scrollbar flex space-x-2 overflow-x-auto pb-2">
                             ${photoUrls.map((url, i) => `<img src="${url}" alt="Thumbnail ${i + 1}" class="bg-white w-20 h-20 flex-shrink-0 object-contain rounded-md cursor-pointer border-2 ${i === 0 ? 'thumbnail-active' : 'border-transparent'} hover:border-gray-400 transition" data-index="${i}">`).join('')}
@@ -157,6 +159,7 @@
             const thumbs = document.querySelectorAll('#thumbnail-container img');
             
             const showImage = (index) => {
+                if (photoUrls.length <= 1) return; // Don't cycle if only one image
                 if (index >= photoUrls.length) index = 0;
                 if (index < 0) index = photoUrls.length - 1;
                 mainImg.src = photoUrls[index];
@@ -165,7 +168,6 @@
                 thumbs.forEach((thumb, i) => {
                     const isActive = i === currentIndex;
                     thumb.classList.toggle('thumbnail-active', isActive);
-                    // If this is the active thumbnail, scroll it into view
                     if (isActive) {
                         thumb.scrollIntoView({
                             behavior: 'smooth',
@@ -179,6 +181,39 @@
             document.getElementById('prev-image-btn').addEventListener('click', () => showImage(currentIndex - 1));
             document.getElementById('next-image-btn').addEventListener('click', () => showImage(currentIndex + 1));
             thumbs.forEach(thumb => thumb.addEventListener('click', (e) => showImage(parseInt(e.target.dataset.index))));
+
+            // --- Swipe functionality for main image ---
+            const mainImageContainer = document.getElementById('main-image-container');
+            if (mainImageContainer) {
+                let touchStartX = 0;
+                
+                mainImageContainer.addEventListener('touchstart', e => {
+                    touchStartX = e.changedTouches[0].clientX;
+                    mainImg.style.transition = 'none'; // No transition while dragging
+                }, { passive: true });
+
+                mainImageContainer.addEventListener('touchmove', e => {
+                    const touchMoveX = e.changedTouches[0].clientX;
+                    const diffX = touchMoveX - touchStartX;
+                    mainImg.style.transform = `translateX(${diffX}px)`; // "Push" effect
+                }, { passive: true });
+
+                mainImageContainer.addEventListener('touchend', e => {
+                    mainImg.style.transition = 'transform 0.3s ease-out'; // Smooth snap-back
+                    mainImg.style.transform = 'translateX(0)';
+
+                    const swipeThreshold = 50; // Min distance for a swipe
+                    const diff = e.changedTouches[0].clientX - touchStartX;
+
+                    if (Math.abs(diff) > swipeThreshold) {
+                        if (diff < 0) { // Swiped left
+                            showImage(currentIndex + 1);
+                        } else { // Swiped right
+                            showImage(currentIndex - 1);
+                        }
+                    }
+                });
+            }
 
             // --- RENDER SIMILAR PRODUCTS ---
             const similarProducts = allProducts.filter(p => p.id !== currentProduct.id && (p.category === currentProduct.category || p.brand === currentProduct.brand)).slice(0, 5);
