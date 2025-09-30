@@ -4,6 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Arelyshop.com - Página Principal</title>
+
+    <!-- SEO and Social Sharing Meta Tags -->
+    <meta name="description" content="Visita Arelyshop.com y descubre los mejores accesorios y gadgets de UGREEN | BASEUS | ANKER para hacer tu día más fácil.">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://arelyshop.com/">
+    <meta property="og:title" content="Arelyshop.com - Página Principal">
+    <meta property="og:description" content="Visita Arelyshop.com y descubre los mejores accesorios y gadgets de UGREEN | BASEUS | ANKER para hacer tu día más fácil.">
+    <meta property="og:image" content="https://arelyshop.com/images/arelyshop-preview.webp">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://arelyshop.com/">
+    <meta name="twitter:title" content="Arelyshop.com - Página Principal">
+    <meta name="twitter:description" content="Visita Arelyshop.com y descubre los mejores accesorios y gadgets de UGREEN | BASEUS | ANKER para hacer tu día más fácil.">
+    <meta name="twitter:image" content="https://arelyshop.com/images/arelyshop-preview.webp">
+
     <link rel="icon" href="/images/favicon.svg" type="image/svg+xml">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -534,8 +552,7 @@
                     let priceHTML = '';
                     let discountBadgeHTML = '';
                     let stockOverlayHTML = '';
-                    let addToCartButtonHTML = '';
-
+                    
                     const isOutOfStock = product.stock <= 0;
 
                     // Check for a valid discount price, ONLY if the product is in stock
@@ -550,7 +567,7 @@
                         `;
 
                         discountBadgeHTML = `
-                            <div class="absolute bottom-1 left-1 w-12 h-auto z-10">
+                            <div class="absolute bottom-1 left-1 w-9 h-auto z-10">
                                 <svg id="Capa_2" data-name="Capa 2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 302.44 402.78">
                                     <defs>
                                         <linearGradient id="Degradado_sin_nombre_13_new_${product.id}" data-name="Degradado sin nombre 13" x1="151.22" y1="402.78" x2="151.22" y2="0" gradientUnits="userSpaceOnUse">
@@ -575,42 +592,42 @@
 
                     if (isOutOfStock) {
                         stockOverlayHTML = `<div class="sold-out-watermark"><span>AGOTADO</span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="white"><path d="M620-520q25 0 42.5-17.5T680-580q0-25-17.5-42.5T620-640q-25 0-42.5 17.5T560-580q0 25 17.5 42.5T620-520Zm-280 0q25 0 42.5-17.5T400-580q0-25-17.5-42.5T340-640q-25 0-42.5 17.5T280-580q0 25 17.5 42.5T340-520Zm140 100q-68 0-123.5 38.5T276-280h66q22-37 58.5-58.5T480-360q43 0 79.5 21.5T618-280h66q-25-63-80.5-101.5T480-420Zm0 340q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-400Zm0 320q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Z"/></svg></div>`;
-                        addToCartButtonHTML = `
-                            <button class="w-full bg-gray-400 text-white text-sm py-1.5 px-1 rounded-lg cursor-not-allowed" disabled>
-                                Agotado
-                            </button>`;
+                    }
+
+                    const hasSecondImage = product.photo_url_2;
+                    const mainImageClass = `w-full h-full object-cover transition-all duration-300 ${isOutOfStock ? 'opacity-50' : ''}`;
+                    let imageHTML;
+
+                    if (hasSecondImage) {
+                        imageHTML = `
+                            <img src="${product.photo_url_1 || 'https://placehold.co/400x400/e2e8f0/cbd5e0?text=Producto'}" alt="${product.name}" class="${mainImageClass} block group-hover:hidden" onerror="this.onerror=null;this.src='https://placehold.co/400x400/e2e8f0/cbd5e0?text=Error';">
+                            <img src="${product.photo_url_2}" alt="${product.name} (vista alternativa)" class="${mainImageClass} hidden group-hover:block" onerror="this.style.display='none';">
+                        `;
                     } else {
-                        addToCartButtonHTML = `
-                            <button class="add-to-cart-btn w-full bg-black text-white text-sm py-1.5 px-1 rounded-lg hover:bg-gray-800 transition-colors" data-name="${product.name}" data-price="${product.discount_price || product.sale_price}">
-                                Agregar al Carrito
-                            </button>`;
+                        imageHTML = `
+                            <img src="${product.photo_url_1 || 'https://placehold.co/400x400/e2e8f0/cbd5e0?text=Producto'}" alt="${product.name}" class="${mainImageClass} group-hover:scale-110" onerror="this.onerror=null;this.src='https://placehold.co/400x400/e2e8f0/cbd5e0?text=Error';">
+                        `;
                     }
 
                     const productCard = document.createElement('div');
-                    productCard.className = 'bg-white rounded-lg shadow-md overflow-hidden group flex flex-col';
+                    productCard.className = 'bg-white rounded-lg shadow-md overflow-hidden group';
                     productCard.innerHTML = `
-                        <a href="product.html?id=${product.id}" class="block">
+                        <a href="product.html?id=${product.id}" class="block h-full flex flex-col">
                             <div class="aspect-square overflow-hidden relative">
                                 ${stockOverlayHTML}
                                 ${discountBadgeHTML}
-                                <img src="${product.photo_url_1 || 'https://placehold.co/400x400/e2e8f0/cbd5e0?text=Producto'}" alt="${product.name}" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110 ${isOutOfStock ? 'opacity-50' : ''}" onerror="this.onerror=null;this.src='https://placehold.co/400x400/e2e8f0/cbd5e0?text=Error';">
+                                ${imageHTML}
                             </div>
-                            <div class="p-2 pb-0 text-center">
+                            <div class="p-2 text-center mt-auto">
                                 <h3 class="product-title font-semibold text-gray-800 text-sm">${product.name}</h3>
                                 ${priceHTML}
                             </div>
                         </a>
-                        <div class="mt-auto p-2">
-                           ${addToCartButtonHTML}
-                        </div>
                     `;
                     container.appendChild(productCard);
                 });
 
-                // Re-bind events to the new buttons
-                document.querySelectorAll('.add-to-cart-btn').forEach(button => {
-                    button.addEventListener('click', handleAddToCart);
-                });
+                // Event listeners for Add to Cart buttons are not needed on this page.
             }
             
             // --- Search Popup Logic ---
@@ -946,6 +963,19 @@
                 desktopMarcasContainer.addEventListener('mouseenter', () => desktopMarcasSubmenu.classList.remove('hidden'));
                 desktopMarcasContainer.addEventListener('mouseleave', () => desktopMarcasSubmenu.classList.add('hidden'));
             }
+
+            // --- Search Redirect Logic ---
+            function handleSearchRedirect(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const searchTerm = e.target.value.trim();
+                    if (searchTerm) {
+                        window.location.href = `all-products.html?search=${encodeURIComponent(searchTerm)}`;
+                    }
+                }
+            }
+            mobileSearchInput.addEventListener('keydown', handleSearchRedirect);
+            desktopSearchInput.addEventListener('keydown', handleSearchRedirect);
             
              // --- Promo Banner Logic ---
             const promoBannerCloseBtn = document.querySelector('#promo-banner button');
@@ -987,6 +1017,14 @@
     </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
 
 
 
