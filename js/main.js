@@ -245,7 +245,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     item.href = `product.html?id=${p.id}`;
                     item.className = 'flex items-center p-2 hover:bg-gray-100 transition-colors';
                     const price = p.discount_price || p.sale_price;
-                    item.innerHTML = `<img src="${p.photo_url_1 || 'https://placehold.co/100x100'}" alt="${p.name}" class="w-12 h-12 object-cover rounded-md mr-4"><div class="flex-1"><p class="text-sm font-semibold">${p.name}</p><p class="text-xs text-gray-600">Bs. ${Math.round(price)}</p></div>`;
+                    item.innerHTML = `<img src="${p.photo_url_1 || 'https://placehold.co/100x100'}" alt="${p.name}" class="w-12 h-12 object-cover rounded-md mr-4"><div class="flex-1"><p class="text-sm font-semibold text-gray-800">${p.name}</p><p class="text-xs text-gray-600">Bs. ${Math.round(price)}</p></div>`;
                     resultsContainer.appendChild(item);
                 });
             } else {
@@ -337,4 +337,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
     init();
 });
+
 
