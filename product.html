@@ -41,7 +41,6 @@
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col">
 
-    <!-- Header will be loaded here -->
     <div id="header-placeholder"></div>
 
     <!-- Main Content -->
@@ -57,7 +56,6 @@
         </section>
     </main>
 
-    <!-- Footer will be loaded here -->
     <div id="footer-placeholder"></div>
 
     <script src="/js/main.js"></script>
@@ -152,17 +150,32 @@
             document.getElementById('page-add-to-cart-btn').addEventListener('click', () => {
                 addToCart(currentProduct.name, currentProduct.discount_price || currentProduct.sale_price);
             });
+            
             // Gallery listeners
             let currentIndex = 0;
             const mainImg = document.getElementById('main-product-image');
             const thumbs = document.querySelectorAll('#thumbnail-container img');
+            
             const showImage = (index) => {
                 if (index >= photoUrls.length) index = 0;
                 if (index < 0) index = photoUrls.length - 1;
                 mainImg.src = photoUrls[index];
                 currentIndex = index;
-                thumbs.forEach((thumb, i) => thumb.classList.toggle('thumbnail-active', i === currentIndex));
+                
+                thumbs.forEach((thumb, i) => {
+                    const isActive = i === currentIndex;
+                    thumb.classList.toggle('thumbnail-active', isActive);
+                    // If this is the active thumbnail, scroll it into view
+                    if (isActive) {
+                        thumb.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'nearest',
+                            inline: 'center'
+                        });
+                    }
+                });
             };
+
             document.getElementById('prev-image-btn').addEventListener('click', () => showImage(currentIndex - 1));
             document.getElementById('next-image-btn').addEventListener('click', () => showImage(currentIndex + 1));
             thumbs.forEach(thumb => thumb.addEventListener('click', (e) => showImage(parseInt(e.target.dataset.index))));
@@ -178,3 +191,4 @@
     </script>
 </body>
 </html>
+
