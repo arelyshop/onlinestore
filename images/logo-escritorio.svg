@@ -11,7 +11,7 @@
       }
 
       .cls-2 {
-        fill: #4f07c8;
+        fill: #00f85d;
         stroke: #1d1d1b;
         stroke-miterlimit: 10;
       }
