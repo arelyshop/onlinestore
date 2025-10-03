@@ -116,15 +116,63 @@
             let descriptionHTML = `<p class="text-gray-600 mt-4 whitespace-pre-wrap">${description.replace(/\*(.*?)\*/g, '<strong>$1</strong>')}</p>`;
             if(hasLongDescription) { /* ... logic for 'Ver más' ... */ }
 
+            // --- WATERMARK AND DOWNLOAD FUNCTION ---
+            const downloadImageWithWatermark = (url, filename) => {
+                const image = new Image();
+                image.crossOrigin = 'Anonymous'; 
+                image.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = image.naturalWidth;
+                    canvas.height = image.naturalHeight;
+                    
+                    // Fill background with white for JPG compression
+                    ctx.fillStyle = '#FFFFFF';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    ctx.drawImage(image, 0, 0);
+
+                    const waterMarkText = "Arelyshop.com";
+                    ctx.font = `bold ${Math.max(40, canvas.width / 15)}px Inter, sans-serif`;
+                    ctx.fillStyle = "rgba(0, 0, 0, 0.1)"; // 10% transparent
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    
+                    const centerX = canvas.width / 2;
+                    const centerY = canvas.height / 2;
+                    ctx.translate(centerX, centerY);
+                    ctx.rotate(-Math.PI / 4);
+                    ctx.fillText(waterMarkText, 0, 0);
+                    ctx.rotate(Math.PI / 4);
+                    ctx.translate(-centerX, -centerY);
+
+                    const link = document.createElement('a');
+                    link.download = `${filename}.jpg`;
+                    link.href = canvas.toDataURL('image/jpeg', 0.9); // 90% quality JPG
+                    link.click();
+                };
+                image.onerror = () => {
+                    console.error("Could not load image for watermarking.");
+                    alert("No se pudo descargar la imagen. Inténtalo de nuevo.");
+                };
+                // Use a CORS proxy for tainted canvas errors
+                image.src = `https://corsproxy.io/?${encodeURIComponent(url)}`;
+            };
+
+
             container.innerHTML = `
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:w-[85%] md:mx-auto">
                     <!-- Image Gallery -->
                     <div>
                         <div id="main-image-container" class="relative aspect-square bg-white rounded-lg shadow-md mb-4 overflow-hidden">
                             <div id="image-track" class="flex h-full">
-                                ${photoUrls.map(url => `
-                                    <div class="w-full h-full flex-shrink-0 flex items-center justify-center">
+                                ${photoUrls.map((url, i) => `
+                                    <div class="relative w-full h-full flex-shrink-0 flex items-center justify-center">
                                         <img src="${url}" alt="${currentProduct.name}" class="max-w-full max-h-full object-contain pointer-events-none">
+                                        <button class="download-btn absolute bottom-2 right-2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75 transition z-20" data-url="${url}" data-name="${currentProduct.name.replace(/[^a-zA-Z0-9]/g, '-')}-${i + 1}">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                                <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                            </svg>
+                                        </button>
                                     </div>
                                 `).join('')}
                             </div>
@@ -157,6 +205,18 @@
             // --- EVENT LISTENERS FOR PRODUCT PAGE ---
             document.getElementById('page-add-to-cart-btn').addEventListener('click', () => {
                 addToCart(currentProduct.name, currentProduct.discount_price || currentProduct.sale_price);
+            });
+
+            // Attach listeners for new download buttons
+            document.querySelectorAll('.download-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    e.stopPropagation(); // Prevent gallery swipe
+                    const url = e.currentTarget.dataset.url;
+                    const name = e.currentTarget.dataset.name;
+                    // Since the image URL might be relative, we need a full URL
+                    const absoluteUrl = new URL(url, window.location.href).href;
+                    downloadImageWithWatermark(absoluteUrl, name);
+                });
             });
             
             // Gallery listeners
