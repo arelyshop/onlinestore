@@ -125,11 +125,15 @@
                     const ctx = canvas.getContext('2d');
                     canvas.width = image.naturalWidth;
                     canvas.height = image.naturalHeight;
+                    
+                    // Fill background with white for JPG compression
+                    ctx.fillStyle = '#FFFFFF';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
                     ctx.drawImage(image, 0, 0);
 
                     const waterMarkText = "Arelyshop.com";
-                    ctx.font = `${Math.max(40, canvas.width / 15)}px Inter, sans-serif`;
-                    ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
+                    ctx.font = `bold ${Math.max(40, canvas.width / 15)}px Inter, sans-serif`;
+                    ctx.fillStyle = "rgba(0, 0, 0, 0.1)"; // 10% transparent
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
                     
@@ -142,8 +146,8 @@
                     ctx.translate(-centerX, -centerY);
 
                     const link = document.createElement('a');
-                    link.download = `${filename}.png`;
-                    link.href = canvas.toDataURL('image/png');
+                    link.download = `${filename}.jpg`;
+                    link.href = canvas.toDataURL('image/jpeg', 0.9); // 90% quality JPG
                     link.click();
                 };
                 image.onerror = () => {
