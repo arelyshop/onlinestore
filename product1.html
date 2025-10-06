@@ -37,7 +37,6 @@
         .sold-out-watermark svg { width: 1em; height: 1em; }
         #sidenav, #cart-flyout { transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
         #sidenav-overlay, #cart-overlay { transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
-        #image-track { transition: transform 0.3s ease-in-out; }
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col">
@@ -73,7 +72,7 @@
                 container.innerHTML = `<p class="text-center py-20 text-red-500 font-semibold">Producto no encontrado.</p>`;
                 return;
             }
-            
+
             // --- RENDER PRODUCT DETAILS ---
             document.title = `Arelyshop.com - ${currentProduct.name}`;
             const photoUrls = [1, 2, 3, 4, 5, 6, 7, 8].map(i => currentProduct[`photo_url_${i}`]).filter(Boolean);
@@ -93,9 +92,12 @@
                                     <stop offset="0" stop-color="#e20919"/><stop offset="1" stop-color="#fb6404"/>
                                 </linearGradient>
                             </defs>
-                            <g><path fill="url(#discount-grad-detail-${currentProduct.id})" fill-rule="evenodd" d="M61.01,179.91C51.45,94.39,101.43,34.24,195.1,0c-57.38,74.43,48.9,155.06,54.76,232.36,13.74-23.43,21.53-54.72,23.08-96.52,70.24,110.2,12.01,290.3-142.57,264.42-14.19-2.37-27.87-6.85-40.33-13.52C33.68,356.62,0,291.04,0,228.4c0-39.92,17.08-75.57,39.18-103.89,2.95,27.75,9.24,48.44,21.83,55.4Z"/></g>
+                            <g>
+                                <path fill="url(#discount-grad-detail-${currentProduct.id})" fill-rule="evenodd" d="M61.01,179.91C51.45,94.39,101.43,34.24,195.1,0c-57.38,74.43,48.9,155.06,54.76,232.36,13.74-23.43,21.53-54.72,23.08-96.52,70.24,110.2,12.01,290.3-142.57,264.42-14.19-2.37-27.87-6.85-40.33-13.52C33.68,356.62,0,291.04,0,228.4c0-39.92,17.08-75.57,39.18-103.89,2.95,27.75,9.24,48.44,21.83,55.4Z"/>
+                            </g>
                             <text x="151.22" y="280" font-family="Inter, sans-serif" font-weight="bold" fill="white" text-anchor="middle">
-                                <tspan font-size="80">${discountPercentage}%</tspan><tspan x="151.22" dy="80" font-size="90">OFF</tspan>
+                                <tspan font-size="80">${discountPercentage}%</tspan>
+                                <tspan x="151.22" dy="80" font-size="90">OFF</tspan>
                             </text>
                         </svg>
                     </div>`;
@@ -105,29 +107,27 @@
             stockHTML = isOutOfStock ? `<p class="mt-2 font-semibold text-lg text-gray-700">Agotado</p>` : (currentProduct.stock <= 5 ? `<p class="mt-2 font-semibold text-lg text-red-600">¡Solo quedan ${currentProduct.stock}!</p>` : `<p class="mt-2 font-semibold text-lg text-green-600">En stock</p>`);
 
             const description = currentProduct.description || 'No hay descripción disponible.';
+            const snippetLength = 800;
+            const hasLongDescription = description.length > snippetLength;
             let descriptionHTML = `<p class="text-gray-600 mt-4 whitespace-pre-wrap">${description.replace(/\*(.*?)\*/g, '<strong>$1</strong>')}</p>`;
+            if(hasLongDescription) { /* ... logic for 'Ver más' ... */ }
 
             container.innerHTML = `
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:w-[85%] md:mx-auto">
+                    <!-- Image Gallery -->
                     <div>
-                        <div id="main-image-container" class="relative aspect-square bg-white rounded-lg shadow-md mb-4 overflow-hidden">
-                            <div id="image-track" class="flex h-full">
-                                ${photoUrls.map((url, index) => `
-                                    <div class="relative w-full h-full flex-shrink-0 flex items-center justify-center">
-                                        <img src="${url}" alt="${currentProduct.name}" class="max-w-full max-h-full object-contain pointer-events-none">
-                                        <button class="download-btn absolute bottom-2 right-2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75 transition" data-url="${url}" data-filename="${currentProduct.name.replace(/[^a-zA-Z0-9]/g, '_')}_${index + 1}.jpg" title="Descargar Imagen">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
-                                        </button>
-                                    </div>
-                                `).join('')}
+                        <div class="relative">
+                            <div id="main-image-container" class="aspect-square bg-white rounded-lg shadow-md mb-4 overflow-hidden">
+                                <img id="main-product-image" src="${photoUrls[0]}" alt="${currentProduct.name}" class="w-full h-full object-contain rounded-lg bg-white">
                             </div>
-                            <button id="prev-image-btn" class="absolute top-1/2 left-2 md:left-4 -translate-y-1/2 bg-white/50 hover:bg-white p-1 md:p-2 rounded-full shadow-md transition z-10"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></button>
-                            <button id="next-image-btn" class="absolute top-1/2 right-2 md:right-4 -translate-y-1/2 bg-white/50 hover:bg-white p-1 md:p-2 rounded-full shadow-md transition z-10"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></button>
+                            <button id="prev-image-btn" class="absolute top-1/2 left-4 -translate-y-1/2 bg-white/50 hover:bg-white p-2 rounded-full shadow-md transition"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></button>
+                            <button id="next-image-btn" class="absolute top-1/2 right-4 -translate-y-1/2 bg-white/50 hover:bg-white p-2 rounded-full shadow-md transition"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></button>
                         </div>
                         <div id="thumbnail-container" class="custom-scrollbar flex space-x-2 overflow-x-auto pb-2">
                             ${photoUrls.map((url, i) => `<img src="${url}" alt="Thumbnail ${i + 1}" class="bg-white w-20 h-20 flex-shrink-0 object-contain rounded-md cursor-pointer border-2 ${i === 0 ? 'thumbnail-active' : 'border-transparent'} hover:border-gray-400 transition" data-index="${i}">`).join('')}
                         </div>
                     </div>
+                    <!-- Product Info -->
                     <div class="flex flex-col">
                         <h1 class="text-2xl font-bold text-gray-900">${currentProduct.name}</h1>
                         <p class="text-sm text-gray-500 mt-1">SKU: ${currentProduct.sku || 'No disponible'}</p>
@@ -151,96 +151,67 @@
                 addToCart(currentProduct.name, currentProduct.discount_price || currentProduct.sale_price);
             });
             
-            // --- DOWNLOAD LOGIC ---
-            const downloadImageWithWatermark = (url, filename) => {
-                const img = new Image();
-                img.crossOrigin = 'Anonymous';
-                img.src = url;
-                img.onload = () => {
-                    const canvas = document.createElement('canvas');
-                    canvas.width = img.width;
-                    canvas.height = img.height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0);
-                    
-                    const diagonal = Math.sqrt(canvas.width * canvas.width + canvas.height * canvas.height);
-                    const fontSize = Math.max(24, diagonal / 18) * 1.15; // Increased by 15%
-                    ctx.font = `bold ${fontSize}px Inter, sans-serif`;
-                    ctx.fillStyle = 'rgba(0, 0, 0, 0.1)'; // 10% transparent black
-                    ctx.textAlign = 'center';
-                    ctx.textBaseline = 'middle';
-                    ctx.translate(canvas.width / 2, canvas.height / 2);
-                    ctx.rotate(-Math.PI / 4);
-                    ctx.fillText('Arelyshop.com', 0, 0);
-
-                    const link = document.createElement('a');
-                    link.href = canvas.toDataURL('image/jpeg', 0.85); // Compress to JPG
-                    link.download = filename;
-                    link.click();
-                };
-                img.onerror = () => {
-                    console.error('Error loading image for download.');
-                }
-            };
-
-            // --- GALLERY LOGIC ---
+            // Gallery listeners
             let currentIndex = 0;
-            let isTransitioning = false;
-            const imageTrack = document.getElementById('image-track');
+            const mainImg = document.getElementById('main-product-image');
             const thumbs = document.querySelectorAll('#thumbnail-container img');
-            const mainImageContainer = document.getElementById('main-image-container');
             
             const showImage = (index) => {
-                if (isTransitioning || photoUrls.length <= 1) return;
-
-                const newIndex = (index + photoUrls.length) % photoUrls.length;
-                isTransitioning = true;
-                currentIndex = newIndex;
-
-                imageTrack.style.transform = `translateX(-${currentIndex * 100}%)`;
-
+                if (index >= photoUrls.length) index = 0;
+                if (index < 0) index = photoUrls.length - 1;
+                mainImg.src = photoUrls[index];
+                currentIndex = index;
+                
                 thumbs.forEach((thumb, i) => {
                     const isActive = i === currentIndex;
                     thumb.classList.toggle('thumbnail-active', isActive);
+                    // If this is the active thumbnail, scroll it into view
                     if (isActive) {
-                        thumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                        thumb.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'nearest',
+                            inline: 'center'
+                        });
                     }
                 });
-                
-                // Use a timeout to reliably reset the transition flag
-                setTimeout(() => {
-                    isTransitioning = false;
-                }, 300); // Duration matches CSS transition
             };
 
             document.getElementById('prev-image-btn').addEventListener('click', () => showImage(currentIndex - 1));
             document.getElementById('next-image-btn').addEventListener('click', () => showImage(currentIndex + 1));
             thumbs.forEach(thumb => thumb.addEventListener('click', (e) => showImage(parseInt(e.target.dataset.index))));
-            
-            // --- EVENT DELEGATION FOR DOWNLOADS ---
-            mainImageContainer.addEventListener('click', (e) => {
-                if (e.target.closest('.download-btn')) {
-                    const button = e.target.closest('.download-btn');
-                    downloadImageWithWatermark(button.dataset.url, button.dataset.filename);
-                }
-            });
 
-            // --- SWIPE LOGIC ---
-            let touchStartX = 0;
-            mainImageContainer.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].clientX; }, { passive: true });
-            mainImageContainer.addEventListener('touchend', e => {
-                const swipeThreshold = 50;
-                const diff = e.changedTouches[0].clientX - touchStartX;
-                if (Math.abs(diff) > swipeThreshold) {
-                    showImage(diff < 0 ? currentIndex + 1 : currentIndex - 1);
+            // --- Swipe functionality for touch screens ---
+            const mainImageContainer = document.getElementById('main-image-container');
+            let touchstartX = 0;
+            let touchendX = 0;
+
+            mainImageContainer.addEventListener('touchstart', function(event) {
+                touchstartX = event.changedTouches[0].screenX;
+            }, { passive: true });
+
+            mainImageContainer.addEventListener('touchend', function(event) {
+                touchendX = event.changedTouches[0].screenX;
+                handleSwipe();
+            }, { passive: true }); 
+
+            function handleSwipe() {
+                // Swipe left
+                if (touchstartX - touchendX > 50) {
+                    showImage(currentIndex + 1);
                 }
-            });
+                
+                // Swipe right
+                if (touchendX - touchstartX > 50) {
+                    showImage(currentIndex - 1);
+                }
+            }
 
             // --- RENDER SIMILAR PRODUCTS ---
             const similarProducts = allProducts.filter(p => p.id !== currentProduct.id && (p.category === currentProduct.category || p.brand === currentProduct.brand)).slice(0, 5);
             if (similarProducts.length > 0) {
                 document.getElementById('similar-products-section').classList.remove('hidden');
-                document.getElementById('similar-products-grid').innerHTML = similarProducts.map(p => createProductCard(p)).join('');
+                const grid = document.getElementById('similar-products-grid');
+                grid.innerHTML = similarProducts.map(p => createProductCard(p)).join('');
             }
         });
     </script>
