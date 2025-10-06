@@ -37,9 +37,9 @@
         .sold-out-watermark svg { width: 1em; height: 1em; }
         #sidenav, #cart-flyout { transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
         #sidenav-overlay, #cart-overlay { transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
-        /* Style for smooth snap-back animation on main image */
-        #main-product-image {
-            transition: transform 0.3s ease-out;
+        /* Style for smooth carousel animation */
+        #image-track {
+            transition: transform 0.3s ease-in-out;
         }
     </style>
 </head>
@@ -120,10 +120,16 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:w-[85%] md:mx-auto">
                     <!-- Image Gallery -->
                     <div>
-                        <div id="main-image-container" class="relative aspect-square bg-white rounded-lg shadow-md mb-4 overflow-hidden cursor-grab active:cursor-grabbing">
-                            <img id="main-product-image" src="${photoUrls[0]}" alt="${currentProduct.name}" class="w-full h-full object-contain rounded-lg bg-white pointer-events-none">
-                            <button id="prev-image-btn" class="absolute top-1/2 left-4 -translate-y-1/2 bg-white/50 hover:bg-white p-2 rounded-full shadow-md transition hidden md:block"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></button>
-                            <button id="next-image-btn" class="absolute top-1/2 right-4 -translate-y-1/2 bg-white/50 hover:bg-white p-2 rounded-full shadow-md transition hidden md:block"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></button>
+                        <div id="main-image-container" class="relative aspect-square bg-white rounded-lg shadow-md mb-4 overflow-hidden">
+                            <div id="image-track" class="flex h-full">
+                                ${photoUrls.map(url => `
+                                    <div class="w-full h-full flex-shrink-0 flex items-center justify-center">
+                                        <img src="${url}" alt="${currentProduct.name}" class="max-w-full max-h-full object-contain pointer-events-none">
+                                    </div>
+                                `).join('')}
+                            </div>
+                            <button id="prev-image-btn" class="absolute top-1/2 left-2 md:left-4 -translate-y-1/2 bg-white/50 hover:bg-white p-1 md:p-2 rounded-full shadow-md transition z-10"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></button>
+                            <button id="next-image-btn" class="absolute top-1/2 right-2 md:right-4 -translate-y-1/2 bg-white/50 hover:bg-white p-1 md:p-2 rounded-full shadow-md transition z-10"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></button>
                         </div>
                         <div id="thumbnail-container" class="custom-scrollbar flex space-x-2 overflow-x-auto pb-2">
                             ${photoUrls.map((url, i) => `<img src="${url}" alt="Thumbnail ${i + 1}" class="bg-white w-20 h-20 flex-shrink-0 object-contain rounded-md cursor-pointer border-2 ${i === 0 ? 'thumbnail-active' : 'border-transparent'} hover:border-gray-400 transition" data-index="${i}">`).join('')}
@@ -155,16 +161,20 @@
             
             // Gallery listeners
             let currentIndex = 0;
-            const mainImg = document.getElementById('main-product-image');
+            let isTransitioning = false;
+            const imageTrack = document.getElementById('image-track');
             const thumbs = document.querySelectorAll('#thumbnail-container img');
             
             const showImage = (index) => {
-                if (photoUrls.length <= 1) return; // Don't cycle if only one image
-                if (index >= photoUrls.length) index = 0;
-                if (index < 0) index = photoUrls.length - 1;
-                mainImg.src = photoUrls[index];
-                currentIndex = index;
+                if (isTransitioning || photoUrls.length <= 1) return;
+
+                const newIndex = (index + photoUrls.length) % photoUrls.length;
                 
+                isTransitioning = true;
+                currentIndex = newIndex;
+
+                imageTrack.style.transform = `translateX(-${currentIndex * 100}%)`;
+
                 thumbs.forEach((thumb, i) => {
                     const isActive = i === currentIndex;
                     thumb.classList.toggle('thumbnail-active', isActive);
@@ -176,6 +186,10 @@
                         });
                     }
                 });
+
+                imageTrack.addEventListener('transitionend', () => {
+                    isTransitioning = false;
+                }, { once: true });
             };
 
             document.getElementById('prev-image-btn').addEventListener('click', () => showImage(currentIndex - 1));
@@ -189,19 +203,9 @@
                 
                 mainImageContainer.addEventListener('touchstart', e => {
                     touchStartX = e.changedTouches[0].clientX;
-                    mainImg.style.transition = 'none'; // No transition while dragging
-                }, { passive: true });
-
-                mainImageContainer.addEventListener('touchmove', e => {
-                    const touchMoveX = e.changedTouches[0].clientX;
-                    const diffX = touchMoveX - touchStartX;
-                    mainImg.style.transform = `translateX(${diffX}px)`; // "Push" effect
                 }, { passive: true });
 
                 mainImageContainer.addEventListener('touchend', e => {
-                    mainImg.style.transition = 'transform 0.3s ease-out'; // Smooth snap-back
-                    mainImg.style.transform = 'translateX(0)';
-
                     const swipeThreshold = 50; // Min distance for a swipe
                     const diff = e.changedTouches[0].clientX - touchStartX;
 
