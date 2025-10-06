@@ -37,6 +37,9 @@
         .sold-out-watermark svg { width: 1em; height: 1em; }
         #sidenav, #cart-flyout { transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
         #sidenav-overlay, #cart-overlay { transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        /* Image Modal Styles */
+        #image-modal { display: none; }
+        #image-modal.flex { display: flex; }
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col">
@@ -57,6 +60,17 @@
     </main>
 
     <div id="footer-placeholder"></div>
+
+    <!-- Image Modal -->
+    <div id="image-modal" class="fixed inset-0 bg-black bg-opacity-80 z-50 items-center justify-center p-4">
+        <div class="relative max-w-4xl max-h-full">
+            <img id="modal-image" src="" alt="Vista ampliada del producto" class="w-full h-auto max-h-[90vh] object-contain">
+            <button id="close-modal-btn" class="absolute -top-4 -right-4 md:top-0 md:right-0 m-2 text-white bg-black/50 rounded-full p-1.5 hover:bg-black">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+    </div>
+
 
     <script src="/js/main.js"></script>
     <script>
@@ -118,7 +132,7 @@
                     <div>
                         <div class="relative">
                             <div id="main-image-container" class="aspect-square bg-white rounded-lg shadow-md mb-4 overflow-hidden">
-                                <img id="main-product-image" src="${photoUrls[0]}" alt="${currentProduct.name}" class="w-full h-full object-contain rounded-lg bg-white">
+                                <img id="main-product-image" src="${photoUrls[0]}" alt="${currentProduct.name}" class="w-full h-full object-contain rounded-lg bg-white cursor-pointer">
                             </div>
                             <button id="prev-image-btn" class="absolute top-1/2 left-4 -translate-y-1/2 bg-white/50 hover:bg-white p-2 rounded-full shadow-md transition"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></button>
                             <button id="next-image-btn" class="absolute top-1/2 right-4 -translate-y-1/2 bg-white/50 hover:bg-white p-2 rounded-full shadow-md transition"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></button>
@@ -155,6 +169,9 @@
             let currentIndex = 0;
             const mainImg = document.getElementById('main-product-image');
             const thumbs = document.querySelectorAll('#thumbnail-container img');
+            const modal = document.getElementById('image-modal');
+            const modalImg = document.getElementById('modal-image');
+            const closeModalBtn = document.getElementById('close-modal-btn');
             
             const showImage = (index) => {
                 if (index >= photoUrls.length) index = 0;
@@ -179,6 +196,26 @@
             document.getElementById('prev-image-btn').addEventListener('click', () => showImage(currentIndex - 1));
             document.getElementById('next-image-btn').addEventListener('click', () => showImage(currentIndex + 1));
             thumbs.forEach(thumb => thumb.addEventListener('click', (e) => showImage(parseInt(e.target.dataset.index))));
+
+            // --- Modal Logic ---
+            mainImg.addEventListener('click', () => {
+                modal.classList.add('flex');
+                modalImg.src = mainImg.src;
+                document.body.style.overflow = 'hidden';
+            });
+            
+            const closeModal = () => {
+                modal.classList.remove('flex');
+                document.body.style.overflow = '';
+            };
+
+            closeModalBtn.addEventListener('click', closeModal);
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+
 
             // --- Swipe functionality for touch screens ---
             const mainImageContainer = document.getElementById('main-image-container');
