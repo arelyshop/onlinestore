@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const brandSelect = document.getElementById('brand-select');
     const brandCustomInput = document.getElementById('brand-custom');
     const scanBarcodeBtn = document.getElementById('scan-barcode-btn');
+    const scanSearchBarcodeBtn = document.getElementById('scan-search-barcode-btn');
     const scannerContainer = document.getElementById('scanner-container');
     const closeScannerBtn = document.getElementById('close-scanner-btn');
     const barcodeInput = document.getElementById('barcode');
@@ -294,16 +295,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     /**
      * Starts the barcode scanner.
+     * @param {function} successCallback - Function to run on successful scan.
      */
-    const startScanner = () => {
+    const startScanner = (successCallback) => {
         scannerContainer.classList.remove('hidden');
         scannerContainer.classList.add('flex');
 
         html5QrCode = new Html5Qrcode("reader");
         
         const qrCodeSuccessCallback = (decodedText, decodedResult) => {
-            barcodeInput.value = decodedText;
-            stopScanner();
+            successCallback(decodedText);
         };
 
         const config = { 
@@ -337,7 +338,22 @@ document.addEventListener('DOMContentLoaded', () => {
     deleteBtn.addEventListener('click', handleDelete);
     searchInput.addEventListener('input', handleSearch);
     suggestSkuBtn.addEventListener('click', suggestSku);
-    scanBarcodeBtn.addEventListener('click', startScanner);
+
+    scanBarcodeBtn.addEventListener('click', () => {
+        startScanner((decodedText) => {
+            barcodeInput.value = decodedText;
+            stopScanner();
+        });
+    });
+
+    scanSearchBarcodeBtn.addEventListener('click', () => {
+        startScanner((decodedText) => {
+            searchInput.value = decodedText;
+            handleSearch();
+            stopScanner();
+        });
+    });
+
     closeScannerBtn.addEventListener('click', stopScanner);
 
     productListEl.addEventListener('click', (event) => {
@@ -371,5 +387,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- INITIALIZATION ---
     fetchAndRenderProducts();
 });
+
 
 
