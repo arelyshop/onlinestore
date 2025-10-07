@@ -1,390 +1,353 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // --- STATE ---
-    let allProducts = [];
-    let currentProductId = null;
-    let html5QrCode = null;
-
-    // --- ELEMENT SELECTORS ---
-    const productForm = document.getElementById('product-form');
-    const formTitle = document.getElementById('form-title');
-    const productListEl = document.getElementById('product-list');
-    const searchInput = document.getElementById('search-product-input');
-    const newProductBtn = document.getElementById('new-product-btn');
-    const saveBtn = document.getElementById('save-btn');
-    const deleteBtn = document.getElementById('delete-btn');
-    const statusMessageEl = document.getElementById('status-message');
-    const photoUrlInputs = productForm.querySelectorAll('input[type="url"]');
-    const suggestSkuBtn = document.getElementById('suggest-sku-btn');
-    const skuInput = document.getElementById('sku');
-    const categorySelect = document.getElementById('category-select');
-    const categoryCustomInput = document.getElementById('category-custom');
-    const brandSelect = document.getElementById('brand-select');
-    const brandCustomInput = document.getElementById('brand-custom');
-    const scanBarcodeBtn = document.getElementById('scan-barcode-btn');
-    const scanSearchBarcodeBtn = document.getElementById('scan-search-barcode-btn');
-    const scannerContainer = document.getElementById('scanner-container');
-    const closeScannerBtn = document.getElementById('close-scanner-btn');
-    const barcodeInput = document.getElementById('barcode');
+    // --- ELEMENTOS DEL DOM PARA LOGIN ---
+    const loginContainer = document.getElementById('login-container');
+    const adminPanel = document.getElementById('admin-panel');
+    const loginForm = document.getElementById('login-form');
+    const errorMessage = document.getElementById('error-message');
+    const logoutBtn = document.getElementById('logout-btn');
+    const loginBtn = document.getElementById('login-btn');
     
-    // API Endpoint
-    const API_URL = '/.netlify/functions';
+    // --- LÓGICA DE LOGIN ---
 
-    // --- FUNCTIONS ---
-
-    /**
-     * Fetch all products from the backend and render the list
-     */
-    const fetchAndRenderProducts = async () => {
-        try {
-            productListEl.innerHTML = '<p class="text-gray-500">Cargando productos...</p>';
-            const response = await fetch(`${API_URL}/get-products`);
-            if (!response.ok) throw new Error('Failed to fetch products');
-            
-            allProducts = await response.json();
-            renderProductList(allProducts);
-        } catch (error) {
-            console.error('Error fetching products:', error);
-            productListEl.innerHTML = '<p class="text-red-500">Error al cargar productos.</p>';
-        }
+    // Función para mostrar el panel de admin y ocultar el login
+    const showAdminPanel = () => {
+        loginContainer.classList.add('hidden');
+        adminPanel.classList.remove('hidden');
+        adminPanel.classList.add('flex');
+        initializeAdminLogic(); // Inicia la lógica del panel solo después de loguearse
     };
 
-    /**
-     * Render a list of products in the sidebar
-     * @param {Array} products - The array of products to render
-     */
-    const renderProductList = (products) => {
-        const searchTerm = searchInput.value.toLowerCase();
-        const filteredProducts = products.filter(p => 
-            p.name.toLowerCase().includes(searchTerm) || 
-            (p.sku && p.sku.toLowerCase().includes(searchTerm)) ||
-            (p.barcode && p.barcode.toLowerCase().includes(searchTerm))
-        );
-
-        if (filteredProducts.length === 0) {
-            productListEl.innerHTML = '<p class="text-gray-500">No se encontraron productos.</p>';
-            return;
-        }
-
-        productListEl.innerHTML = filteredProducts.map(product => `
-            <div class="flex items-center justify-between p-3 mb-2 rounded-lg cursor-pointer hover:bg-gray-200 transition-colors ${product.id === currentProductId ? 'bg-blue-100' : 'bg-gray-50'}" data-id="${product.id}">
-                <div class="flex-grow">
-                    <p class="font-semibold text-gray-800">${product.name}</p>
-                    <p class="text-sm text-gray-500">SKU: ${product.sku || 'N/A'}</p>
-                </div>
-                <div class="text-sm text-gray-600">Stock: ${product.stock || 0}</div>
-            </div>
-        `).join('');
-    };
-    
-    /**
-     * Populate the form with data from a selected product
-     * @param {number} productId - The ID of the product to edit
-     */
-    const populateFormForEdit = (productId) => {
-        const product = allProducts.find(p => p.id === productId);
-        if (!product) return;
-
-        resetForm(); // Start with a clean slate
-        currentProductId = productId;
-        
-        // Populate all form fields
-        for (const key in product) {
-            if (productForm.elements[key]) {
-                productForm.elements[key].value = product[key] || '';
-            }
-        }
-
-        // Handle Category dropdown
-        const categoryOptionExists = [...categorySelect.options].some(opt => opt.value === product.category);
-        if (product.category && categoryOptionExists) {
-            categorySelect.value = product.category;
-            categoryCustomInput.classList.add('hidden');
-        } else if (product.category) {
-            categorySelect.value = 'custom';
-            categoryCustomInput.value = product.category;
-            categoryCustomInput.classList.remove('hidden');
-        }
-
-        // Handle Brand dropdown
-        const brandOptionExists = [...brandSelect.options].some(opt => opt.value === product.brand);
-        if (product.brand && brandOptionExists) {
-            brandSelect.value = product.brand;
-            brandCustomInput.classList.add('hidden');
-        } else if (product.brand) {
-            brandSelect.value = 'custom';
-            brandCustomInput.value = product.brand;
-            brandCustomInput.classList.remove('hidden');
-        }
-
-        formTitle.textContent = 'Editar Producto';
-        saveBtn.textContent = 'Guardar Cambios';
-        deleteBtn.classList.remove('hidden');
-        renderProductList(allProducts); // Re-render to show selection
-    };
-
-    /**
-     * Reset the form to its "Add New Product" state
-     */
-    const resetForm = () => {
-        productForm.reset();
-        currentProductId = null;
-        formTitle.textContent = 'Agregar Nuevo Producto';
-        saveBtn.textContent = 'Guardar Producto';
-        deleteBtn.classList.add('hidden');
-        statusMessageEl.textContent = '';
-        statusMessageEl.className = 'mt-4 text-center font-semibold';
-        categoryCustomInput.classList.add('hidden');
-        brandCustomInput.classList.add('hidden');
-        renderProductList(allProducts); // Re-render to clear selection highlight
-    };
-
-    /**
-     * Handle form submission for both creating and updating products
-     */
-    const handleFormSubmit = async (event) => {
-        event.preventDefault();
-        saveBtn.disabled = true;
-        saveBtn.textContent = 'Guardando...';
-        statusMessageEl.textContent = '';
-
-        const formData = new FormData(productForm);
-        const productData = Object.fromEntries(formData.entries());
-        
-        productData.category = categorySelect.value === 'custom' ? categoryCustomInput.value : categorySelect.value;
-        productData.brand = brandSelect.value === 'custom' ? brandCustomInput.value : brandSelect.value;
-        delete productData['category-select'];
-        delete productData['category-custom'];
-        delete productData['brand-select'];
-        delete productData['brand-custom'];
-
-        const numericFields = ['sale_price', 'discount_price', 'purchase_price', 'wholesale_price', 'stock'];
-        numericFields.forEach(field => {
-            productData[field] = productData[field] === '' ? null : Number(productData[field]);
-        });
-        
-        const isUpdating = !!currentProductId;
-        const url = isUpdating ? `${API_URL}/update-product` : `${API_URL}/add-product`;
-        const method = isUpdating ? 'PUT' : 'POST';
-
-        if(isUpdating) {
-            productData.id = currentProductId;
-        }
-
-        try {
-            const response = await fetch(url, {
-                method: method,
-                body: JSON.stringify(productData),
-                headers: { 'Content-Type': 'application/json' },
-            });
-            
-            if (!response.ok) {
-                 const errorText = await response.text();
-                 try {
-                     const errorData = JSON.parse(errorText);
-                     throw new Error(errorData.error || 'Server error');
-                 } catch (e) {
-                     throw new Error(errorText); // If the error response wasn't JSON
-                 }
-            }
-
-            statusMessageEl.textContent = `¡Producto ${isUpdating ? 'actualizado' : 'agregado'} con éxito!`;
-            statusMessageEl.className = 'mt-4 text-center font-semibold text-green-600';
-
-            await fetchAndRenderProducts();
-            setTimeout(resetForm, 2000);
-
-        } catch (error) {
-            console.error('Error saving product:', error);
-            statusMessageEl.textContent = `Error: ${error.message}`;
-            statusMessageEl.className = 'mt-4 text-center font-semibold text-red-600';
-        } finally {
-            saveBtn.disabled = false;
-            saveBtn.textContent = isUpdating ? 'Guardar Cambios' : 'Guardar Producto';
-        }
-    };
-
-    /**
-     * Handle product deletion
-     */
-    const handleDelete = async () => {
-        if (!currentProductId || !confirm('¿Estás seguro de que quieres eliminar este producto? Esta acción no se puede deshacer.')) {
-            return;
-        }
-        
-        deleteBtn.disabled = true;
-        deleteBtn.textContent = 'Eliminando...';
-
-        try {
-             const response = await fetch(`${API_URL}/delete-product`, {
-                method: 'DELETE', // Using DELETE method
-                body: JSON.stringify({ id: currentProductId }),
-                headers: { 'Content-Type': 'application/json' },
-            });
-
-             if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || 'Server error');
-            }
-            const result = await response.json();
-            statusMessageEl.textContent = result.message || 'Producto eliminado.';
-            statusMessageEl.className = 'mt-4 text-center font-semibold text-green-600';
-            
-            await fetchAndRenderProducts();
-            setTimeout(resetForm, 2000);
-
-        } catch(error) {
-             console.error('Error deleting product:', error);
-            statusMessageEl.textContent = `Error: ${error.message}`;
-            statusMessageEl.className = 'mt-4 text-center font-semibold text-red-600';
-        } finally {
-            deleteBtn.disabled = false;
-            deleteBtn.textContent = 'Eliminar Producto';
-        }
-    };
-
-    /**
-     * Filter the product list based on search input
-     */
-    const handleSearch = () => {
-        renderProductList(allProducts);
-    };
-
-    /**
-     * Converts Google Drive URLs to direct image links
-     */
-    function convertGoogleDriveUrl(url) {
-        const regex = /\/file\/d\/([a-zA-Z0-9_-]+)/;
-        const match = url.match(regex);
-        if (match && match[1]) {
-            return `https://lh3.googleusercontent.com/d/${match[1]}=w1000?authuser=0`;
-        }
-        return url;
+    // Comprobar si el usuario ya ha iniciado sesión en esta sesión del navegador
+    if (sessionStorage.getItem('is_arelyshop_admin_logged_in') === 'true') {
+        showAdminPanel();
     }
 
-    /**
-     * Suggests a new unique SKU
-     */
-    function suggestSku() {
-        const prefix = "ASP";
-        let maxNumber = 0;
-        allProducts.forEach(product => {
-            if (product.sku && product.sku.toUpperCase().startsWith(prefix)) {
-                const numberPart = parseInt(product.sku.substring(prefix.length), 10);
-                if (!isNaN(numberPart) && numberPart > maxNumber) {
-                    maxNumber = numberPart;
+    // Manejar el envío del formulario de login
+    loginForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        errorMessage.classList.add('hidden');
+        loginBtn.textContent = 'Verificando...';
+        loginBtn.disabled = true;
+        
+        const username = event.target.username.value;
+        const password = event.target.password.value;
+
+        try {
+            const response = await fetch('/netlify/functions/login', {
+                method: 'POST',
+                body: JSON.stringify({ username, password }),
+                headers: { 'Content-Type': 'application/json' },
+            });
+
+            if (response.ok) {
+                sessionStorage.setItem('is_arelyshop_admin_logged_in', 'true');
+                showAdminPanel();
+            } else {
+                const errorData = await response.json();
+                errorMessage.textContent = errorData.error || 'Credenciales incorrectas.';
+                errorMessage.classList.remove('hidden');
+            }
+        } catch (error) {
+            console.error('Error al intentar iniciar sesión:', error);
+            errorMessage.textContent = 'Error de conexión. Inténtalo de nuevo.';
+            errorMessage.classList.remove('hidden');
+        } finally {
+            loginBtn.textContent = 'Ingresar';
+            loginBtn.disabled = false;
+        }
+    });
+
+    // Manejar el cierre de sesión
+    logoutBtn.addEventListener('click', () => {
+        sessionStorage.removeItem('is_arelyshop_admin_logged_in');
+        window.location.reload();
+    });
+
+
+    // --- LÓGICA DEL PANEL DE ADMINISTRACIÓN ---
+    // Toda la lógica original del panel se mueve a esta función
+    function initializeAdminLogic() {
+        // --- STATE ---
+        let allProducts = [];
+        let currentProductId = null;
+        let html5QrCode = null;
+        let currentScannerTarget = null; // 'barcode' o 'search'
+
+        // --- ELEMENT SELECTORS ---
+        const productForm = document.getElementById('product-form');
+        const formTitle = document.getElementById('form-title');
+        const productListEl = document.getElementById('product-list');
+        const searchInput = document.getElementById('search-product-input');
+        const newProductBtn = document.getElementById('new-product-btn');
+        const saveBtn = document.getElementById('save-btn');
+        const deleteBtn = document.getElementById('delete-btn');
+        const statusMessageEl = document.getElementById('status-message');
+        const photoUrlInputs = productForm.querySelectorAll('input[type="url"]');
+        const suggestSkuBtn = document.getElementById('suggest-sku-btn');
+        const skuInput = document.getElementById('sku');
+        const categorySelect = document.getElementById('category-select');
+        const categoryCustomInput = document.getElementById('category-custom');
+        const brandSelect = document.getElementById('brand-select');
+        const brandCustomInput = document.getElementById('brand-custom');
+        const barcodeInput = document.getElementById('barcode');
+        const scanBarcodeBtn = document.getElementById('scan-barcode-btn');
+        const scanSearchBtn = document.getElementById('scan-search-btn');
+        const scannerContainer = document.getElementById('scanner-container');
+        const closeScannerBtn = document.getElementById('close-scanner-btn');
+
+        // API Endpoint
+        const API_URL = '/.netlify/functions';
+
+        // --- FUNCTIONS ---
+        const fetchAndRenderProducts = async () => {
+            try {
+                productListEl.innerHTML = '<p class="text-gray-500">Cargando productos...</p>';
+                const response = await fetch(`${API_URL}/get-products`);
+                if (!response.ok) throw new Error('Failed to fetch products');
+                allProducts = await response.json();
+                renderProductList(allProducts);
+            } catch (error) {
+                console.error('Error fetching products:', error);
+                productListEl.innerHTML = '<p class="text-red-500">Error al cargar productos.</p>';
+            }
+        };
+
+        const renderProductList = (products) => {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            const filteredProducts = products.filter(p => 
+                p.name.toLowerCase().includes(searchTerm) || 
+                (p.sku && p.sku.toLowerCase().includes(searchTerm)) ||
+                (p.barcode && p.barcode.toLowerCase().includes(searchTerm))
+            );
+
+            if (filteredProducts.length === 0) {
+                productListEl.innerHTML = '<p class="text-gray-500">No se encontraron productos.</p>';
+                return;
+            }
+
+            productListEl.innerHTML = filteredProducts.map(product => `
+                <div class="flex items-center justify-between p-3 mb-2 rounded-lg cursor-pointer hover:bg-gray-200 transition-colors ${product.id === currentProductId ? 'bg-blue-100' : 'bg-gray-50'}" data-id="${product.id}">
+                    <div class="flex-grow">
+                        <p class="font-semibold text-gray-800">${product.name}</p>
+                        <p class="text-sm text-gray-500">SKU: ${product.sku || 'N/A'}</p>
+                    </div>
+                    <div class="text-sm text-gray-600">Stock: ${product.stock || 0}</div>
+                </div>
+            `).join('');
+        };
+        
+        const populateFormForEdit = (productId) => {
+            const product = allProducts.find(p => p.id === productId);
+            if (!product) return;
+            resetForm();
+            currentProductId = productId;
+            for (const key in product) {
+                if (productForm.elements[key]) {
+                    productForm.elements[key].value = product[key] || '';
                 }
             }
-        });
-        skuInput.value = `${prefix}${maxNumber + 1}`;
-    }
+            const categoryOptionExists = [...categorySelect.options].some(opt => opt.value === product.category);
+            if (product.category && categoryOptionExists) {
+                categorySelect.value = product.category;
+                categoryCustomInput.classList.add('hidden');
+            } else if (product.category) {
+                categorySelect.value = 'custom';
+                categoryCustomInput.value = product.category;
+                categoryCustomInput.classList.remove('hidden');
+            }
+            const brandOptionExists = [...brandSelect.options].some(opt => opt.value === product.brand);
+            if (product.brand && brandOptionExists) {
+                brandSelect.value = product.brand;
+                brandCustomInput.classList.add('hidden');
+            } else if (product.brand) {
+                brandSelect.value = 'custom';
+                brandCustomInput.value = product.brand;
+                brandCustomInput.classList.remove('hidden');
+            }
+            formTitle.textContent = 'Editar Producto';
+            saveBtn.textContent = 'Guardar Cambios';
+            deleteBtn.classList.remove('hidden');
+            renderProductList(allProducts);
+        };
 
-    /**
-     * Stops the barcode scanner and hides the modal.
-     */
-    const stopScanner = () => {
-        if (html5QrCode && html5QrCode.isScanning) {
-            html5QrCode.stop().then(() => {
-                console.log("QR Code scanning stopped.");
-            }).catch((err) => {
-                console.error("Failed to stop scanner", err);
+        const resetForm = () => {
+            productForm.reset();
+            currentProductId = null;
+            formTitle.textContent = 'Agregar Nuevo Producto';
+            saveBtn.textContent = 'Guardar Producto';
+            deleteBtn.classList.add('hidden');
+            statusMessageEl.textContent = '';
+            statusMessageEl.className = 'mt-4 text-center font-semibold';
+            categoryCustomInput.classList.add('hidden');
+            brandCustomInput.classList.add('hidden');
+            renderProductList(allProducts);
+        };
+
+        const handleFormSubmit = async (event) => {
+            event.preventDefault();
+            saveBtn.disabled = true;
+            saveBtn.textContent = 'Guardando...';
+            statusMessageEl.textContent = '';
+            const formData = new FormData(productForm);
+            const productData = Object.fromEntries(formData.entries());
+            productData.category = categorySelect.value === 'custom' ? categoryCustomInput.value : categorySelect.value;
+            productData.brand = brandSelect.value === 'custom' ? brandCustomInput.value : brandSelect.value;
+            delete productData['category-select'];
+            delete productData['category-custom'];
+            delete productData['brand-select'];
+            delete productData['brand-custom'];
+            const numericFields = ['sale_price', 'discount_price', 'purchase_price', 'wholesale_price', 'stock'];
+            numericFields.forEach(field => {
+                productData[field] = productData[field] === '' ? null : Number(productData[field]);
             });
+            const isUpdating = !!currentProductId;
+            const url = isUpdating ? `${API_URL}/update-product` : `${API_URL}/add-product`;
+            const method = isUpdating ? 'PUT' : 'POST';
+            if(isUpdating) {
+                productData.id = currentProductId;
+            }
+            try {
+                const response = await fetch(url, { method, body: JSON.stringify(productData), headers: { 'Content-Type': 'application/json' } });
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(JSON.parse(errorText).error || errorText);
+                }
+                statusMessageEl.textContent = `¡Producto ${isUpdating ? 'actualizado' : 'agregado'} con éxito!`;
+                statusMessageEl.className = 'mt-4 text-center font-semibold text-green-600';
+                await fetchAndRenderProducts();
+                setTimeout(resetForm, 2000);
+            } catch (error) {
+                console.error('Error saving product:', error);
+                statusMessageEl.textContent = `Error: ${error.message}`;
+                statusMessageEl.className = 'mt-4 text-center font-semibold text-red-600';
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.textContent = isUpdating ? 'Guardar Cambios' : 'Guardar Producto';
+            }
+        };
+
+        const handleDelete = async () => {
+            if (!currentProductId || !confirm('¿Estás seguro de que quieres eliminar este producto? Esta acción no se puede deshacer.')) return;
+            deleteBtn.disabled = true;
+            deleteBtn.textContent = 'Eliminando...';
+            try {
+                 const response = await fetch(`${API_URL}/delete-product`, {
+                    method: 'DELETE',
+                    body: JSON.stringify({ id: currentProductId }),
+                    headers: { 'Content-Type': 'application/json' },
+                });
+                 if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Server error');
+                }
+                const result = await response.json();
+                statusMessageEl.textContent = result.message || 'Producto eliminado.';
+                statusMessageEl.className = 'mt-4 text-center font-semibold text-green-600';
+                await fetchAndRenderProducts();
+                setTimeout(resetForm, 2000);
+            } catch(error) {
+                 console.error('Error deleting product:', error);
+                statusMessageEl.textContent = `Error: ${error.message}`;
+                statusMessageEl.className = 'mt-4 text-center font-semibold text-red-600';
+            } finally {
+                deleteBtn.disabled = false;
+                deleteBtn.textContent = 'Eliminar Producto';
+            }
+        };
+
+        const handleSearch = () => renderProductList(allProducts);
+
+        function convertGoogleDriveUrl(url) {
+            const regex = /\/file\/d\/([a-zA-Z0-9_-]+)/;
+            const match = url.match(regex);
+            return (match && match[1]) ? `https://lh3.googleusercontent.com/d/${match[1]}=w1000?authuser=0` : url;
         }
-        scannerContainer.classList.add('hidden');
-        scannerContainer.classList.remove('flex');
-    };
 
-    /**
-     * Starts the barcode scanner.
-     * @param {function} successCallback - Function to run on successful scan.
-     */
-    const startScanner = (successCallback) => {
-        scannerContainer.classList.remove('hidden');
-        scannerContainer.classList.add('flex');
+        function suggestSku() {
+            const prefix = "ASP";
+            let maxNumber = 0;
+            allProducts.forEach(product => {
+                if (product.sku && product.sku.toUpperCase().startsWith(prefix)) {
+                    const numberPart = parseInt(product.sku.substring(prefix.length), 10);
+                    if (!isNaN(numberPart) && numberPart > maxNumber) maxNumber = numberPart;
+                }
+            });
+            skuInput.value = `${prefix}${maxNumber + 1}`;
+        }
 
-        html5QrCode = new Html5Qrcode("reader");
-        
-        const qrCodeSuccessCallback = (decodedText, decodedResult) => {
-            successCallback(decodedText);
-        };
+        function startScanner(target) {
+            currentScannerTarget = target;
+            scannerContainer.classList.remove('hidden');
+            scannerContainer.classList.add('flex');
+            
+            if (!html5QrCode) {
+                html5QrCode = new Html5Qrcode("reader");
+            }
 
-        const config = { 
-            fps: 10, 
-            qrbox: (viewfinderWidth, viewfinderHeight) => {
-                const minEdge = Math.min(viewfinderWidth, viewfinderHeight);
-                const qrboxSize = Math.floor(minEdge * 0.8);
-                return {
-                    width: qrboxSize,
-                    height: qrboxSize
-                };
-            },
-            rememberLastUsedCamera: true,
-            supportedScanTypes: [
-                Html5QrcodeScanType.SCAN_TYPE_CAMERA,
-            ]
-        };
-
-        html5QrCode.start({ facingMode: "environment" }, config, qrCodeSuccessCallback)
-            .catch(err => {
-                console.log("Unable to start scanning.", err);
-                alert("No se pudo iniciar el escáner. Asegúrate de dar permisos para usar la cámara.");
+            const qrCodeSuccessCallback = (decodedText, decodedResult) => {
+                if (currentScannerTarget === 'barcode') {
+                    barcodeInput.value = decodedText;
+                } else if (currentScannerTarget === 'search') {
+                    searchInput.value = decodedText;
+                    handleSearch();
+                }
                 stopScanner();
-            });
-    };
+            };
 
-    
-    // --- EVENT LISTENERS ---
-    productForm.addEventListener('submit', handleFormSubmit);
-    newProductBtn.addEventListener('click', resetForm);
-    deleteBtn.addEventListener('click', handleDelete);
-    searchInput.addEventListener('input', handleSearch);
-    suggestSkuBtn.addEventListener('click', suggestSku);
-
-    scanBarcodeBtn.addEventListener('click', () => {
-        startScanner((decodedText) => {
-            barcodeInput.value = decodedText;
-            stopScanner();
-        });
-    });
-
-    scanSearchBarcodeBtn.addEventListener('click', () => {
-        startScanner((decodedText) => {
-            searchInput.value = decodedText;
-            handleSearch();
-            stopScanner();
-        });
-    });
-
-    closeScannerBtn.addEventListener('click', stopScanner);
-
-    productListEl.addEventListener('click', (event) => {
-        const productElement = event.target.closest('[data-id]');
-        if (productElement) {
-            const productId = parseInt(productElement.dataset.id, 10);
-            populateFormForEdit(productId);
+            const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+            html5QrCode.start({ facingMode: "environment" }, config, qrCodeSuccessCallback)
+                .catch(err => console.log(`Unable to start scanning, error: ${err}`));
         }
-    });
-    
-    photoUrlInputs.forEach(input => {
-        input.addEventListener('input', (event) => {
-            const originalUrl = event.target.value;
-            const convertedUrl = convertGoogleDriveUrl(originalUrl);
-            if (originalUrl !== convertedUrl) {
-                event.target.value = convertedUrl;
+
+        function stopScanner() {
+            if (html5QrCode && html5QrCode.isScanning) {
+                html5QrCode.stop().then(() => {
+                    console.log("QR Code scanning stopped.");
+                }).catch(err => {
+                    console.log(`Error stopping scan: ${err}`);
+                });
+            }
+            scannerContainer.classList.add('hidden');
+            scannerContainer.classList.remove('flex');
+        }
+
+        // --- EVENT LISTENERS ---
+        productForm.addEventListener('submit', handleFormSubmit);
+        newProductBtn.addEventListener('click', resetForm);
+        deleteBtn.addEventListener('click', handleDelete);
+        searchInput.addEventListener('input', handleSearch);
+        suggestSkuBtn.addEventListener('click', suggestSku);
+        scanBarcodeBtn.addEventListener('click', () => startScanner('barcode'));
+        scanSearchBtn.addEventListener('click', () => startScanner('search'));
+        closeScannerBtn.addEventListener('click', stopScanner);
+
+        productListEl.addEventListener('click', (event) => {
+            const productElement = event.target.closest('[data-id]');
+            if (productElement) {
+                populateFormForEdit(parseInt(productElement.dataset.id, 10));
             }
         });
-    });
+        
+        photoUrlInputs.forEach(input => {
+            input.addEventListener('input', (event) => {
+                const originalUrl = event.target.value;
+                const convertedUrl = convertGoogleDriveUrl(originalUrl);
+                if (originalUrl !== convertedUrl) event.target.value = convertedUrl;
+            });
+        });
 
-    categorySelect.addEventListener('change', (e) => {
-        categoryCustomInput.classList.toggle('hidden', e.target.value !== 'custom');
-        if (e.target.value === 'custom') categoryCustomInput.focus();
-    });
+        categorySelect.addEventListener('change', (e) => {
+            categoryCustomInput.classList.toggle('hidden', e.target.value !== 'custom');
+            if (e.target.value === 'custom') categoryCustomInput.focus();
+        });
 
-    brandSelect.addEventListener('change', (e) => {
-        brandCustomInput.classList.toggle('hidden', e.target.value !== 'custom');
-        if (e.target.value === 'custom') brandCustomInput.focus();
-    });
+        brandSelect.addEventListener('change', (e) => {
+            brandCustomInput.classList.toggle('hidden', e.target.value !== 'custom');
+            if (e.target.value === 'custom') brandCustomInput.focus();
+        });
 
-    // --- INITIALIZATION ---
-    fetchAndRenderProducts();
+        // --- INITIALIZATION ---
+        fetchAndRenderProducts();
+    }
 });
 
