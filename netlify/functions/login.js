@@ -1,13 +1,11 @@
 const { Pool } = require('pg');
 const bcrypt = require('bcryptjs');
 
-// Configuración de la conexión a la base de datos usando la variable de entorno
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
 });
 
 exports.handler = async (event) => {
-  // Solo permitir peticiones POST
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: JSON.stringify({ error: 'Método no permitido' }) };
   }
@@ -19,23 +17,34 @@ exports.handler = async (event) => {
       return { statusCode: 400, body: JSON.stringify({ error: 'Usuario y contraseña son requeridos.' }) };
     }
 
-    // Buscar al usuario en la base de datos
-    const result = await pool.query('SELECT * FROM credentials WHERE username = $1', [username]);
+    // --- CÓDIGO DE DIAGNÓSTICO ---
+    console.log(`[Paso 1] Contraseña recibida del navegador: "${password}"`);
+
+    const result = await pool.query('SELECT password_hash FROM credentials WHERE username = $1', [username]);
     const user = result.rows[0];
 
-    // Si el usuario no existe, las credenciales son inválidas
     if (!user) {
+      console.log('[Error] El usuario no fue encontrado en la base de datos.');
       return { statusCode: 401, body: JSON.stringify({ error: 'Credenciales inválidas.' }) };
     }
 
-    // Comparar la contraseña enviada con el hash guardado en la BD
-    const passwordIsValid = bcrypt.compareSync(password, user.password_hash);
+    const hashFromDB = user.password_hash;
+    console.log(`[Paso 2] Hash recuperado de la Base de Datos: "${hashFromDB}"`);
+    
+    // Generamos un hash de la contraseña que nos llegó para comparar
+    const salt = bcrypt.genSaltSync(10);
+    const freshlyGeneratedHash = bcrypt.hashSync(password, salt);
+    console.log(`[Paso 3] Hash recién generado a partir de la contraseña: "${freshlyGeneratedHash}"`);
+    
+    // Comparamos el hash de la BD con la contraseña recibida
+    const passwordIsValid = bcrypt.compareSync(password, hashFromDB);
+    console.log(`[Paso 4] Resultado de bcrypt.compareSync: ${passwordIsValid}`);
+    // --- FIN DEL CÓDIGO DE DIAGNÓSTICO ---
 
     if (!passwordIsValid) {
       return { statusCode: 401, body: JSON.stringify({ error: 'Credenciales inválidas.' }) };
     }
 
-    // Si todo es correcto, enviar una respuesta exitosa
     return {
       statusCode: 200,
       body: JSON.stringify({ message: 'Login exitoso' }),
