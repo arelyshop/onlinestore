@@ -63,9 +63,14 @@
                     <div class="lg:col-span-1 bg-white p-6 rounded-lg shadow-md flex flex-col h-[85vh]">
                         <h2 class="text-2xl font-bold mb-4">Lista de Productos</h2>
                         <div class="relative mb-4">
-                            <input type="text" id="search-product-input" placeholder="Buscar por nombre, SKU o Cód. Barras..." class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <input type="text" id="search-product-input" placeholder="Buscar por nombre, SKU o Cód. Barras..." class="w-full pl-10 pr-10 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                              <div class="absolute top-0 left-0 inline-flex items-center justify-center h-full w-10 text-gray-400">
                                 <svg class="h-6 w-6" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                            </div>
+                            <div class="absolute top-0 right-0 inline-flex items-center justify-center h-full w-10 text-gray-400">
+                                <button type="button" id="scan-search-barcode-btn" class="p-2 rounded-lg text-gray-500 hover:text-gray-700">
+                                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-260q75 0 127.5-52.5T660-440q0-75-52.5-127.5T480-620q-75 0-127.5 52.5T300-440q0 75 52.5 127.5T480-260Zm0-80q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29ZM160-120q-33 0-56.5-23.5T80-200v-480q0-33 23.5-56.5T160-760h126l74-80h240l74 80h126q33 0 56.5 23.5T880-680v480q0 33-23.5 56.5T800-120H160Zm0-80h640v-480H638l-73-80H395l-73 80H160v480Zm320-240Z"/></svg>
+                                </button>
                             </div>
                         </div>
                         <div id="product-list" class="flex-grow overflow-y-auto custom-scrollbar pr-2">
@@ -219,6 +224,7 @@
     <script src="script.js"></script>
 </body>
 </html>
+
 
 
 
