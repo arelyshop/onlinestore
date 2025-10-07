@@ -9,28 +9,26 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // --- LÓGICA DE LOGIN ---
 
-    // Función para mostrar el panel de admin y ocultar el login
     const showAdminPanel = () => {
         loginContainer.classList.add('hidden');
         adminPanel.classList.remove('hidden');
         adminPanel.classList.add('flex');
-        initializeAdminLogic(); // Inicia la lógica del panel solo después de loguearse
+        initializeAdminLogic(); 
     };
 
-    // Comprobar si el usuario ya ha iniciado sesión en esta sesión del navegador
     if (sessionStorage.getItem('is_arelyshop_admin_logged_in') === 'true') {
         showAdminPanel();
     }
 
-    // Manejar el envío del formulario de login
     loginForm.addEventListener('submit', async (event) => {
         event.preventDefault();
         errorMessage.classList.add('hidden');
         loginBtn.textContent = 'Verificando...';
         loginBtn.disabled = true;
         
-        const username = event.target.username.value;
-        const password = event.target.password.value;
+        // CAMBIO IMPORTANTE: Usamos .trim() para limpiar los valores
+        const username = event.target.username.value.trim();
+        const password = event.target.password.value.trim();
 
         try {
             const response = await fetch('/.netlify/functions/login', {
@@ -57,7 +55,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Manejar el cierre de sesión
     logoutBtn.addEventListener('click', () => {
         sessionStorage.removeItem('is_arelyshop_admin_logged_in');
         window.location.reload();
@@ -65,13 +62,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // --- LÓGICA DEL PANEL DE ADMINISTRACIÓN ---
-    // Toda la lógica original del panel se mueve a esta función
     function initializeAdminLogic() {
         // --- STATE ---
         let allProducts = [];
         let currentProductId = null;
         let html5QrCode = null;
-        let currentScannerTarget = null; // 'barcode' o 'search'
+        let currentScannerTarget = null; 
 
         // --- ELEMENT SELECTORS ---
         const productForm = document.getElementById('product-form');
@@ -95,7 +91,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const scannerContainer = document.getElementById('scanner-container');
         const closeScannerBtn = document.getElementById('close-scanner-btn');
 
-        // API Endpoint
         const API_URL = '/.netlify/functions';
 
         // --- FUNCTIONS ---
@@ -350,5 +345,4 @@ document.addEventListener('DOMContentLoaded', () => {
         fetchAndRenderProducts();
     }
 });
-
 
