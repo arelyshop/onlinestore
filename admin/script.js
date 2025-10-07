@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- STATE ---
     let allProducts = [];
     let currentProductId = null;
+    let html5QrCode = null;
 
     // --- ELEMENT SELECTORS ---
     const productForm = document.getElementById('product-form');
@@ -19,6 +20,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const categoryCustomInput = document.getElementById('category-custom');
     const brandSelect = document.getElementById('brand-select');
     const brandCustomInput = document.getElementById('brand-custom');
+    const scanBarcodeBtn = document.getElementById('scan-barcode-btn');
+    const scannerContainer = document.getElementById('scanner-container');
+    const closeScannerBtn = document.getElementById('close-scanner-btn');
+    const barcodeInput = document.getElementById('barcode');
     
     // API Endpoint
     const API_URL = '/.netlify/functions';
@@ -50,7 +55,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const searchTerm = searchInput.value.toLowerCase();
         const filteredProducts = products.filter(p => 
             p.name.toLowerCase().includes(searchTerm) || 
-            (p.sku && p.sku.toLowerCase().includes(searchTerm))
+            (p.sku && p.sku.toLowerCase().includes(searchTerm)) ||
+            (p.barcode && p.barcode.toLowerCase().includes(searchTerm))
         );
 
         if (filteredProducts.length === 0) {
@@ -157,7 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const isUpdating = !!currentProductId;
         const url = isUpdating ? `${API_URL}/update-product` : `${API_URL}/add-product`;
-        const method = isUpdating ? 'PUT' : 'POST'; // <-- THIS IS THE KEY FIX
+        const method = isUpdating ? 'PUT' : 'POST';
 
         if(isUpdating) {
             productData.id = currentProductId;
@@ -270,6 +276,60 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         skuInput.value = `${prefix}${maxNumber + 1}`;
     }
+
+    /**
+     * Stops the barcode scanner and hides the modal.
+     */
+    const stopScanner = () => {
+        if (html5QrCode && html5QrCode.isScanning) {
+            html5QrCode.stop().then(() => {
+                console.log("QR Code scanning stopped.");
+            }).catch((err) => {
+                console.error("Failed to stop scanner", err);
+            });
+        }
+        scannerContainer.classList.add('hidden');
+        scannerContainer.classList.remove('flex');
+    };
+
+    /**
+     * Starts the barcode scanner.
+     */
+    const startScanner = () => {
+        scannerContainer.classList.remove('hidden');
+        scannerContainer.classList.add('flex');
+
+        html5QrCode = new Html5Qrcode("reader");
+        
+        const qrCodeSuccessCallback = (decodedText, decodedResult) => {
+            barcodeInput.value = decodedText;
+            stopScanner();
+        };
+
+        const config = { 
+            fps: 10, 
+            qrbox: (viewfinderWidth, viewfinderHeight) => {
+                const minEdge = Math.min(viewfinderWidth, viewfinderHeight);
+                const qrboxSize = Math.floor(minEdge * 0.8);
+                return {
+                    width: qrboxSize,
+                    height: qrboxSize
+                };
+            },
+            rememberLastUsedCamera: true,
+            supportedScanTypes: [
+                Html5QrcodeScanType.SCAN_TYPE_CAMERA,
+            ]
+        };
+
+        html5QrCode.start({ facingMode: "environment" }, config, qrCodeSuccessCallback)
+            .catch(err => {
+                console.log("Unable to start scanning.", err);
+                alert("No se pudo iniciar el escáner. Asegúrate de dar permisos para usar la cámara.");
+                stopScanner();
+            });
+    };
+
     
     // --- EVENT LISTENERS ---
     productForm.addEventListener('submit', handleFormSubmit);
@@ -277,6 +337,8 @@ document.addEventListener('DOMContentLoaded', () => {
     deleteBtn.addEventListener('click', handleDelete);
     searchInput.addEventListener('input', handleSearch);
     suggestSkuBtn.addEventListener('click', suggestSku);
+    scanBarcodeBtn.addEventListener('click', startScanner);
+    closeScannerBtn.addEventListener('click', stopScanner);
 
     productListEl.addEventListener('click', (event) => {
         const productElement = event.target.closest('[data-id]');
@@ -309,4 +371,5 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- INITIALIZATION ---
     fetchAndRenderProducts();
 });
+
 
