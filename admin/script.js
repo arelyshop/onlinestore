@@ -26,7 +26,6 @@ document.addEventListener('DOMContentLoaded', () => {
         loginBtn.textContent = 'Verificando...';
         loginBtn.disabled = true;
         
-        // CAMBIO IMPORTANTE: Usamos .trim() para limpiar los valores
         const username = event.target.username.value.trim();
         const password = event.target.password.value.trim();
 
@@ -96,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // --- FUNCTIONS ---
         const fetchAndRenderProducts = async () => {
             try {
-                productListEl.innerHTML = '<p class="text-gray-500">Cargando productos...</p>';
+                productListEl.innerHTML = '<p class="text-gray-400">Cargando productos...</p>';
                 const response = await fetch(`${API_URL}/get-products`);
                 if (!response.ok) throw new Error('Failed to fetch products');
                 allProducts = await response.json();
@@ -121,12 +120,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             productListEl.innerHTML = filteredProducts.map(product => `
-                <div class="flex items-center justify-between p-3 mb-2 rounded-lg cursor-pointer hover:bg-gray-200 transition-colors ${product.id === currentProductId ? 'bg-blue-100' : 'bg-gray-50'}" data-id="${product.id}">
+                <div class="flex items-center justify-between p-3 mb-2 rounded-lg cursor-pointer hover:bg-gray-700 transition-colors ${product.id === currentProductId ? 'bg-blue-900' : 'bg-gray-800'}" data-id="${product.id}">
                     <div class="flex-grow">
-                        <p class="font-semibold text-gray-800">${product.name}</p>
-                        <p class="text-sm text-gray-500">SKU: ${product.sku || 'N/A'}</p>
+                        <p class="font-semibold text-white">${product.name}</p>
+                        <p class="text-sm text-gray-400">SKU: ${product.sku || 'N/A'}</p>
                     </div>
-                    <div class="text-sm text-gray-600">Stock: ${product.stock || 0}</div>
+                    <div class="text-sm text-gray-300">Stock: ${product.stock || 0}</div>
                 </div>
             `).join('');
         };
@@ -141,6 +140,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     productForm.elements[key].value = product[key] || '';
                 }
             }
+
+            for (let i = 1; i <= 8; i++) {
+                const urlInput = document.getElementById(`photo_url_${i}`);
+                const thumbnail = document.getElementById(`thumbnail-${i}`);
+                if (urlInput.value) {
+                    thumbnail.src = urlInput.value;
+                } else {
+                    thumbnail.src = `https://placehold.co/40x40/1f2937/9ca3af?text=${i}`;
+                }
+            }
+
             const categoryOptionExists = [...categorySelect.options].some(opt => opt.value === product.category);
             if (product.category && categoryOptionExists) {
                 categorySelect.value = product.category;
@@ -175,6 +185,12 @@ document.addEventListener('DOMContentLoaded', () => {
             statusMessageEl.className = 'mt-4 text-center font-semibold';
             categoryCustomInput.classList.add('hidden');
             brandCustomInput.classList.add('hidden');
+
+            for (let i = 1; i <= 8; i++) {
+                const thumbnail = document.getElementById(`thumbnail-${i}`);
+                thumbnail.src = `https://placehold.co/40x40/1f2937/9ca3af?text=${i}`;
+            }
+
             renderProductList(allProducts);
         };
 
@@ -323,11 +339,21 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
         
-        photoUrlInputs.forEach(input => {
+        photoUrlInputs.forEach((input, index) => {
             input.addEventListener('input', (event) => {
                 const originalUrl = event.target.value;
-                const convertedUrl = convertGoogleDriveUrl(originalUrl);
-                if (originalUrl !== convertedUrl) event.target.value = convertedUrl;
+                let convertedUrl = convertGoogleDriveUrl(originalUrl);
+                
+                if (originalUrl !== convertedUrl) {
+                    event.target.value = convertedUrl;
+                }
+                
+                const thumbnail = document.getElementById(`thumbnail-${index + 1}`);
+                if (convertedUrl) {
+                    thumbnail.src = convertedUrl;
+                } else {
+                    thumbnail.src = `https://placehold.co/40x40/1f2937/9ca3af?text=${index + 1}`;
+                }
             });
         });
 
