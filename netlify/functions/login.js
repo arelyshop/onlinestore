@@ -17,14 +17,18 @@ exports.handler = async (event) => {
       return { statusCode: 400, body: JSON.stringify({ error: 'Usuario y contraseña son requeridos.' }) };
     }
 
-    const result = await pool.query('SELECT * FROM credentials WHERE username = $1', [username]);
-    const user = result.rows[0];
-
-    if (!user) {
-      return { statusCode: 401, body: JSON.stringify({ error: 'Credenciales inválidas.' }) };
+    // --- PRUEBA DE DIAGNÓSTICO ---
+    // Ignoraremos temporalmente el hash de la base de datos y usaremos uno de control.
+    // Este hash corresponde a la contraseña "diego".
+    const correctHashForDiego = '$2a$10$iE.IVt.3O/IIk23s34S/X.w9g8zFq4bJp5kL1kE7vR6nZ2lU1vV9.';
+    
+    // Primero, verificamos que el usuario "admin" exista.
+    if (username.toLowerCase() !== 'admin') {
+        return { statusCode: 401, body: JSON.stringify({ error: 'Usuario incorrecto.' }) };
     }
 
-    const passwordIsValid = bcrypt.compareSync(password, user.password_hash);
+    // Luego, comparamos la contraseña que nos envían con nuestro hash de control.
+    const passwordIsValid = bcrypt.compareSync(password, correctHashForDiego);
 
     if (!passwordIsValid) {
       return { statusCode: 401, body: JSON.stringify({ error: 'Credenciales inválidas.' }) };
