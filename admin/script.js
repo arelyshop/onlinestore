@@ -388,5 +388,3 @@ document.addEventListener('DOMContentLoaded', () => {
     fetchAndRenderProducts();
 });
 
-
-
