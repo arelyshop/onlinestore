@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const password = event.target.password.value;
 
         try {
-            const response = await fetch('/netlify/functions/login', {
+            const response = await fetch('/.netlify/functions/login', {
                 method: 'POST',
                 body: JSON.stringify({ username, password }),
                 headers: { 'Content-Type': 'application/json' },
@@ -350,4 +350,5 @@ document.addEventListener('DOMContentLoaded', () => {
         fetchAndRenderProducts();
     }
 });
+
 
