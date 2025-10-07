@@ -9,68 +9,80 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; }
-        /* Custom scrollbar */
         .custom-scrollbar::-webkit-scrollbar { width: 8px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #888; border-radius: 4px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #555; }
-        #reader__dashboard_section_csr {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        #reader__dashboard_section_csr button {
-            background-color: #1f2937;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 8px;
-            margin-top: 10px;
-        }
+        #reader__dashboard_section_csr { display: flex; flex-direction: column; align-items: center; }
+        #reader__dashboard_section_csr button { background-color: #1f2937; color: white; padding: 8px 16px; border-radius: 8px; margin-top: 10px; }
     </style>
 </head>
 <body class="bg-gray-100">
 
-    <div class="flex h-screen bg-gray-100">
-        <!-- Sidebar -->
-        <div class="hidden md:flex flex-col w-64 bg-white shadow-lg">
-            <div class="flex items-center justify-center h-16 bg-black">
-                <img src="/images/logo-escritorio.svg" alt="Arelyshop Admin" class="h-10">
+    <!-- Login Form -->
+    <div id="login-container" class="flex items-center justify-center h-screen">
+        <div class="w-full max-w-md bg-white p-8 rounded-lg shadow-lg">
+            <div class="flex justify-center mb-6">
+                <img src="/images/logo-escritorio.svg" alt="Arelyshop Admin" class="h-12">
             </div>
-            <div class="flex flex-col flex-grow">
-                <nav class="flex-grow px-4 pb-4">
-                    <a href="#" class="flex items-center mt-4 px-4 py-2 text-white bg-gray-900 rounded-lg">
-                        <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
-                        <span class="font-medium">Gestionar Productos</span>
-                    </a>
-                    <a href="/" class="flex items-center mt-4 px-4 py-2 text-gray-600 hover:bg-gray-200 rounded-lg">
-                         <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-                        <span class="font-medium">Ir a la Tienda</span>
-                    </a>
-                </nav>
-            </div>
+            <h2 class="text-2xl font-bold text-center text-gray-800 mb-2">Acceso de Administrador</h2>
+            <p class="text-center text-gray-500 mb-6">Ingresa tus credenciales para continuar</p>
+            <form id="login-form">
+                <div class="mb-4">
+                    <label for="username" class="block text-gray-700 font-semibold mb-2">Usuario</label>
+                    <input type="text" id="username" name="username" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                </div>
+                <div class="mb-6">
+                    <label for="password" class="block text-gray-700 font-semibold mb-2">Contraseña</label>
+                    <input type="password" id="password" name="password" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                </div>
+                <p id="error-message" class="text-red-500 text-center mb-4 hidden"></p>
+                <button id="login-btn" type="submit" class="w-full bg-black text-white font-bold py-3 px-4 rounded-lg hover:bg-gray-800 transition-colors">
+                    Ingresar
+                </button>
+            </form>
         </div>
+    </div>
 
-        <!-- Main content -->
-        <div class="flex flex-col flex-grow">
-            <header class="flex items-center justify-between h-16 bg-white shadow-md px-6">
-                <h1 class="text-xl font-bold text-gray-800">Gestionar Productos</h1>
-            </header>
+    <!-- Main Admin Content (Initially Hidden) -->
+    <div id="admin-panel" class="hidden h-screen bg-gray-100">
+        <div class="flex h-full">
+            <!-- Sidebar -->
+            <div class="hidden md:flex flex-col w-64 bg-white shadow-lg">
+                <div class="flex items-center justify-center h-16 bg-black">
+                    <img src="/images/logo-escritorio.svg" alt="Arelyshop Admin" class="h-10">
+                </div>
+                <div class="flex flex-col flex-grow">
+                    <nav class="flex-grow px-4 pb-4">
+                        <a href="#" class="flex items-center mt-4 px-4 py-2 text-white bg-gray-900 rounded-lg">
+                            <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                            <span class="font-medium">Gestionar Productos</span>
+                        </a>
+                        <a href="/" class="flex items-center mt-4 px-4 py-2 text-gray-600 hover:bg-gray-200 rounded-lg">
+                            <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                            <span class="font-medium">Ir a la Tienda</span>
+                        </a>
+                    </nav>
+                </div>
+            </div>
 
-            <div class="flex-grow p-6 overflow-auto">
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Main content -->
+            <div class="flex flex-col flex-grow">
+                <header class="flex items-center justify-between h-16 bg-white shadow-md px-6">
+                    <h1 class="text-xl font-bold text-gray-800">Gestionar Productos</h1>
+                    <button id="logout-btn" class="text-sm bg-red-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-700 transition-colors">Cerrar Sesión</button>
+                </header>
+
+                <div class="flex-grow p-6 overflow-auto">
+                   <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     
                     <!-- Product List & Search -->
                     <div class="lg:col-span-1 bg-white p-6 rounded-lg shadow-md flex flex-col h-[85vh]">
                         <h2 class="text-2xl font-bold mb-4">Lista de Productos</h2>
-                        <div class="flex items-center space-x-2 mb-4">
-                            <div class="relative flex-grow">
-                                <input type="text" id="search-product-input" placeholder="Buscar por nombre, SKU o Cód. Barras..." class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                <div class="absolute top-0 left-0 inline-flex items-center justify-center h-full w-10 text-gray-400">
-                                    <svg class="h-6 w-6" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                                </div>
-                            </div>
-                            <button type="button" id="scan-search-barcode-btn" class="p-2 bg-gray-600 rounded-lg hover:bg-gray-700">
-                                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M480-260q75 0 127.5-52.5T660-440q0-75-52.5-127.5T480-620q-75 0-127.5 52.5T300-440q0 75 52.5 127.5T480-260Zm0-80q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29ZM160-120q-33 0-56.5-23.5T80-200v-480q0-33 23.5-56.5T160-760h126l74-80h240l74 80h126q33 0 56.5 23.5T880-680v480q0 33-23.5 56.5T800-120H160Zm0-80h640v-480H638l-73-80H395l-73 80H160v480Zm320-240Z"></path></svg>
+                        <div class="relative mb-4">
+                            <input type="text" id="search-product-input" placeholder="Buscar por nombre, SKU o código de barras..." class="w-full pl-4 pr-12 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                             <button id="scan-search-btn" class="absolute top-0 right-0 inline-flex items-center justify-center h-full w-12 text-gray-400 hover:text-gray-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-260q75 0 127.5-52.5T660-440q0-75-52.5-127.5T480-620q-75 0-127.5 52.5T300-440q0 75 52.5 127.5T480-260Zm0-80q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29ZM160-120q-33 0-56.5-23.5T80-200v-480q0-33 23.5-56.5T160-760h126l74-80h240l74 80h126q33 0 56.5 23.5T880-680v480q0 33-23.5 56.5T800-120H160Zm0-80h640v-480H638l-73-80H395l-73 80H160v480Zm320-240Z"/></svg>
                             </button>
                         </div>
                         <div id="product-list" class="flex-grow overflow-y-auto custom-scrollbar pr-2">
@@ -175,10 +187,10 @@
                                 </div>
                                 <div>
                                     <label for="barcode" class="block text-gray-700 font-semibold mb-2">Código de Barras</label>
-                                    <div class="flex items-center space-x-2">
+                                     <div class="flex items-center space-x-2">
                                         <input type="text" id="barcode" name="barcode" class="w-full px-3 py-2 border rounded-lg">
-                                        <button type="button" id="scan-barcode-btn" class="p-2 bg-gray-600 rounded-lg hover:bg-gray-700">
-                                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M480-260q75 0 127.5-52.5T660-440q0-75-52.5-127.5T480-620q-75 0-127.5 52.5T300-440q0 75 52.5 127.5T480-260Zm0-80q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29ZM160-120q-33 0-56.5-23.5T80-200v-480q0-33 23.5-56.5T160-760h126l74-80h240l74 80h126q33 0 56.5 23.5T880-680v480q0 33-23.5 56.5T800-120H160Zm0-80h640v-480H638l-73-80H395l-73 80H160v480Zm320-240Z"/></svg>
+                                        <button type="button" id="scan-barcode-btn" class="text-sm bg-gray-600 text-white font-bold p-2.5 rounded-lg hover:bg-gray-700 transition-colors">
+                                           <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-260q75 0 127.5-52.5T660-440q0-75-52.5-127.5T480-620q-75 0-127.5 52.5T300-440q0 75 52.5 127.5T480-260Zm0-80q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29ZM160-120q-33 0-56.5-23.5T80-200v-480q0-33 23.5-56.5T160-760h126l74-80h240l74 80h126q33 0 56.5 23.5T880-680v480q0 33-23.5 56.5T800-120H160Zm0-80h640v-480H638l-73-80H395l-73 80H160v480Zm320-240Z"/></svg>
                                         </button>
                                     </div>
                                 </div>
@@ -209,23 +221,21 @@
                          <div id="status-message" class="mt-4 text-center font-semibold"></div>
                     </div>
                 </div>
+                </div>
             </div>
         </div>
     </div>
     
     <!-- Barcode Scanner Modal -->
-    <div id="scanner-container" class="fixed inset-0 bg-black bg-opacity-75 flex-col items-center justify-center hidden z-50">
-        <div class="w-full max-w-md p-4 bg-white rounded-lg shadow-lg">
-             <div id="reader" class="w-full"></div>
+    <div id="scanner-container" class="fixed inset-0 bg-black bg-opacity-75 flex-col items-center justify-center hidden z-50 p-4">
+        <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+            <h3 class="text-xl font-bold mb-4 text-center">Escanear Código de Barras</h3>
+            <div id="reader" class="w-full"></div>
+            <button id="close-scanner-btn" class="w-full mt-4 bg-red-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-700 transition-colors">Cancelar</button>
         </div>
-        <button id="close-scanner-btn" class="mt-4 bg-red-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-red-700">Cancelar</button>
     </div>
 
     <script src="script.js"></script>
 </body>
 </html>
-
-
-
-
 
