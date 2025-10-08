@@ -95,6 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const processUrlsBtn = document.getElementById('process-urls-btn');
         const imageSortableList = document.getElementById('image-sortable-list');
         const singleImageInputsContainer = document.getElementById('single-image-inputs-container');
+        const addSingleUrlFieldBtn = document.getElementById('add-single-url-field-btn');
 
         const API_URL = '/.netlify/functions';
 
@@ -109,6 +110,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const addUrlToSorter = (url) => {
             if (!url) return;
+            // Prevent adding duplicate URLs
+            const existingUrls = Array.from(imageSortableList.querySelectorAll('div[data-url]')).map(div => div.dataset.url);
+            if(existingUrls.includes(url)) {
+                alert('Esta URL ya ha sido agregada.');
+                return;
+            }
+
             const div = document.createElement('div');
             div.className = 'flex items-center space-x-3 p-2 bg-gray-600 rounded-md';
             div.dataset.url = url;
@@ -126,28 +134,39 @@ document.addEventListener('DOMContentLoaded', () => {
             imageSortableList.appendChild(div);
         };
         
-        const addUrlsToSorter = (urls) => {
-             urls.forEach(url => addUrlToSorter(url));
-        };
-
         const createNewSingleImageInput = () => {
-            const input = document.createElement('input');
-            input.type = 'url';
-            input.className = 'w-full px-3 py-2 bg-gray-600 border border-gray-500 text-white rounded-lg single-image-input';
-            input.placeholder = 'Pegar URL de la imagen y presionar Enter';
-
-            input.addEventListener('change', (e) => {
-                const url = convertGoogleDriveUrl(e.target.value.trim());
-                if(url) {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'flex items-center space-x-2 single-url-wrapper';
+        
+            wrapper.innerHTML = `
+                <input type="url" class="w-full px-3 py-2 bg-gray-600 border border-gray-500 text-white rounded-lg" placeholder="Pegar URL y hacer clic en Guardar">
+                <button type="button" class="text-sm bg-green-600 text-white font-bold p-2 rounded-lg hover:bg-green-700 transition-colors save-single-url-btn">Guardar</button>
+                <button type="button" class="text-xl text-red-500 font-bold p-1 rounded-lg hover:bg-red-700 transition-colors remove-single-url-btn">&times;</button>
+            `;
+        
+            const input = wrapper.querySelector('input');
+            const saveBtn = wrapper.querySelector('.save-single-url-btn');
+            const removeBtn = wrapper.querySelector('.remove-single-url-btn');
+        
+            const saveUrlAction = () => {
+                const url = convertGoogleDriveUrl(input.value.trim());
+                if (url) {
                     addUrlToSorter(url);
-                    e.target.disabled = true;
-                    e.target.value = '';
-                    e.target.placeholder = `URL agregada: ${url.substring(0, 30)}...`;
-                    createNewSingleImageInput();
+                    input.value = ''; // Clear input after adding
+                }
+            };
+            
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    saveUrlAction();
                 }
             });
-
-            singleImageInputsContainer.appendChild(input);
+        
+            saveBtn.addEventListener('click', saveUrlAction);
+            removeBtn.addEventListener('click', () => wrapper.remove());
+        
+            singleImageInputsContainer.appendChild(wrapper);
             input.focus();
         };
 
@@ -205,7 +224,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     imageUrls.push(product[`photo_url_${i}`]);
                 }
             }
-            addUrlsToSorter(imageUrls);
+            imageSortableList.innerHTML = '';
+            imageUrls.forEach(url => addUrlToSorter(url));
             
             const categoryOptionExists = [...categorySelect.options].some(opt => opt.value === product.category);
             if (product.category && categoryOptionExists) {
@@ -417,9 +437,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const urls = imageUrlList.value.split(',')
                 .map(url => convertGoogleDriveUrl(url.trim()))
                 .filter(url => url);
-            addUrlsToSorter(urls);
+            urls.forEach(url => addUrlToSorter(url));
             imageUrlList.value = '';
         });
+
+        addSingleUrlFieldBtn.addEventListener('click', createNewSingleImageInput);
 
         closePreviewBtn.addEventListener('click', closeImagePreview);
         imagePreviewModal.addEventListener('click', (e) => {
