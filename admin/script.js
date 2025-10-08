@@ -101,6 +101,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // --- FUNCTIONS ---
 
+        const updateImageNumbers = () => {
+            const imageItems = imageSortableList.querySelectorAll('div[data-url]');
+            imageItems.forEach((item, index) => {
+                const numberEl = item.querySelector('.image-number');
+                if (numberEl) {
+                    numberEl.textContent = `${index + 1}.`;
+                }
+            });
+        };
+
         function convertGoogleDriveUrl(url) {
             if (!url) return '';
             const regex = /\/file\/d\/([a-zA-Z0-9_-]+)/;
@@ -118,20 +128,25 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const div = document.createElement('div');
-            div.className = 'flex items-center space-x-3 p-2 bg-gray-600 rounded-md';
+            div.className = 'flex items-center space-x-2 p-2 bg-gray-600 rounded-md';
             div.dataset.url = url;
 
             div.innerHTML = `
-                <svg class="w-6 h-6 text-gray-400 drag-handle" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                <span class="image-number text-sm font-semibold text-gray-400 w-5 text-center"></span>
+                <svg class="w-5 h-5 text-gray-400 drag-handle" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                 <img src="${url}" onerror="this.onerror=null;this.src='https://placehold.co/40x40/1f2937/9ca3af?text=Err';" class="w-10 h-10 rounded-md object-cover bg-gray-700 cursor-pointer hover:opacity-80 transition-opacity">
                 <p class="flex-grow text-sm text-gray-300 truncate">${url}</p>
                 <button type="button" class="text-xl text-red-400 hover:text-red-300 remove-image-btn">&times;</button>
             `;
             
             div.querySelector('img').addEventListener('click', () => openImagePreview(url));
-            div.querySelector('.remove-image-btn').addEventListener('click', () => div.remove());
+            div.querySelector('.remove-image-btn').addEventListener('click', () => {
+                div.remove();
+                updateImageNumbers();
+            });
             
             imageSortableList.appendChild(div);
+            updateImageNumbers();
         };
         
         const createNewSingleImageInput = () => {
@@ -466,7 +481,10 @@ document.addEventListener('DOMContentLoaded', () => {
         sortable = new Sortable(imageSortableList, {
             animation: 150,
             handle: '.drag-handle',
-            ghostClass: 'sortable-ghost'
+            ghostClass: 'sortable-ghost',
+            onEnd: function () {
+                updateImageNumbers();
+            }
         });
     }
 });
