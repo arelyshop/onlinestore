@@ -272,7 +272,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 productFormContainer.classList.remove('hidden');
                 productFormContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 backToListBtn.classList.remove('hidden');
-                newProductBtn.classList.add('hidden');
             }
         };
 
@@ -298,7 +297,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 productListContainer.classList.remove('hidden');
             }
             backToListBtn.classList.add('hidden');
-            newProductBtn.classList.remove('hidden');
         };
 
         const handleFormSubmit = async (event) => {
@@ -466,7 +464,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 productFormContainer.classList.remove('hidden');
                 productFormContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 backToListBtn.classList.remove('hidden');
-                newProductBtn.classList.add('hidden');
             }
         });
 
@@ -535,4 +532,5 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 });
+
 
