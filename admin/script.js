@@ -70,6 +70,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // --- ELEMENT SELECTORS ---
         const productForm = document.getElementById('product-form');
         const productFormContainer = document.getElementById('product-form-container');
+        const productListContainer = document.getElementById('product-list-container');
+        const backToListBtn = document.getElementById('back-to-list-btn');
         const formTitle = document.getElementById('form-title');
         const productListEl = document.getElementById('product-list');
         const searchInput = document.getElementById('search-product-input');
@@ -264,6 +266,12 @@ document.addEventListener('DOMContentLoaded', () => {
             saveBtn.textContent = 'Guardar Cambios';
             deleteBtn.classList.remove('hidden');
             renderProductList(allProducts);
+
+            if (window.innerWidth < 1024) {
+                productFormContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                backToListBtn.classList.remove('hidden');
+                newProductBtn.classList.add('hidden');
+            }
         };
 
         const resetForm = () => {
@@ -281,6 +289,9 @@ document.addEventListener('DOMContentLoaded', () => {
             createNewSingleImageInput();
             imageUrlList.value = '';
             renderProductList(allProducts);
+            
+            backToListBtn.classList.add('hidden');
+            newProductBtn.classList.remove('hidden');
         };
 
         const handleFormSubmit = async (event) => {
@@ -442,10 +453,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const productElement = event.target.closest('[data-id]');
             if (productElement) {
                 populateFormForEdit(parseInt(productElement.dataset.id, 10));
-                if (window.innerWidth < 1024) {
-                    productFormContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
             }
+        });
+
+        backToListBtn.addEventListener('click', () => {
+            productListContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
         });
 
         processUrlsBtn.addEventListener('click', () => {
