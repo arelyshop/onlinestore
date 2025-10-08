@@ -195,15 +195,25 @@
                                 </div>
                                 <div class="md:col-span-2">
                                     <label class="block text-gray-300 font-semibold mb-2">Gestión de Fotos</label>
-                                    <div class="bg-gray-700 p-4 rounded-lg">
-                                        <label for="image-url-list" class="block text-gray-300 text-sm font-semibold mb-2">Pegar lista de URLs (separadas por coma)</label>
-                                        <textarea id="image-url-list" rows="3" class="w-full px-3 py-2 bg-gray-600 border border-gray-500 text-white rounded-lg mb-2" placeholder="https://.../img1.jpg, https://.../img2.jpg"></textarea>
-                                        <button type="button" id="process-urls-btn" class="w-full bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-indigo-700 transition-colors mb-4">
-                                            Cargar y Reemplazar Lista de Fotos
-                                        </button>
-                                        <label class="block text-gray-300 text-sm font-semibold mb-2">Arrastra para reordenar las imágenes</label>
-                                        <div id="image-sortable-list" class="space-y-2 min-h-[50px]">
-                                            <!-- Draggable image items will be injected here -->
+                                    <div class="bg-gray-700 p-4 rounded-lg space-y-4">
+                                        <div>
+                                            <label for="image-url-list" class="block text-gray-300 text-sm font-semibold mb-2">Pegar lista de URLs (separadas por coma)</label>
+                                            <textarea id="image-url-list" rows="3" class="w-full px-3 py-2 bg-gray-600 border border-gray-500 text-white rounded-lg mb-2" placeholder="https://.../img1.jpg, https://.../img2.jpg"></textarea>
+                                            <button type="button" id="process-urls-btn" class="w-full bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-indigo-700 transition-colors">
+                                                Agregar Fotos desde Lista
+                                            </button>
+                                        </div>
+                                        <div>
+                                            <label class="block text-gray-300 text-sm font-semibold mb-2">Agregar URL de foto individualmente</label>
+                                            <div id="single-image-inputs-container" class="space-y-2">
+                                                <!-- Dynamic single URL inputs will be added here -->
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label class="block text-gray-300 text-sm font-semibold mb-2">Fotos actuales (Arrastra para reordenar)</label>
+                                            <div id="image-sortable-list" class="space-y-2 min-h-[50px] p-2 bg-gray-900/50 rounded-md">
+                                                <!-- Draggable image items will be injected here -->
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
