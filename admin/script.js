@@ -89,6 +89,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const scanSearchBtn = document.getElementById('scan-search-btn');
         const scannerContainer = document.getElementById('scanner-container');
         const closeScannerBtn = document.getElementById('close-scanner-btn');
+        const imagePreviewModal = document.getElementById('image-preview-modal');
+        const previewImage = document.getElementById('preview-image');
+        const closePreviewBtn = document.getElementById('close-preview-btn');
+
 
         const API_URL = '/.netlify/functions';
 
@@ -322,6 +326,18 @@ document.addEventListener('DOMContentLoaded', () => {
             scannerContainer.classList.remove('flex');
         }
 
+        function openImagePreview(imageUrl) {
+            if (imageUrl && !imageUrl.includes('placehold.co')) {
+                previewImage.src = imageUrl;
+                imagePreviewModal.classList.remove('hidden');
+            }
+        }
+
+        function closeImagePreview() {
+            imagePreviewModal.classList.add('hidden');
+            previewImage.src = ''; // Clear src to avoid showing old image briefly
+        }
+
         // --- EVENT LISTENERS ---
         productForm.addEventListener('submit', handleFormSubmit);
         newProductBtn.addEventListener('click', resetForm);
@@ -356,6 +372,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         });
+
+        // Add event listeners for thumbnails to open modal
+        for (let i = 1; i <= 8; i++) {
+            const thumbnail = document.getElementById(`thumbnail-${i}`);
+            thumbnail.addEventListener('click', () => openImagePreview(thumbnail.src));
+        }
+
+        closePreviewBtn.addEventListener('click', closeImagePreview);
+        imagePreviewModal.addEventListener('click', (e) => {
+            // Close if clicking on the dark overlay, but not on the image itself
+            if (e.target === imagePreviewModal) {
+                closeImagePreview();
+            }
+        });
+
 
         categorySelect.addEventListener('change', (e) => {
             categoryCustomInput.classList.toggle('hidden', e.target.value !== 'custom');
