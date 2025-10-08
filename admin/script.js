@@ -268,6 +268,8 @@ document.addEventListener('DOMContentLoaded', () => {
             renderProductList(allProducts);
 
             if (window.innerWidth < 1024) {
+                productListContainer.classList.add('hidden');
+                productFormContainer.classList.remove('hidden');
                 productFormContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 backToListBtn.classList.remove('hidden');
                 newProductBtn.classList.add('hidden');
@@ -290,6 +292,11 @@ document.addEventListener('DOMContentLoaded', () => {
             imageUrlList.value = '';
             renderProductList(allProducts);
             
+            // Mobile view reset
+            if (window.innerWidth < 1024) {
+                productFormContainer.classList.add('hidden');
+                productListContainer.classList.remove('hidden');
+            }
             backToListBtn.classList.add('hidden');
             newProductBtn.classList.remove('hidden');
         };
@@ -337,7 +344,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 statusMessageEl.textContent = `¡Producto ${isUpdating ? 'actualizado' : 'agregado'} con éxito!`;
                 statusMessageEl.className = 'mt-4 text-center font-semibold text-green-600';
                 await fetchAndRenderProducts();
-                setTimeout(resetForm, 2000);
+                setTimeout(() => {
+                    resetForm();
+                    if (window.innerWidth < 1024) {
+                       productListContainer.scrollIntoView({ behavior: 'smooth' });
+                    }
+                }, 2000);
             } catch (error) {
                 console.error('Error saving product:', error);
                 statusMessageEl.textContent = `Error: ${error.message}`;
@@ -366,7 +378,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 statusMessageEl.textContent = result.message || 'Producto eliminado.';
                 statusMessageEl.className = 'mt-4 text-center font-semibold text-green-600';
                 await fetchAndRenderProducts();
-                setTimeout(resetForm, 2000);
+                setTimeout(() => {
+                    resetForm();
+                    if (window.innerWidth < 1024) {
+                       productListContainer.scrollIntoView({ behavior: 'smooth' });
+                    }
+                }, 2000);
             } catch(error) {
                  console.error('Error deleting product:', error);
                 statusMessageEl.textContent = `Error: ${error.message}`;
@@ -441,7 +458,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // --- EVENT LISTENERS ---
         productForm.addEventListener('submit', handleFormSubmit);
-        newProductBtn.addEventListener('click', resetForm);
+        
+        newProductBtn.addEventListener('click', () => {
+            resetForm();
+            if (window.innerWidth < 1024) {
+                productListContainer.classList.add('hidden');
+                productFormContainer.classList.remove('hidden');
+                productFormContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                backToListBtn.classList.remove('hidden');
+                newProductBtn.classList.add('hidden');
+            }
+        });
+
         deleteBtn.addEventListener('click', handleDelete);
         searchInput.addEventListener('input', handleSearch);
         suggestSkuBtn.addEventListener('click', suggestSku);
@@ -457,6 +485,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         backToListBtn.addEventListener('click', () => {
+            resetForm();
             productListContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
         });
 
@@ -498,6 +527,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 updateImageNumbers();
             }
         });
+        
+        // Set initial view for mobile
+        if (window.innerWidth < 1024) {
+            productFormContainer.classList.add('hidden');
+            productListContainer.classList.remove('hidden');
+        }
     }
 });
 
