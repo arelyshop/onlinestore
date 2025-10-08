@@ -70,6 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // --- ELEMENT SELECTORS ---
         const productForm = document.getElementById('product-form');
+        const productFormContainer = document.getElementById('product-form-container'); // <-- Nuevo selector
         const formTitle = document.getElementById('form-title');
         const productListEl = document.getElementById('product-list');
         const searchInput = document.getElementById('search-product-input');
@@ -352,6 +353,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const productElement = event.target.closest('[data-id]');
             if (productElement) {
                 populateFormForEdit(parseInt(productElement.dataset.id, 10));
+                
+                // Si la pantalla es de tamaño móvil (menos de 1024px, el breakpoint 'lg' de Tailwind)
+                if (window.innerWidth < 1024) {
+                    productFormContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
             }
         });
         
