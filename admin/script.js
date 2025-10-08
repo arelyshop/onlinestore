@@ -231,7 +231,7 @@ document.addEventListener('DOMContentLoaded', () => {
             currentProductId = productId;
             for (const key in product) {
                 if (productForm.elements[key]) {
-                    productForm.elements[key].value = product[key] || '';
+                    productForm.elements[key].value = product[key] ?? '';
                 }
             }
 
@@ -532,5 +532,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 });
+
+
 
 
