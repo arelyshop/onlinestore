@@ -94,18 +94,21 @@ document.addEventListener('DOMContentLoaded', () => {
         const imageUrlList = document.getElementById('image-url-list');
         const processUrlsBtn = document.getElementById('process-urls-btn');
         const imageSortableList = document.getElementById('image-sortable-list');
+        const singleImageInputsContainer = document.getElementById('single-image-inputs-container');
 
         const API_URL = '/.netlify/functions';
 
         // --- FUNCTIONS ---
 
         function convertGoogleDriveUrl(url) {
+            if (!url) return '';
             const regex = /\/file\/d\/([a-zA-Z0-9_-]+)/;
             const match = url.match(regex);
             return (match && match[1]) ? `https://lh3.googleusercontent.com/d/${match[1]}=w1000?authuser=0` : url;
         }
 
-        const createImageListItem = (url) => {
+        const addUrlToSorter = (url) => {
+            if (!url) return;
             const div = document.createElement('div');
             div.className = 'flex items-center space-x-3 p-2 bg-gray-600 rounded-md';
             div.dataset.url = url;
@@ -114,23 +117,39 @@ document.addEventListener('DOMContentLoaded', () => {
                 <svg class="w-6 h-6 text-gray-400 drag-handle" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                 <img src="${url}" onerror="this.onerror=null;this.src='https://placehold.co/40x40/1f2937/9ca3af?text=Err';" class="w-10 h-10 rounded-md object-cover bg-gray-700 cursor-pointer hover:opacity-80 transition-opacity">
                 <p class="flex-grow text-sm text-gray-300 truncate">${url}</p>
-                <button type="button" class="text-red-400 hover:text-red-300 remove-image-btn">&times;</button>
+                <button type="button" class="text-xl text-red-400 hover:text-red-300 remove-image-btn">&times;</button>
             `;
             
             div.querySelector('img').addEventListener('click', () => openImagePreview(url));
             div.querySelector('.remove-image-btn').addEventListener('click', () => div.remove());
-
-            return div;
+            
+            imageSortableList.appendChild(div);
+        };
+        
+        const addUrlsToSorter = (urls) => {
+             urls.forEach(url => addUrlToSorter(url));
         };
 
-        const populateImageSorter = (urls) => {
-            imageSortableList.innerHTML = '';
-            urls.forEach(url => {
+        const createNewSingleImageInput = () => {
+            const input = document.createElement('input');
+            input.type = 'url';
+            input.className = 'w-full px-3 py-2 bg-gray-600 border border-gray-500 text-white rounded-lg single-image-input';
+            input.placeholder = 'Pegar URL de la imagen y presionar Enter';
+
+            input.addEventListener('change', (e) => {
+                const url = convertGoogleDriveUrl(e.target.value.trim());
                 if(url) {
-                    imageSortableList.appendChild(createImageListItem(url));
+                    addUrlToSorter(url);
+                    e.target.disabled = true;
+                    e.target.value = '';
+                    e.target.placeholder = `URL agregada: ${url.substring(0, 30)}...`;
+                    createNewSingleImageInput();
                 }
             });
-        }
+
+            singleImageInputsContainer.appendChild(input);
+            input.focus();
+        };
 
         const fetchAndRenderProducts = async () => {
             try {
@@ -186,7 +205,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     imageUrls.push(product[`photo_url_${i}`]);
                 }
             }
-            populateImageSorter(imageUrls);
+            addUrlsToSorter(imageUrls);
             
             const categoryOptionExists = [...categorySelect.options].some(opt => opt.value === product.category);
             if (product.category && categoryOptionExists) {
@@ -223,6 +242,8 @@ document.addEventListener('DOMContentLoaded', () => {
             categoryCustomInput.classList.add('hidden');
             brandCustomInput.classList.add('hidden');
             imageSortableList.innerHTML = '';
+            singleImageInputsContainer.innerHTML = '';
+            createNewSingleImageInput();
             imageUrlList.value = '';
             renderProductList(allProducts);
         };
@@ -236,7 +257,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const formData = new FormData(productForm);
             const productData = Object.fromEntries(formData.entries());
 
-            // Get image URLs from the sortable list
             const imageItems = imageSortableList.querySelectorAll('div[data-url]');
             for (let i = 0; i < 8; i++) {
                 productData[`photo_url_${i + 1}`] = imageItems[i] ? imageItems[i].dataset.url : null;
@@ -397,7 +417,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const urls = imageUrlList.value.split(',')
                 .map(url => convertGoogleDriveUrl(url.trim()))
                 .filter(url => url);
-            populateImageSorter(urls);
+            addUrlsToSorter(urls);
             imageUrlList.value = '';
         });
 
@@ -420,6 +440,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // --- INITIALIZATION ---
         fetchAndRenderProducts();
+        createNewSingleImageInput(); // Create the first single image input
         sortable = new Sortable(imageSortableList, {
             animation: 150,
             handle: '.drag-handle',
