@@ -30,22 +30,27 @@ document.addEventListener('DOMContentLoaded', function () {
         const isOutOfStock = product.stock <= 0;
 
         // --- INICIO DE LA CORRECCIÓN ---
-
-        // 1. Convertir los precios de texto a números para una comparación correcta.
         const salePrice = parseFloat(product.sale_price);
         const discountPrice = parseFloat(product.discount_price);
 
-        // 2. Usar las variables numéricas para la lógica de descuento.
         if (!isOutOfStock && discountPrice && salePrice && discountPrice < salePrice) {
             const discountPercentage = Math.round(((salePrice - discountPrice) / salePrice) * 100);
             priceHTML = `<div class="mt-1 flex items-baseline justify-center space-x-2 flex-wrap"><span class="text-gray-500 line-through text-sm">Bs. ${Math.round(salePrice)}</span><span class="font-bold text-red-600 text-base">Bs. ${Math.round(discountPrice)}</span></div>`;
+            
+            // --- SVG CÍRCULO CORREGIDO ---
             discountBadgeHTML = `
-                <div class="absolute bottom-1 left-1 w-9 h-auto z-10">
-                    <svg data-name="Capa 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 302.44 402.78">
-                        <defs><linearGradient id="grad-${product.id}" x1="151.22" y1="402.78" x2="151.22" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#e20919"/><stop offset="1" stop-color="#fb6404"/></linearGradient></defs>
-                        <g><path fill="url(#grad-${product.id})" fill-rule="evenodd" d="M61.01,179.91C51.45,94.39,101.43,34.24,195.1,0c-57.38,74.43,48.9,155.06,54.76,232.36,13.74-23.43,21.53-54.72,23.08-96.52,70.24,110.2,12.01,290.3-142.57,264.42-14.19-2.37-27.87-6.85-40.33-13.52C33.68,356.62,0,291.04,0,228.4c0-39.92,17.08-75.57,39.18-103.89,2.95,27.75,9.24,48.44,21.83,55.4Z"/></g>
-                        <text x="151.22" y="280" font-family="Inter, sans-serif" font-weight="bold" fill="white" text-anchor="middle">
-                            <tspan font-size="80">${discountPercentage}%</tspan><tspan x="151.22" dy="80" font-size="90">OFF</tspan>
+                <div class="absolute bottom-2 left-2 w-11 h-11 z-10">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+                        <defs>
+                            <linearGradient id="grad-${product.id}" x1="100" y1="0" x2="100" y2="200" gradientUnits="userSpaceOnUse">
+                                <stop offset="0" stop-color="#fb6404"/>
+                                <stop offset="1" stop-color="#e20919"/>
+                            </linearGradient>
+                        </defs>
+                        <circle cx="100" cy="100" r="100" fill="url(#grad-${product.id})" />
+                        <text x="100" y="95" font-family="Inter, sans-serif" font-weight="bold" fill="white" text-anchor="middle" dominant-baseline="middle">
+                            <tspan font-size="58">${discountPercentage}%</tspan>
+                            <tspan x="100" dy="1.1em" font-size="48">OFF</tspan>
                         </text>
                     </svg>
                 </div>`;
@@ -54,7 +59,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         
         // --- FIN DE LA CORRECCIÓN ---
-
 
         // Stock logic
         if (isOutOfStock) {
@@ -367,3 +371,4 @@ document.addEventListener('DOMContentLoaded', function () {
 
     init();
 });
+
