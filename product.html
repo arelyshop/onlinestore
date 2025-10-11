@@ -53,8 +53,8 @@
         </div>
         <section id="similar-products-section" class="container mx-auto px-4 md:px-0 mt-16 hidden">
              <div class="md:w-[85%] md:mx-auto">
-                <h2 class="text-2xl font-bold text-center text-gray-800 mb-8">También te puede interesar...</h2>
-                <div id="similar-products-grid" class="grid grid-cols-2 md:grid-cols-5 gap-4"></div>
+                <h2 class="text-2xl font-bold text-center text-gray-800 mb-8">Otros clientes también vieron</h2>
+                <div id="similar-products-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4"></div>
             </div>
         </section>
     </main>
@@ -72,7 +72,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
             </button>
             <button id="close-modal-btn" class="absolute -top-4 -right-4 md:top-0 md:right-0 m-2 text-white bg-black/50 rounded-full p-1.5 hover:bg-black">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin-round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
             </button>
         </div>
     </div>
@@ -260,7 +260,11 @@
 
 
             // --- RENDER SIMILAR PRODUCTS ---
-            const similarProducts = allProducts.filter(p => p.id !== currentProduct.id && (p.category === currentProduct.category || p.brand === currentProduct.brand)).slice(0, 5);
+            const isMobile = window.innerWidth < 1024; // lg breakpoint for Tailwind
+            const similarProductsCount = isMobile ? 6 : 5;
+
+            const similarProducts = allProducts.filter(p => p.id !== currentProduct.id && (p.category === currentProduct.category || p.brand === currentProduct.brand)).slice(0, similarProductsCount);
+            
             if (similarProducts.length > 0) {
                 document.getElementById('similar-products-section').classList.remove('hidden');
                 const grid = document.getElementById('similar-products-grid');
@@ -270,3 +274,4 @@
     </script>
 </body>
 </html>
+
