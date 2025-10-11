@@ -30,32 +30,31 @@ document.addEventListener('DOMContentLoaded', function () {
         const isOutOfStock = product.stock <= 0;
 
         // --- INICIO DE LA CORRECCIÓN ---
-
-        // 1. Convertir los precios de texto a números para una comparación correcta.
+        // 1. Convertir precios a números para la comparación
         const salePrice = parseFloat(product.sale_price);
         const discountPrice = parseFloat(product.discount_price);
 
-        // 2. Usar las variables numéricas para la lógica de descuento.
+        // 2. Usar las variables numéricas en la condición
         if (!isOutOfStock && discountPrice && salePrice && discountPrice < salePrice) {
             const discountPercentage = Math.round(((salePrice - discountPrice) / salePrice) * 100);
             priceHTML = `<div class="mt-1 flex items-baseline justify-center space-x-2 flex-wrap"><span class="text-gray-500 line-through text-sm">Bs. ${Math.round(salePrice)}</span><span class="font-bold text-red-600 text-base">Bs. ${Math.round(discountPrice)}</span></div>`;
+            // 3. SVG con texto centrado corregido
             discountBadgeHTML = `
                 <div class="absolute bottom-1 left-1 w-9 h-auto z-10">
                     <svg data-name="Capa 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 302.44 402.78">
                         <defs><linearGradient id="grad-${product.id}" x1="151.22" y1="402.78" x2="151.22" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#e20919"/><stop offset="1" stop-color="#fb6404"/></linearGradient></defs>
                         <g><path fill="url(#grad-${product.id})" fill-rule="evenodd" d="M61.01,179.91C51.45,94.39,101.43,34.24,195.1,0c-57.38,74.43,48.9,155.06,54.76,232.36,13.74-23.43,21.53-54.72,23.08-96.52,70.24,110.2,12.01,290.3-142.57,264.42-14.19-2.37-27.87-6.85-40.33-13.52C33.68,356.62,0,291.04,0,228.4c0-39.92,17.08-75.57,39.18-103.89,2.95,27.75,9.24,48.44,21.83,55.4Z"/></g>
-                        <text x="151.22" y="280" font-family="Inter, sans-serif" font-weight="bold" fill="white" text-anchor="middle">
-                            <tspan font-size="80">${discountPercentage}%</tspan><tspan x="151.22" dy="80" font-size="90">OFF</tspan>
+                        <text x="151.22" y="240" font-family="Inter, sans-serif" font-weight="bold" fill="white" text-anchor="middle">
+                            <tspan font-size="85">${discountPercentage}%</tspan>
+                            <tspan dy="1.1em" font-size="75">OFF</tspan>
                         </text>
                     </svg>
                 </div>`;
         } else {
             priceHTML = `<p class="text-gray-600 mt-1 text-center font-semibold">Bs. ${Math.round(salePrice)}</p>`;
         }
-        
         // --- FIN DE LA CORRECCIÓN ---
-
-
+        
         // Stock logic
         if (isOutOfStock) {
             stockOverlayHTML = `<div class="sold-out-watermark"><span>AGOTADO</span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="white"><path d="M620-520q25 0 42.5-17.5T680-580q0-25-17.5-42.5T620-640q-25 0-42.5 17.5T560-580q0 25 17.5 42.5T620-520Zm-280 0q25 0 42.5-17.5T400-580q0-25-17.5-42.5T340-640q-25 0-42.5 17.5T280-580q0 25 17.5 42.5T340-520Zm140 100q-68 0-123.5 38.5T276-280h66q22-37 58.5-58.5T480-360q43 0 79.5 21.5T618-280h66q-25-63-80.5-101.5T480-420Zm0 340q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-400Zm0 320q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Z"/></svg></div>`;
@@ -367,3 +366,4 @@ document.addEventListener('DOMContentLoaded', function () {
 
     init();
 });
+
