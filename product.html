@@ -37,7 +37,6 @@
         .sold-out-watermark svg { width: 1em; height: 1em; }
         #sidenav, #cart-flyout { transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
         #sidenav-overlay, #cart-overlay { transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
-        /* Image Modal Styles */
         #image-modal { display: none; }
         #image-modal.flex { display: flex; }
     </style>
@@ -72,7 +71,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
             </button>
             <button id="close-modal-btn" class="absolute -top-4 -right-4 md:top-0 md:right-0 m-2 text-white bg-black/50 rounded-full p-1.5 hover:bg-black">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin-round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
             </button>
         </div>
     </div>
@@ -81,7 +80,8 @@
     <script src="/js/main.js"></script>
     <script>
         window.addEventListener('shared-components-loaded', ({ detail }) => {
-            const { allProducts, addToCart, createProductCard } = detail;
+            // --- DESTRUCTURAMOS LA NUEVA FUNCIÓN ---
+            const { allProducts, addToCart, createProductCard, createDiscountBadgeHTML } = detail;
             const urlParams = new URLSearchParams(window.location.search);
             const productId = parseInt(urlParams.get('id'));
             const container = document.getElementById('product-details-container');
@@ -93,50 +93,29 @@
                 return;
             }
 
-            // --- RENDER PRODUCT DETAILS ---
             document.title = `Arelyshop.com - ${currentProduct.name}`;
             const photoUrls = [1, 2, 3, 4, 5, 6, 7, 8].map(i => currentProduct[`photo_url_${i}`]).filter(Boolean);
             if (photoUrls.length === 0) photoUrls.push('https://placehold.co/600x600/e2e8f0/cbd5e0?text=Sin+Imagen');
             
             const isOutOfStock = currentProduct.stock <= 0;
-            let priceHTML = '', discountBadgeHTML = '', stockHTML = '';
+            let priceHTML = '', stockHTML = '';
             
-            // --- INICIO DE LA CORRECCIÓN ---
-            // 1. Convertir precios a números para la comparación
             const salePrice = parseFloat(currentProduct.sale_price);
             const discountPrice = parseFloat(currentProduct.discount_price);
 
-            // 2. Usar las variables numéricas en la condición
             if (!isOutOfStock && discountPrice && salePrice && discountPrice < salePrice) {
-                const discountPercentage = Math.round(((salePrice - discountPrice) / salePrice) * 100);
                 priceHTML = `<div class="flex items-end space-x-2"><span class="text-2xl font-bold text-red-600">Bs. ${Math.round(discountPrice)}</span><span class="text-lg text-gray-500 line-through">Bs. ${Math.round(salePrice)}</span></div>`;
-                discountBadgeHTML = `
-                    <div class="w-8 h-auto ml-2">
-                        <svg data-name="Capa 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 302.44 402.78">
-                            <defs>
-                                <linearGradient id="discount-grad-detail-${currentProduct.id}" x1="151.22" y1="402.78" x2="151.22" y2="0" gradientUnits="userSpaceOnUse">
-                                    <stop offset="0" stop-color="#e20919"/><stop offset="1" stop-color="#fb6404"/>
-                                </linearGradient>
-                            </defs>
-                            <g>
-                                <path fill="url(#discount-grad-detail-${currentProduct.id})" fill-rule="evenodd" d="M61.01,179.91C51.45,94.39,101.43,34.24,195.1,0c-57.38,74.43,48.9,155.06,54.76,232.36,13.74-23.43,21.53-54.72,23.08-96.52,70.24,110.2,12.01,290.3-142.57,264.42-14.19-2.37-27.87-6.85-40.33-13.52C33.68,356.62,0,291.04,0,228.4c0-39.92,17.08-75.57,39.18-103.89,2.95,27.75,9.24,48.44,21.83,55.4Z"/>
-                            </g>
-                            <text x="151.22" y="280" font-family="Inter, sans-serif" font-weight="bold" fill="white" text-anchor="middle">
-                                <tspan font-size="80">${discountPercentage}%</tspan>
-                                <tspan x="151.22" dy="80" font-size="90">OFF</tspan>
-                            </text>
-                        </svg>
-                    </div>`;
             } else {
                 priceHTML = `<p class="text-2xl font-bold text-gray-900">Bs. ${Math.round(salePrice)}</p>`;
             }
-            // --- FIN DE LA CORRECCIÓN ---
+
+            // --- INVOCAMOS LA FUNCIÓN CENTRALIZADA ---
+            const discountBadgeHTML = createDiscountBadgeHTML(currentProduct, { size: 'large' });
 
             stockHTML = isOutOfStock ? `<p class="mt-2 font-semibold text-lg text-gray-700">Agotado</p>` : (currentProduct.stock <= 5 ? `<p class="mt-2 font-semibold text-lg text-red-600">¡Solo quedan ${currentProduct.stock}!</p>` : `<p class="mt-2 font-semibold text-lg text-green-600">En stock</p>`);
 
             const description = currentProduct.description || 'No hay descripción disponible.';
-            const snippetLength = 800;
-            const hasLongDescription = description.length > snippetLength;
+            const hasLongDescription = description.length > 800;
             let descriptionHTML = `<p class="text-gray-600 mt-4 whitespace-pre-wrap">${description.replace(/\*(.*?)\*/g, '<strong>$1</strong>')}</p>`;
             if(hasLongDescription) { /* ... logic for 'Ver más' ... */ }
 
@@ -174,13 +153,11 @@
                     </div>
                 </div>`;
             
-            // --- EVENT LISTENERS FOR PRODUCT PAGE ---
             document.getElementById('page-add-to-cart-btn').addEventListener('click', () => {
                 const priceToAdd = (discountPrice && discountPrice < salePrice) ? discountPrice : salePrice;
                 addToCart(currentProduct.name, priceToAdd);
             });
             
-            // --- Gallery & Modal Elements ---
             let currentIndex = 0;
             const mainImg = document.getElementById('main-product-image');
             const thumbs = document.querySelectorAll('#thumbnail-container img');
@@ -191,13 +168,12 @@
             const modalNextBtn = document.getElementById('modal-next-btn');
             const mainImageContainer = document.getElementById('main-image-container');
 
-            // --- Gallery Logic ---
             const showImage = (index) => {
                 if (index >= photoUrls.length) index = 0;
                 if (index < 0) index = photoUrls.length - 1;
                 currentIndex = index;
                 mainImg.src = photoUrls[currentIndex];
-                modalImg.src = photoUrls[currentIndex]; // Keep modal image in sync
+                modalImg.src = photoUrls[currentIndex];
                 
                 thumbs.forEach((thumb, i) => {
                     const isActive = i === currentIndex;
@@ -208,15 +184,13 @@
                 });
             };
             
-            // Event Listeners for main gallery
             document.getElementById('prev-image-btn').addEventListener('click', () => showImage(currentIndex - 1));
             document.getElementById('next-image-btn').addEventListener('click', () => showImage(currentIndex + 1));
             thumbs.forEach(thumb => thumb.addEventListener('click', (e) => showImage(parseInt(e.target.dataset.index))));
 
-            // --- Modal Logic ---
             const openModal = () => {
                 modal.classList.add('flex');
-                showImage(currentIndex); // Ensure correct image is shown on open
+                showImage(currentIndex);
                 document.body.style.overflow = 'hidden';
             };
             
@@ -225,7 +199,6 @@
                 document.body.style.overflow = '';
             };
             
-            // Event Listeners for modal
             mainImg.addEventListener('click', openModal);
             closeModalBtn.addEventListener('click', closeModal);
             modalPrevBtn.addEventListener('click', () => showImage(currentIndex - 1));
@@ -234,7 +207,6 @@
                 if (e.target === modal) closeModal();
             });
 
-            // --- Swipe functionality for touch screens ---
             function setupSwipe(element, onSwipeLeft, onSwipeRight) {
                 let touchstartX = 0;
                 let touchendX = 0;
@@ -254,13 +226,10 @@
                 }
             }
 
-            // Apply swipe to main gallery and modal
             setupSwipe(mainImageContainer, () => showImage(currentIndex + 1), () => showImage(currentIndex - 1));
             setupSwipe(modal, () => showImage(currentIndex + 1), () => showImage(currentIndex - 1));
 
-
-            // --- RENDER SIMILAR PRODUCTS ---
-            const isMobile = window.innerWidth < 1024; // lg breakpoint for Tailwind
+            const isMobile = window.innerWidth < 1024;
             const similarProductsCount = isMobile ? 6 : 5;
 
             const similarProducts = allProducts.filter(p => p.id !== currentProduct.id && (p.category === currentProduct.category || p.brand === currentProduct.brand)).slice(0, similarProductsCount);
