@@ -11,10 +11,8 @@ document.addEventListener('DOMContentLoaded', function () {
             const text = await response.text();
             const element = document.querySelector(selector);
             if (element) {
-                // Use a temporary wrapper to parse the component HTML
                 const tempWrapper = document.createElement('div');
                 tempWrapper.innerHTML = text;
-                // Replace the placeholder with the actual component's child nodes
                 element.replaceWith(...tempWrapper.childNodes);
             }
         } catch (error) {
@@ -22,50 +20,60 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     };
 
-    const createProductCard = (product) => {
-        let priceHTML = '';
-        let discountBadgeHTML = '';
-        let stockOverlayHTML = '';
-
-        const isOutOfStock = product.stock <= 0;
-
-        // --- INICIO DE LA CORRECCIÓN ---
+    // --- FUNCIÓN CENTRALIZADA PARA EL ÍCONO DE DESCUENTO ---
+    const createDiscountBadgeHTML = (product, options = {}) => {
         const salePrice = parseFloat(product.sale_price);
         const discountPrice = parseFloat(product.discount_price);
+        const isOutOfStock = product.stock <= 0;
+
+        if (isOutOfStock || !discountPrice || !salePrice || discountPrice >= salePrice) {
+            return ''; // No hay insignia si no hay descuento o está agotado
+        }
+
+        const discountPercentage = Math.round(((salePrice - discountPrice) / salePrice) * 100);
+        const sizeClass = options.size === 'large' ? 'w-12 h-12 ml-3' : 'absolute bottom-2 left-2 w-11 h-11 z-10';
+        const percentFontSize = options.size === 'large' ? '60' : '58';
+        const offFontSize = options.size === 'large' ? '50' : '48';
+        
+        return `
+            <div class="${sizeClass}">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+                    <defs>
+                        <linearGradient id="grad-badge-${product.id}" x1="100" y1="0" x2="100" y2="200" gradientUnits="userSpaceOnUse">
+                            <stop offset="0" stop-color="#fb6404"/>
+                            <stop offset="1" stop-color="#e20919"/>
+                        </linearGradient>
+                    </defs>
+                    <circle cx="100" cy="100" r="100" fill="url(#grad-badge-${product.id})" />
+                    <text x="100" y="95" font-family="Inter, sans-serif" font-weight="bold" fill="white" text-anchor="middle" dominant-baseline="middle">
+                        <tspan font-size="${percentFontSize}">${discountPercentage}%</tspan>
+                        <tspan x="100" dy="1.1em" font-size="${offFontSize}">OFF</tspan>
+                    </text>
+                </svg>
+            </div>`;
+    };
+
+
+    const createProductCard = (product) => {
+        let priceHTML = '';
+        let stockOverlayHTML = '';
+
+        const salePrice = parseFloat(product.sale_price);
+        const discountPrice = parseFloat(product.discount_price);
+        const isOutOfStock = product.stock <= 0;
 
         if (!isOutOfStock && discountPrice && salePrice && discountPrice < salePrice) {
-            const discountPercentage = Math.round(((salePrice - discountPrice) / salePrice) * 100);
             priceHTML = `<div class="mt-1 flex items-baseline justify-center space-x-2 flex-wrap"><span class="text-gray-500 line-through text-sm">Bs. ${Math.round(salePrice)}</span><span class="font-bold text-red-600 text-base">Bs. ${Math.round(discountPrice)}</span></div>`;
-            
-            // --- SVG CÍRCULO CORREGIDO ---
-            discountBadgeHTML = `
-                <div class="absolute bottom-2 left-2 w-11 h-11 z-10">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
-                        <defs>
-                            <linearGradient id="grad-${product.id}" x1="100" y1="0" x2="100" y2="200" gradientUnits="userSpaceOnUse">
-                                <stop offset="0" stop-color="#fb6404"/>
-                                <stop offset="1" stop-color="#e20919"/>
-                            </linearGradient>
-                        </defs>
-                        <circle cx="100" cy="100" r="100" fill="url(#grad-${product.id})" />
-                        <text x="100" y="95" font-family="Inter, sans-serif" font-weight="bold" fill="white" text-anchor="middle" dominant-baseline="middle">
-                            <tspan font-size="58">${discountPercentage}%</tspan>
-                            <tspan x="100" dy="1.1em" font-size="48">OFF</tspan>
-                        </text>
-                    </svg>
-                </div>`;
         } else {
             priceHTML = `<p class="text-gray-600 mt-1 text-center font-semibold">Bs. ${Math.round(salePrice)}</p>`;
         }
         
-        // --- FIN DE LA CORRECCIÓN ---
+        const discountBadgeHTML = createDiscountBadgeHTML(product, { size: 'small' });
 
-        // Stock logic
         if (isOutOfStock) {
             stockOverlayHTML = `<div class="sold-out-watermark"><span>AGOTADO</span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="white"><path d="M620-520q25 0 42.5-17.5T680-580q0-25-17.5-42.5T620-640q-25 0-42.5 17.5T560-580q0 25 17.5 42.5T620-520Zm-280 0q25 0 42.5-17.5T400-580q0-25-17.5-42.5T340-640q-25 0-42.5 17.5T280-580q0 25 17.5 42.5T340-520Zm140 100q-68 0-123.5 38.5T276-280h66q22-37 58.5-58.5T480-360q43 0 79.5 21.5T618-280h66q-25-63-80.5-101.5T480-420Zm0 340q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-400Zm0 320q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Z"/></svg></div>`;
         }
 
-        // Image hover logic
         const hasSecondImage = product.photo_url_2;
         const imageClass = `w-full h-full object-cover transition-all duration-300 ${isOutOfStock ? 'opacity-50' : ''}`;
         let imageHTML;
@@ -79,7 +87,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 <img src="${product.photo_url_1 || 'https://placehold.co/400x400/e2e8f0/cbd5e0?text=Producto'}" alt="${product.name}" class="${imageClass} group-hover:scale-110" onerror="this.onerror=null;this.src='https://placehold.co/400x400/e2e8f0/cbd5e0?text=Error';">`;
         }
         
-        // Card HTML
         return `
             <div class="bg-white rounded-lg shadow-md overflow-hidden group">
                 <a href="product.html?id=${product.id}" class="block h-full flex flex-col">
@@ -109,7 +116,6 @@ document.addEventListener('DOMContentLoaded', function () {
         cart.push({ name: productName, price: parseFloat(productPrice) });
         saveCart();
         renderCart();
-        // Animate cart icons
         [document.getElementById('mobile-cart-btn'), document.getElementById('desktop-cart-btn')].forEach(icon => {
             if (icon) {
                 icon.classList.add('cart-bounce-animation');
@@ -161,24 +167,20 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // --- SHARED COMPONENT INITIALIZATION ---
     async function initializeSharedComponents() {
-        // Fetch all products for search and filters
         try {
             const response = await fetch('/.netlify/functions/get-products');
             if (!response.ok) throw new Error('Could not fetch products');
             allProducts = await response.json();
         } catch (error) {
             console.error('Failed to initialize shared components:', error);
-            return; // Stop if products can't be fetched
+            return;
         }
 
-        // Setup common elements and event listeners
         const yearSpan = document.getElementById('current-year');
         if (yearSpan) yearSpan.textContent = new Date().getFullYear();
 
-        // Populate dynamic menus
         populateFilterMenus(allProducts);
 
-        // --- Flyouts & Menus Logic ---
         const sidenav = document.getElementById('sidenav');
         const cartFlyout = document.getElementById('cart-flyout');
         const sidenavOverlay = document.getElementById('sidenav-overlay');
@@ -202,7 +204,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const openFlyout = (flyoutEl, overlayEl) => {
             if (isMobile()) {
-                // If it's the cart, make it full width. Otherwise, keep sidenav at w-72.
                 if (flyoutEl === cartFlyout) {
                     flyoutEl.classList.add('w-full');
                     flyoutEl.classList.remove('w-72', 'md:w-96');
@@ -249,7 +250,6 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('close-cart-btn')?.addEventListener('click', () => closeFlyout(cartFlyout, cartOverlay, 'right'));
         cartOverlay?.addEventListener('click', () => closeFlyout(cartFlyout, cartOverlay, 'right'));
         
-        // --- Search Logic ---
         const searchInputs = [document.getElementById('mobile-search-input'), document.getElementById('desktop-search-input')];
         const searchResultsContainers = [document.getElementById('mobile-search-results'), document.getElementById('desktop-search-results')];
 
@@ -303,21 +303,19 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
-        // --- Other Listeners ---
         document.getElementById('cart-items-container')?.addEventListener('click', (e) => {
             const removeBtn = e.target.closest('.remove-from-cart-btn');
             if (removeBtn) removeFromCart(parseInt(removeBtn.dataset.index));
         });
 
         document.getElementById('whatsapp-order-btn')?.addEventListener('click', () => {
-            if (cart.length === 0) return; // Removed alert for better UX
+            if (cart.length === 0) return;
             let message = '¡Hola! Quisiera hacer el siguiente pedido:\n\n' + cart.map(item => `- ${item.name} (Bs. ${item.price.toFixed(2)})`).join('\n');
             const total = cart.reduce((sum, item) => sum + item.price, 0);
             message += `\n\n*Total a pagar: Bs. ${total.toFixed(2)}*`;
             window.open(`https://wa.me/59167500044?text=${encodeURIComponent(message)}`, '_blank');
         });
         
-        // Accordion menus in sidenav
         document.getElementById('mobile-categories-btn')?.addEventListener('click', () => {
             document.getElementById('mobile-categories-submenu').classList.toggle('hidden');
             document.getElementById('mobile-categories-arrow').classList.toggle('rotate-180');
@@ -327,7 +325,6 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('mobile-marcas-arrow').classList.toggle('rotate-180');
         });
         
-        // Desktop dropdowns
         const desktopCategoriesContainer = document.getElementById('desktop-categories-dropdown-container');
         desktopCategoriesContainer?.addEventListener('mouseenter', () => desktopCategoriesContainer.querySelector('div').classList.remove('hidden'));
         desktopCategoriesContainer?.addEventListener('mouseleave', () => desktopCategoriesContainer.querySelector('div').classList.add('hidden'));
@@ -336,7 +333,15 @@ document.addEventListener('DOMContentLoaded', function () {
         desktopMarcasContainer?.addEventListener('mouseenter', () => desktopMarcasContainer.querySelector('div').classList.remove('hidden'));
         desktopMarcasContainer?.addEventListener('mouseleave', () => desktopMarcasContainer.querySelector('div').classList.add('hidden'));
 
-        window.dispatchEvent(new CustomEvent('shared-components-loaded', { detail: { allProducts, addToCart, createProductCard } }));
+        // --- EXPORTAR FUNCIONES NECESARIAS ---
+        window.dispatchEvent(new CustomEvent('shared-components-loaded', { 
+            detail: { 
+                allProducts, 
+                addToCart, 
+                createProductCard,
+                createDiscountBadgeHTML // <-- Exportamos la nueva función
+            } 
+        }));
     }
     
     function populateFilterMenus(products) {
@@ -358,17 +363,14 @@ document.addEventListener('DOMContentLoaded', function () {
         if (brandMenuMob) brandMenuMob.innerHTML = brandLinks.replace(/pl-6 pr-4 py-2/g, 'py-2 px-4');
     }
 
-    // --- INITIALIZATION ---
     async function init() {
         await Promise.all([
             loadComponent('header.html', '#header-placeholder'),
             loadComponent('footer.html', '#footer-placeholder')
         ]);
-        // Once header/footer are loaded, initialize their interactive components
         initializeSharedComponents();
         loadCart();
     }
 
     init();
 });
-
