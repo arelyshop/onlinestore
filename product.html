@@ -5,18 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Arelyshop.com - Producto</title>
 
-    <!-- SEO and Social Sharing Meta Tags -->
-    <meta name="description" content="Visita Arelyshop.com y descubre los mejores accesorios y gadgets de UGREEN | BASEUS | ANKER para hacer tu día más fácil.">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://arelyshop.com/product.html">
-    <meta property="og:title" content="Arelyshop.com - Producto">
-    <meta property="og:description" content="Visita Arelyshop.com y descubre los mejores accesorios y gadgets de UGREEN | BASEUS | ANKER para hacer tu día más fácil.">
-    <meta property="og:image" content="https://arelyshop.com/images/arelyshop-preview.webp">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:url" content="https://arelyshop.com/product.html">
-    <meta name="twitter:title" content="Arelyshop.com - Producto">
-    <meta name="twitter:description" content="Visita Arelyshop.com y descubre los mejores accesorios y gadgets de UGREEN | BASEUS | ANKER para hacer tu día más fácil.">
-    <meta name="twitter:image" content="https://arelyshop.com/images/arelyshop-preview.webp">
+    <!-- SEO and Social Sharing Meta Tags (with IDs for dynamic update) -->
+    <meta id="meta-description" name="description" content="Visita Arelyshop.com y descubre los mejores accesorios y gadgets de UGREEN | BASEUS | ANKER para hacer tu día más fácil.">
+    <meta id="og-type" property="og:type" content="website">
+    <meta id="og-url" property="og:url" content="https://arelyshop.com/product.html">
+    <meta id="og-title" property="og:title" content="Arelyshop.com - Producto">
+    <meta id="og-description" property="og:description" content="Visita Arelyshop.com y descubre los mejores accesorios y gadgets de UGREEN | BASEUS | ANKER para hacer tu día más fácil.">
+    <meta id="og-image" property="og:image" content="https://arelyshop.com/images/arelyshop-preview.webp">
+    <meta id="twitter-card" name="twitter:card" content="summary_large_image">
+    <meta id="twitter-url" name="twitter:url" content="https://arelyshop.com/product.html">
+    <meta id="twitter-title" name="twitter:title" content="Arelyshop.com - Producto">
+    <meta id="twitter-description" name="twitter:description" content="Visita Arelyshop.com y descubre los mejores accesorios y gadgets de UGREEN | BASEUS | ANKER para hacer tu día más fácil.">
+    <meta id="twitter-image" name="twitter:image" content="https://arelyshop.com/images/arelyshop-preview.webp">
 
     <link rel="icon" href="/images/favicon.svg" type="image/svg+xml">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -93,7 +93,32 @@
                 return;
             }
 
+            // --- UPDATE META TAGS FOR SEO & SOCIAL SHARING ---
+            const pageUrl = window.location.href;
+            const imageUrl = currentProduct.photo_url_1 || 'https://arelyshop.com/images/arelyshop-preview.webp';
+            const getMetaDescription = (desc) => {
+                if (!desc) {
+                    return 'Visita Arelyshop.com y descubre los mejores accesorios y gadgets de UGREEN | BASEUS | ANKER para hacer tu día más fácil.';
+                }
+                return desc.replace(/\*/g, '').substring(0, 155).trim() + '...';
+            };
+            const metaDescription = getMetaDescription(currentProduct.description);
+
+            document.getElementById('og-title').setAttribute('content', currentProduct.name);
+            document.getElementById('twitter-title').setAttribute('content', currentProduct.name);
             document.title = `Arelyshop.com - ${currentProduct.name}`;
+
+            document.getElementById('og-image').setAttribute('content', imageUrl);
+            document.getElementById('twitter-image').setAttribute('content', imageUrl);
+
+            document.getElementById('og-description').setAttribute('content', metaDescription);
+            document.getElementById('twitter-description').setAttribute('content', metaDescription);
+            document.getElementById('meta-description').setAttribute('content', metaDescription);
+            
+            document.getElementById('og-url').setAttribute('content', pageUrl);
+            document.getElementById('twitter-url').setAttribute('content', pageUrl);
+            
+            // --- RENDER PRODUCT DETAILS ---
             const photoUrls = [1, 2, 3, 4, 5, 6, 7, 8].map(i => currentProduct[`photo_url_${i}`]).filter(Boolean);
             if (photoUrls.length === 0) photoUrls.push('https://placehold.co/600x600/e2e8f0/cbd5e0?text=Sin+Imagen');
             
@@ -109,7 +134,6 @@
                 priceHTML = `<p class="text-2xl font-bold text-gray-900">Bs. ${Math.round(salePrice)}</p>`;
             }
 
-            // --- INVOCAMOS LA FUNCIÓN CENTRALIZADA ---
             const discountBadgeHTML = createDiscountBadgeHTML(currentProduct, { size: 'large' });
 
             stockHTML = isOutOfStock ? `<p class="mt-2 font-semibold text-lg text-gray-700">Agotado</p>` : (currentProduct.stock <= 5 ? `<p class="mt-2 font-semibold text-lg text-red-600">¡Solo quedan ${currentProduct.stock}!</p>` : `<p class="mt-2 font-semibold text-lg text-green-600">En stock</p>`);
